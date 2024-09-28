@@ -14,8 +14,8 @@ const {
 
 dotenv.config();
 
-const uploadDir = process.env.UPLOAD_DIR || "uploads";
-const convertedDir = process.env.CONVERTED_DIR || "converted";
+const uploadDir = "uploads";
+const convertedDir = "converted";
 
 const app = express();
 const upload = multer({ dest: path.join(__dirname, uploadDir) });
@@ -27,24 +27,15 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(`/${convertedDir}`, express.static(path.join(__dirname, convertedDir)));
-app.use(express.static(path.join(__dirname, "..", "dist")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
-});
-
-const ensureDir = async (dirPath) => {
-  try {
-    await fs.promises.access(dirPath);
-  } catch {
-    await fs.promises.mkdir(dirPath);
+const ensureDir = (dirPath) => {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath);
   }
 };
 
-(async () => {
-  await ensureDir(path.join(__dirname, uploadDir));
-  await ensureDir(path.join(__dirname, convertedDir));
-})();
+ensureDir(path.join(__dirname, uploadDir));
+ensureDir(path.join(__dirname, convertedDir));
 
 app.post("/convert", upload.single("file"), async (req, res) => {
   if (!req.file) {
@@ -94,10 +85,11 @@ app.post("/convert", upload.single("file"), async (req, res) => {
 
       setTimeout(async () => {
         try {
-          await fs.promises.access(outputPath);
-          await fs.promises.unlink(outputPath);
+          if (fs.existsSync(outputPath)) {
+            await fs.promises.unlink(outputPath);
+          }
         } catch (error) {
-          console.error("Error during file deletion:", error);
+          console.error("Error deleting converted file", error);
         }
       }, 60000);
     });
@@ -106,11 +98,11 @@ app.post("/convert", upload.single("file"), async (req, res) => {
       res.status(500).send("Error saving file");
     });
   } catch (error) {
-    res.status(500).send({ message: "PDF 변환 중 오류가 발생했습니다." });
+    res.status(500).send({ message: "Error occurred during conversion." });
   }
 });
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

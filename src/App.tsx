@@ -31,6 +31,15 @@ const App: React.FC = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const isAttendanceScreenshot = (fileName: string): boolean => {
+    return (
+      (fileName.includes("오전") || fileName.includes("오후")) &&
+      (fileName.includes("10") ||
+        fileName.includes("2") ||
+        fileName.includes("7"))
+    );
+  };
+
   const getSuffix = (
     fileName: string,
     type: FormValues["applicationType"]
@@ -42,7 +51,6 @@ const App: React.FC = () => {
     if (type === "vacation") {
       if (fileName.includes("출석대장")) return "(출석대장)";
       if (fileName.includes("휴가 사용 계획서")) return "(휴가계획서)";
-      return "(기타)";
     }
     if (type === "attendance") {
       if (fileName.includes("출석대장")) return "(출석대장)";
@@ -78,15 +86,15 @@ const App: React.FC = () => {
     const zip = new JSZip();
 
     try {
-      for (const file of fileList) {
+      const fileProcessingTasks = fileList.map(async (file) => {
         const fileExtension = file.name.split(".").pop()?.toLowerCase() || "";
         const suffix = getSuffix(file.name, values.applicationType);
         const isImage = ["jpg", "jpeg", "png"].includes(fileExtension);
-        const isAttendance = values.applicationType === "attendance";
+        const isScreenshot = isAttendanceScreenshot(file.name);
 
         let fileName = file.name;
 
-        if (!isAttendance || !isImage) {
+        if (!isScreenshot) {
           fileName = `${formatDate(
             values.date
           )}_데브캠프_프론트엔드 개발 4회차_${values.name}${suffix}`;
@@ -124,7 +132,9 @@ const App: React.FC = () => {
           const blob = await fileResponse.blob();
           zip.file(fileName, blob);
         }
-      }
+      });
+
+      await Promise.all(fileProcessingTasks);
 
       const content = await zip.generateAsync({ type: "blob" });
       const typeSuffix = getTypeSuffix(values.applicationType);
@@ -142,7 +152,6 @@ const App: React.FC = () => {
 
   const handleFileChange = (info: UploadChangeParam<UploadFile>) => {
     let newFileList = [...info.fileList];
-    newFileList = newFileList.slice(-5);
     setFileList(newFileList);
   };
 
@@ -178,11 +187,11 @@ const App: React.FC = () => {
           padding: "40px",
           backgroundColor: "#ffffff",
           borderRadius: "10px",
-          boxShadow: "0 0 16px rgba(0, 0, 0, 0.1)",
+          boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)",
           position: "relative",
         }}
       >
-        <Spin spinning={isLoading} tip="파일 처리 중..." size="large">
+        <Spin spinning={isLoading} tip="파일 처리 중..." size="default">
           <Form form={form} layout="vertical" onFinish={onFinish}>
             <Form.Item
               name="applicationType"
@@ -225,6 +234,7 @@ const App: React.FC = () => {
                 onChange={handleFileChange}
                 multiple
                 fileList={fileList}
+                listType="picture"
               >
                 <Button icon={<UploadOutlined />} style={{ width: "100%" }}>
                   파일 선택
