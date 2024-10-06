@@ -7,7 +7,12 @@ import {
   FileChangeInfo,
 } from "../types/applicationType";
 import FileUpload from "./FileUpload";
-import { formLabel, submitButton, datePicker } from "../styles/styles";
+import {
+  formLabel,
+  submitButton,
+  datePicker,
+  requiredIcon,
+} from "../styles/styles";
 import { getDateLabel } from "../utils/fileHandle";
 
 const { Option } = Select;
@@ -30,10 +35,20 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
   const applicationType = Form.useWatch("applicationType", form);
 
   return (
-    <Form form={form} layout="vertical" onFinish={onFinish}>
+    <Form
+      form={form}
+      layout="vertical"
+      onFinish={onFinish}
+      requiredMark={false}
+    >
       <Form.Item
         name="applicationType"
-        label={<span css={formLabel}>신청 유형</span>}
+        label={
+          <span css={formLabel}>
+            <span css={requiredIcon}>*</span>
+            신청 유형
+          </span>
+        }
         initialValue="attendance"
         rules={[{ required: true, message: "신청 유형을 선택해주세요" }]}
       >
@@ -43,19 +58,23 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
           <Option value="officialLeave">공가</Option>
         </Select>
       </Form.Item>
-
       <Form.Item
         name="name"
-        label={<span css={formLabel}>이름</span>}
+        label={
+          <span css={formLabel}>
+            <span css={requiredIcon}>*</span>
+            이름
+          </span>
+        }
         rules={[{ required: true, message: "이름을 입력해주세요" }]}
       >
         <Input />
       </Form.Item>
-
       <Form.Item
         name="date"
         label={
           <span css={formLabel}>
+            <span css={requiredIcon}>*</span>
             {getDateLabel(applicationType as ApplicationType)}
           </span>
         }
@@ -63,9 +82,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
       >
         <DatePicker css={datePicker} />
       </Form.Item>
-
-      <FileUpload fileList={fileList} handleFileChange={handleFileChange} />
-
+      <FileUpload fileList={fileList} handleFileChange={handleFileChange} />{" "}
       <Form.Item>
         <Button
           type="primary"

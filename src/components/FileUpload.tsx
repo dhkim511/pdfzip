@@ -3,7 +3,7 @@ import React from "react";
 import { Form, Upload, Button } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { FormValues, FileChangeInfo } from "../types/applicationType";
-import { fileUpload, uploadButton, formLabel } from "../styles/styles";
+import { uploadButton, formLabel, requiredIcon } from "../styles/styles";
 
 interface FileUploadProps {
   fileList: FormValues["files"];
@@ -17,7 +17,12 @@ const FileUpload: React.FC<FileUploadProps> = ({
   return (
     <Form.Item
       name="files"
-      label={<span css={formLabel}>파일 첨부</span>}
+      label={
+        <span css={formLabel}>
+          <span css={requiredIcon}>*</span>
+          파일 첨부
+        </span>
+      }
       rules={[{ required: true, message: "파일을 첨부해주세요" }]}
     >
       <Upload
@@ -26,7 +31,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
         multiple
         fileList={fileList}
         listType="picture"
-        css={fileUpload}
       >
         <Button icon={<UploadOutlined />} css={uploadButton}>
           파일 선택
