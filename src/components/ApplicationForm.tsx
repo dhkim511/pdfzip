@@ -1,24 +1,19 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
-import { Form, Select, Input, DatePicker, Button } from "antd";
+import { Form, Select, Input, DatePicker, Button, FormInstance } from "antd";
 import {
   FormValues,
   ApplicationType,
   FileChangeInfo,
 } from "../types/applicationType";
 import FileUpload from "./FileUpload";
-import {
-  applicationForm,
-  formLabel,
-  submitButton,
-  datePicker,
-} from "../styles/styles";
+import { formLabel, submitButton, datePicker } from "../styles/styles";
 import { getDateLabel } from "../utils/fileHandle";
 
 const { Option } = Select;
 
 interface ApplicationFormProps {
-  form: any;
+  form: FormInstance;
   onFinish: (values: FormValues) => void;
   fileList: FormValues["files"];
   handleFileChange: (info: FileChangeInfo) => void;
@@ -35,12 +30,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
   const applicationType = Form.useWatch("applicationType", form);
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      onFinish={onFinish}
-      css={applicationForm}
-    >
+    <Form form={form} layout="vertical" onFinish={onFinish}>
       <Form.Item
         name="applicationType"
         label={<span css={formLabel}>신청 유형</span>}

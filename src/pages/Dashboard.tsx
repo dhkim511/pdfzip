@@ -2,6 +2,7 @@
 import React from "react";
 import { Spin } from "antd";
 import ApplicationForm from "../components/ApplicationForm";
+import LinkForm from "../components/LinkForm";
 import { useApplicationForm } from "../hooks/useApplicationForm";
 import { LOADING_MESSAGE } from "../constants/messages";
 import { appContainer, formContainer } from "../styles/styles";
@@ -12,6 +13,9 @@ const Dashboard: React.FC = () => {
 
   return (
     <div css={appContainer}>
+      <div css={formContainer}>
+        <LinkForm />
+      </div>
       <div css={formContainer}>
         <Spin spinning={isLoading} tip={LOADING_MESSAGE}>
           <ApplicationForm
