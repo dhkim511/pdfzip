@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server": "node server/server.cjs",
-    "start": "node server/server.cjs"
+    "server": "node server/index.cjs",
+    "start": "node server/index.cjs"
   },
   "dependencies": {
     "@adobe/pdfservices-node-sdk": "^4.0.1",
