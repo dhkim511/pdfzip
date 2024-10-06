@@ -16,7 +16,6 @@ export const getSuffix = (
   if (type === "officialLeave") {
     if (fileName.includes("출석대장")) return "(출석대장)";
     if (isAttendanceScreenshot(fileName)) return "(증빙서류)";
-    if (isAttendanceScreenshot(fileName)) return "(증빙서류)";
     return "(증빙서류)";
   }
   if (type === "vacation") {
