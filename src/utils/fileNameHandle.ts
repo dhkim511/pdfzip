@@ -1,4 +1,4 @@
-import { FormValues, ApplicationType } from "../types/applicationType";
+import { FormValues } from "../types/applicationType";
 
 export const isAttendanceScreenshot = (fileName: string): boolean => {
   return (
@@ -40,19 +40,6 @@ export const getTypeSuffix = (type: FormValues["applicationType"]): string => {
       return "(출결 정정)";
     default:
       return "";
-  }
-};
-
-export const getDateLabel = (applicationType: ApplicationType): string => {
-  switch (applicationType) {
-    case "vacation":
-      return "휴가 예정 날짜";
-    case "officialLeave":
-      return "공가 날짜";
-    case "attendance":
-      return "정정 희망 날짜";
-    default:
-      return "날짜";
   }
 };
 

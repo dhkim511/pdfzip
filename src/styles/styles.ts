@@ -35,6 +35,12 @@ export const formLabel = css`
   font-weight: bold;
 `;
 
+export const fileUploadLabelDetail = css`
+  color: #fc1c49; 
+  font-size: 14px;
+  font-weight: 500;
+`;
+
 export const datePicker = css`
   width: 100%;
 `;

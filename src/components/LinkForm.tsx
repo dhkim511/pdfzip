@@ -10,6 +10,7 @@ import {
   link,
 } from "../styles/styles";
 import { handleDownload } from "../utils/fileDownload";
+import { RESOURCES } from "../constants/resources";
 
 const { Link } = Typography;
 
@@ -29,22 +30,14 @@ const LinkForm: React.FC = () => {
         <div css={downloadButtonGroup}>
           <Button
             icon={<DownloadOutlined />}
-            onClick={() =>
-              handleDownload(
-                "데브캠프  프론트엔드 개발_1기(DEV_FE1) 출석대장.docx"
-              )
-            }
+            onClick={() => handleDownload(RESOURCES.DOCS.ATTENDANCE_SHEET)}
             css={downloadButton}
           >
             출석대장 다운로드
           </Button>
           <Button
             icon={<DownloadOutlined />}
-            onClick={() =>
-              handleDownload(
-                "[KDT] 휴가 사용 계획서_김패캠의 사본 - (시트 복제 후 사용)상담일자_휴가사용일자.docx"
-              )
-            }
+            onClick={() => handleDownload(RESOURCES.DOCS.VACATION_PLAN)}
             css={downloadButton}
           >
             휴가계획서 다운로드
@@ -61,7 +54,7 @@ const LinkForm: React.FC = () => {
         }
       >
         <Link
-          href="https://docs.google.com/forms/d/e/1FAIpQLSd3sIQywt59-md5533dq52sWRubzCE09VdGNWaxtLWANGM0oQ/viewform"
+          href={RESOURCES.LINKS.SUBMISSION_FORM}
           target="_blank"
           css={link}
         >

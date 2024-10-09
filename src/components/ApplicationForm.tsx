@@ -13,7 +13,8 @@ import {
   datePicker,
   requiredIcon,
 } from "../styles/styles";
-import { getDateLabel } from "../utils/fileHandle";
+import { getDateLabel } from "../utils/labelHandle";
+import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
 
 const { Option } = Select;
 
@@ -50,7 +51,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
           </span>
         }
         initialValue="attendance"
-        rules={[{ required: true, message: "신청 유형을 선택해주세요" }]}
+        rules={[{ required: true, message: FEEDBACK_MESSAGES.FORM_VALIDATION.APPLICATION_TYPE_REQUIRED }]}
       >
         <Select>
           <Option value="attendance">출결 정정</Option>
@@ -66,7 +67,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
             이름
           </span>
         }
-        rules={[{ required: true, message: "이름을 입력해주세요" }]}
+        rules={[{ required: true, message: FEEDBACK_MESSAGES.FORM_VALIDATION.NAME_REQUIRED }]}
       >
         <Input />
       </Form.Item>
@@ -78,11 +79,15 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
             {getDateLabel(applicationType as ApplicationType)}
           </span>
         }
-        rules={[{ required: true, message: "날짜를 선택해주세요" }]}
+        rules={[{ required: true, message: FEEDBACK_MESSAGES.FORM_VALIDATION.DATE_REQUIRED }]}
       >
         <DatePicker css={datePicker} />
       </Form.Item>
-      <FileUpload fileList={fileList} handleFileChange={handleFileChange} />{" "}
+      <FileUpload 
+        fileList={fileList} 
+        handleFileChange={handleFileChange} 
+        applicationType={applicationType as ApplicationType} 
+      />
       <Form.Item>
         <Button
           type="primary"

@@ -3,7 +3,7 @@ import { Form, message } from "antd";
 import type { UploadFile } from "antd/es/upload/interface";
 import { FormValues, FileChangeInfo } from "../types/applicationType";
 import { createAndDownloadZip } from "../utils/zipArchiver";
-import { ERROR_MESSAGES } from "../constants/messages";
+import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
 
 export const useApplicationForm = () => {
   const [form] = Form.useForm<FormValues>();
@@ -12,7 +12,7 @@ export const useApplicationForm = () => {
 
   const onFinish = async (values: FormValues) => {
     if (fileList.length === 0) {
-      message.error(ERROR_MESSAGES.NO_FILE);
+      message.error(FEEDBACK_MESSAGES.ERRORS.NO_FILE);
       return;
     }
 
@@ -23,7 +23,7 @@ export const useApplicationForm = () => {
         fileList.map((file) => file.originFileObj as File)
       );
     } catch (error) {
-      message.error(ERROR_MESSAGES.GENERAL_ERROR);
+      message.error(FEEDBACK_MESSAGES.ERRORS.GENERAL_ERROR);
     } finally {
       setIsLoading(false);
     }

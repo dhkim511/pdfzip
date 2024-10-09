@@ -6,8 +6,8 @@ import {
   isAttendanceScreenshot,
   getTypeSuffix,
   formatDate,
-} from "./fileHandle";
-import { SERVER_URL } from "../constants/config";
+} from "./fileNameHandle";
+import { SERVER_URL } from "../constants/environmentConfig";
 
 export const createAndDownloadZip = async (
   values: FormValues,

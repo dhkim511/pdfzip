@@ -4,7 +4,7 @@ import { Spin } from "antd";
 import ApplicationForm from "../components/ApplicationForm";
 import LinkForm from "../components/LinkForm";
 import { useApplicationForm } from "../hooks/useApplicationForm";
-import { LOADING_MESSAGE } from "../constants/messages";
+import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
 import { appContainer, formContainer } from "../styles/styles";
 
 const Dashboard: React.FC = () => {
@@ -17,7 +17,7 @@ const Dashboard: React.FC = () => {
         <LinkForm />
       </div>
       <div css={formContainer}>
-        <Spin spinning={isLoading} tip={LOADING_MESSAGE}>
+        <Spin spinning={isLoading} tip={FEEDBACK_MESSAGES.STATUS.LOADING}>
           <ApplicationForm
             form={form}
             onFinish={onFinish}
