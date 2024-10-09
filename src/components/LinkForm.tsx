@@ -31,7 +31,7 @@ const LinkForm: React.FC = () => {
             icon={<DownloadOutlined />}
             onClick={() =>
               handleDownload(
-                "데브캠프 프론트엔드 개발_1기(DEV_FE1) 출석대장.docx"
+                "데브캠프  프론트엔드 개발_1기(DEV_FE1) 출석대장.docx"
               )
             }
             css={downloadButton}
