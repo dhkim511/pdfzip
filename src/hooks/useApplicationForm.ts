@@ -16,14 +16,20 @@ export const useApplicationForm = () => {
       return;
     }
 
+    const files = fileList.map((file) => {
+      if (!file.originFileObj) {
+        message.error("파일 업로드가 완료되지 않았습니다.");
+        throw new Error("파일이 유효하지 않습니다.");
+      }
+      return file.originFileObj as File;
+    });
+
     setIsLoading(true);
     try {
-      await createAndDownloadZip(
-        values,
-        fileList.map((file) => file.originFileObj as File)
-      );
+      await createAndDownloadZip(values, files);
     } catch (error) {
-      message.error(FEEDBACK_MESSAGES.ERRORS.GENERAL_ERROR);
+      const errorMessage = (error as Error).message;
+      message.error(`${FEEDBACK_MESSAGES.ERRORS.GENERAL_ERROR} - ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }

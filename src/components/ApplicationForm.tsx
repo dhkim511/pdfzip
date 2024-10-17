@@ -59,6 +59,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
           <Option value="officialLeave">공가</Option>
         </Select>
       </Form.Item>
+
       <Form.Item
         name="name"
         label={
@@ -71,6 +72,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
       >
         <Input />
       </Form.Item>
+
       <Form.Item
         name="date"
         label={
@@ -81,13 +83,51 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
         }
         rules={[{ required: true, message: FEEDBACK_MESSAGES.FORM_VALIDATION.DATE_REQUIRED }]}
       >
-        <DatePicker css={datePicker} />
+        <DatePicker css={datePicker} format="MM/DD" />
       </Form.Item>
+
+      <Form.Item
+        name="checkInTime"
+        label={
+          <span css={formLabel}>
+            입실 시간
+          </span>
+        }
+        rules={[{ required: true, message: "입실 시간을 입력해주세요." }]}
+      >
+        <Input placeholder="ex) 10:00" />
+      </Form.Item>
+
+      <Form.Item
+        name="checkOutTime"
+        label={
+          <span css={formLabel}>
+            퇴실 시간
+          </span>
+        }
+        rules={[{ required: true, message: "퇴실 시간을 입력해주세요." }]}
+      >
+        <Input placeholder="ex) 19:00" />
+      </Form.Item>
+
+      <Form.Item
+        name="reason"
+        label={
+          <span css={formLabel}>
+            사유
+          </span>
+        }
+        rules={[{ required: true, message: "사유를 입력해주세요." }]}
+      >
+        <Input.TextArea rows={4} placeholder="사유를 입력해주세요." />
+      </Form.Item>
+
       <FileUpload 
         fileList={fileList} 
         handleFileChange={handleFileChange} 
         applicationType={applicationType as ApplicationType} 
       />
+      
       <Form.Item>
         <Button
           type="primary"

@@ -1,12 +1,7 @@
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { FormValues } from "../types/applicationType";
-import {
-  getSuffix,
-  isAttendanceScreenshot,
-  getTypeSuffix,
-  formatDate,
-} from "./fileNameHandle";
+import { getSuffix, isAttendanceScreenshot, getTypeSuffix, formatDate } from "./fileNameHandle";
 import { SERVER_URL } from "../constants/environmentConfig";
 
 export const createAndDownloadZip = async (
@@ -24,9 +19,7 @@ export const createAndDownloadZip = async (
     let fileName = file.name;
 
     if (!isScreenshot) {
-      fileName = `${formatDate(values.date)}_데브캠프_프론트엔드 개발 4회차_${
-        values.name
-      }${suffix}`;
+      fileName = `${formatDate(values.date)}_데브캠프_프론트엔드 개발 4회차_${values.name}${suffix}`;
       if (isImage) {
         fileName += `.${fileExtension}`;
       } else {
@@ -42,6 +35,11 @@ export const createAndDownloadZip = async (
       formData.append("file", file);
       formData.append("type", values.applicationType);
       formData.append("fileName", fileName);
+      formData.append("date", formatDate(values.date));
+      formData.append("name", values.name);
+      formData.append("checkInTime", values.checkInTime);
+      formData.append("checkOutTime", values.checkOutTime);
+      formData.append("reason", values.reason);
 
       const response = await fetch(`${SERVER_URL}/convert`, {
         method: "POST",

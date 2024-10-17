@@ -4,13 +4,9 @@ const path = require("path");
 const fs = require("fs");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const {
-  PDFServices,
-  ServicePrincipalCredentials,
-  MimeType,
-  CreatePDFJob,
-  CreatePDFResult,
-} = require("@adobe/pdfservices-node-sdk");
+const PizZip = require("pizzip");
+const Docxtemplater = require("docxtemplater");
+const { PDFServices, ServicePrincipalCredentials, MimeType, CreatePDFJob, CreatePDFResult } = require("@adobe/pdfservices-node-sdk");
 
 dotenv.config();
 
@@ -37,6 +33,45 @@ const ensureDir = (dirPath) => {
 ensureDir(path.join(__dirname, uploadDir));
 ensureDir(path.join(__dirname, convertedDir));
 
+const formatDateYYMMDD = (date) => {
+  const year = date.getFullYear().toString().slice(-2);
+  const month = (`0${date.getMonth() + 1}`).slice(-2);
+  const day = (`0${date.getDate()}`).slice(-2);
+  return `${year}${month}${day}`;
+};
+
+const fillAttendanceForm = async (values) => {
+  const templatePath = path.join(__dirname, "templates", "attendance_template.docx");
+  const content = fs.readFileSync(templatePath, "binary");
+
+  const zip = new PizZip(content);
+  const doc = new Docxtemplater(zip);
+
+  const applicationDate = formatDateYYMMDD(new Date());
+
+  doc.setData({
+    date: values.date,
+    applicationDate, 
+    name: values.name,
+    checkInTime: values.checkInTime,
+    checkOutTime: values.checkOutTime,
+    reason: values.reason,
+  });
+
+  try {
+    doc.render();
+  } catch (error) {
+    console.error("Error during template processing:", error);
+    throw error;
+  }
+
+  const buffer = doc.getZip().generate({ type: "nodebuffer" });
+  const outputPath = path.join(__dirname, convertedDir, "filled_attendance.docx");
+  fs.writeFileSync(outputPath, buffer);
+
+  return outputPath;
+};
+
 app.post("/convert", upload.single("file"), async (req, res) => {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
@@ -49,6 +84,8 @@ app.post("/convert", upload.single("file"), async (req, res) => {
   const outputPath = path.join(__dirname, convertedDir, outputFileName);
 
   try {
+    const filledDocPath = await fillAttendanceForm(req.body);
+
     const credentials = new ServicePrincipalCredentials({
       clientId: process.env.PDF_SERVICES_CLIENT_ID,
       clientSecret: process.env.PDF_SERVICES_CLIENT_SECRET,
@@ -58,7 +95,7 @@ app.post("/convert", upload.single("file"), async (req, res) => {
     const pdfServices = new PDFServices({ credentials });
 
     const inputAsset = await pdfServices.upload({
-      readStream: fs.createReadStream(inputPath),
+      readStream: fs.createReadStream(filledDocPath),
       mimeType: MimeType.DOCX,
     });
 
@@ -74,13 +111,22 @@ app.post("/convert", upload.single("file"), async (req, res) => {
     const outputStream = fs.createWriteStream(outputPath);
     streamAsset.readStream.pipe(outputStream);
 
+    const sanitizeFileName = (fileName) => {
+      return encodeURIComponent(fileName).replace(/['()]/g, escape).replace(/\*/g, '%2A');
+    };
+
     outputStream.on("finish", async () => {
-      await fs.promises.unlink(inputPath);
+      console.log("PDF File saved successfully:", outputPath);
+
+      const sanitizedFileName = sanitizeFileName(outputFileName);
+
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", `attachment; filename="${sanitizedFileName}"`);
 
       res.json({
-        message: "File converted successfully",
-        path: `/${convertedDir}/${outputFileName}`,
-        name: outputFileName,
+        message: "File converted and zipped successfully",
+        path: `/${convertedDir}/${sanitizedFileName}`,
+        name: sanitizedFileName,
       });
 
       setTimeout(async () => {
@@ -91,14 +137,16 @@ app.post("/convert", upload.single("file"), async (req, res) => {
         } catch (error) {
           console.error("Error deleting converted file", error);
         }
-      }, 60000);
+      }, 60000); 
     });
 
     outputStream.on("error", (err) => {
+      console.error("Error saving file", err);
       res.status(500).send("Error saving file");
     });
   } catch (error) {
-    res.status(500).send({ message: "Error occurred during conversion." });
+    console.error("Conversion error:", error);
+    res.status(500).send({ message: "Error occurred during conversion.", details: error.toString() });
   }
 });
 
