@@ -2,7 +2,6 @@ import { css } from "@emotion/react";
 
 export const appContainer = css`
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
@@ -10,14 +9,48 @@ export const appContainer = css`
 `;
 
 export const formContainer = css`
+  display: flex;
+  justify-content: space-between;
   width: 100%;
-  max-width: 600px;
+  max-width: 1200px;
+  border-radius: 10px;
+  gap: 20px;
+`;
+
+export const leftContainer = css`
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const rightContainer = css`
+  width: 55%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
+
+export const guideSection = css`
+  flex: 1;
   padding: 20px 20px 0 20px;
   background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
-  position: relative;
-  margin-bottom: 20px;
+`;
+
+export const linkSection = css`
+  padding: 20px 20px 0 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+`;
+
+export const formSection = css`
+  flex: 1;
+  padding: 20px 20px 0 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
 `;
 
 export const link = css`
@@ -36,7 +69,7 @@ export const formLabel = css`
 `;
 
 export const fileUploadLabelDetail = css`
-  color: #fc1c49; 
+  color: #fc1c49;
   font-size: 14px;
   font-weight: 500;
 `;
