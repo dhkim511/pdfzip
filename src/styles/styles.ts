@@ -5,7 +5,7 @@ export const appContainer = css`
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f2f2f2;
+  background-color: #f6f6f6;
 `;
 
 export const formContainer = css`
@@ -18,13 +18,13 @@ export const formContainer = css`
 `;
 
 export const leftContainer = css`
-  width: 45%;
+  width: 50%;
   display: flex;
   flex-direction: column;
 `;
 
 export const rightContainer = css`
-  width: 55%;
+  width: 50%;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -103,6 +103,7 @@ export const downloadButton = css`
 export const submitButton = css`
   width: 100%;
   height: 48px;
-  border: none;
+  color: #fc1c49;
+  border-color: #fc1c49;
   border-radius: 10px;
 `;

@@ -4,14 +4,16 @@ import type { UploadFile } from "antd/es/upload/interface";
 import { FormValues, FileChangeInfo } from "../types/applicationType";
 import { createAndDownloadZip } from "../utils/zipArchiver";
 import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
+import { SERVER_URL } from "../constants/environmentConfig";
 
 export const useApplicationForm = () => {
   const [form] = Form.useForm<FormValues>();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [signFile, setSignFile] = useState<UploadFile | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const onFinish = async (values: FormValues) => {
-    if (fileList.length === 0) {
+    if (fileList.length === 0 && !signFile) {
       message.error(FEEDBACK_MESSAGES.ERRORS.NO_FILE);
       return;
     }
@@ -26,6 +28,22 @@ export const useApplicationForm = () => {
 
     setIsLoading(true);
     try {
+      // 서명 파일 별도 처리
+      if (signFile && signFile.originFileObj) {
+        const signFormData = new FormData();
+        signFormData.append("file", signFile.originFileObj);
+        
+        const signResponse = await fetch(`${SERVER_URL}/sign`, {
+          method: "POST",
+          body: signFormData,
+        });
+
+        if (!signResponse.ok) {
+          throw new Error("서명 파일 업로드 실패");
+        }
+      }
+
+      // 다른 파일들 처리
       await createAndDownloadZip(values, files);
     } catch (error) {
       const errorMessage = (error as Error).message;
@@ -39,11 +57,17 @@ export const useApplicationForm = () => {
     setFileList([...info.fileList]);
   };
 
+  const handleSignFileChange = (info: FileChangeInfo) => {
+    setSignFile(info.fileList[0] || null);
+  };
+
   return {
     form,
     fileList,
+    signFile,
     isLoading,
     onFinish,
     handleFileChange,
+    handleSignFileChange,
   };
 };

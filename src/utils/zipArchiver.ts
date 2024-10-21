@@ -15,10 +15,11 @@ export const createAndDownloadZip = async (
     const suffix = getSuffix(file.name, values.applicationType);
     const isImage = ["jpg", "jpeg", "png"].includes(fileExtension);
     const isScreenshot = isAttendanceScreenshot(file.name);
+    const isSignature = file.name === 'sign.png';
 
     let fileName = file.name;
 
-    if (!isScreenshot) {
+    if (!isScreenshot && !isSignature) {
       fileName = `${formatDate(values.date)}_데브캠프_프론트엔드 개발 4회차_${values.name}${suffix}`;
       if (isImage) {
         fileName += `.${fileExtension}`;
@@ -27,7 +28,7 @@ export const createAndDownloadZip = async (
       }
     }
 
-    if (isImage) {
+    if (isImage || isSignature) {
       const fileContent = await file.arrayBuffer();
       zip.file(fileName, fileContent);
     } else {

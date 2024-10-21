@@ -2,7 +2,6 @@
 import React from "react";
 import { Spin } from "antd";
 import ApplicationForm from "../components/ApplicationForm";
-import LinkForm from "../components/LinkForm";
 import GuideForm from "../components/GuideForm";
 import { useApplicationForm } from "../hooks/useApplicationForm";
 import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
@@ -12,13 +11,18 @@ import {
   leftContainer,
   rightContainer,
   guideSection,
-  linkSection,
   formSection,
 } from "../styles/styles";
 
 const Dashboard: React.FC = () => {
-  const { form, fileList, isLoading, onFinish, handleFileChange } =
-    useApplicationForm();
+  const {
+    form,
+    fileList,
+    isLoading,
+    onFinish,
+    handleFileChange,
+    handleSignFileChange, // 이 부분을 추가
+  } = useApplicationForm();
 
   return (
     <div css={appContainer}>
@@ -29,9 +33,6 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
         <div css={rightContainer}>
-          <div css={linkSection}>
-            <LinkForm />
-          </div>
           <div css={formSection}>
             <Spin spinning={isLoading} tip={FEEDBACK_MESSAGES.STATUS.LOADING}>
               <ApplicationForm
@@ -39,6 +40,7 @@ const Dashboard: React.FC = () => {
                 onFinish={onFinish}
                 fileList={fileList}
                 handleFileChange={handleFileChange}
+                handleSignFileChange={handleSignFileChange} // 이 부분을 추가
                 isLoading={isLoading}
               />
             </Spin>

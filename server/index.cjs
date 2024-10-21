@@ -6,7 +6,15 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const PizZip = require("pizzip");
 const Docxtemplater = require("docxtemplater");
-const { PDFServices, ServicePrincipalCredentials, MimeType, CreatePDFJob, CreatePDFResult } = require("@adobe/pdfservices-node-sdk");
+const ImageModule = require("docxtemplater-image-module-free");
+const {
+  PDFServices,
+  ServicePrincipalCredentials,
+  MimeType,
+  CreatePDFJob,
+  CreatePDFResult,
+} = require("@adobe/pdfservices-node-sdk");
+const { PDFDocument } = require("pdf-lib");
 
 dotenv.config();
 
@@ -35,28 +43,66 @@ ensureDir(path.join(__dirname, convertedDir));
 
 const formatDateYYMMDD = (date) => {
   const year = date.getFullYear().toString().slice(-2);
-  const month = (`0${date.getMonth() + 1}`).slice(-2);
-  const day = (`0${date.getDate()}`).slice(-2);
+  const month = `0${date.getMonth() + 1}`.slice(-2);
+  const day = `0${date.getDate()}`.slice(-2);
   return `${year}${month}${day}`;
 };
 
+// PDF에 서명 이미지 추가하는 함수
+async function addSignatureToPDF(pdfPath, signaturePath) {
+  const existingPdfBytes = fs.readFileSync(pdfPath);
+  const pdfDoc = await PDFDocument.load(existingPdfBytes);
+
+  const pages = pdfDoc.getPages();
+  const firstPage = pages[0];
+
+  const pngImageBytes = fs.readFileSync(signaturePath);
+  const pngImage = await pdfDoc.embedPng(pngImageBytes);
+
+  const { width, height } = pngImage.scale(0.5); // 서명 크기 조절
+
+  // 서명 위치를 '학습근로자 서명' 필드 아래로 조정
+  firstPage.drawImage(pngImage, {
+    x: 430, // X 좌표: 현재 위치가 적절하므로 그대로 유지
+    y: 430, // Y 좌표: 높이를 더 높여서 필드 안으로 이동
+    width: 80, // 서명 너비
+    height: 30, // 서명 높이
+  });
+
+  const pdfBytes = await pdfDoc.save();
+  const signedPdfPath = path.join(__dirname, convertedDir, "signed_output.pdf");
+  fs.writeFileSync(signedPdfPath, pdfBytes);
+
+  return signedPdfPath;
+}
+
 const fillAttendanceForm = async (values) => {
-  const templatePath = path.join(__dirname, "templates", "attendance_template.docx");
+  const templatePath = path.join(
+    __dirname,
+    "templates",
+    "attendance_template.docx"
+  );
   const content = fs.readFileSync(templatePath, "binary");
 
   const zip = new PizZip(content);
-  const doc = new Docxtemplater(zip);
+
+  const doc = new Docxtemplater(zip, {
+    paragraphLoop: true,
+    linebreaks: true,
+  });
 
   const applicationDate = formatDateYYMMDD(new Date());
 
-  doc.setData({
+  const data = {
     date: values.date,
-    applicationDate, 
+    applicationDate,
     name: values.name,
     checkInTime: values.checkInTime,
     checkOutTime: values.checkOutTime,
     reason: values.reason,
-  });
+  };
+
+  doc.setData(data);
 
   try {
     doc.render();
@@ -66,7 +112,11 @@ const fillAttendanceForm = async (values) => {
   }
 
   const buffer = doc.getZip().generate({ type: "nodebuffer" });
-  const outputPath = path.join(__dirname, convertedDir, "filled_attendance.docx");
+  const outputPath = path.join(
+    __dirname,
+    convertedDir,
+    "filled_attendance.docx"
+  );
   fs.writeFileSync(outputPath, buffer);
 
   return outputPath;
@@ -77,13 +127,13 @@ app.post("/convert", upload.single("file"), async (req, res) => {
     return res.status(400).send("No file uploaded.");
   }
 
-  const inputPath = req.file.path;
   const outputFileName = req.body.fileName.endsWith(".pdf")
     ? req.body.fileName
     : `${req.body.fileName || "converted"}.pdf`;
   const outputPath = path.join(__dirname, convertedDir, outputFileName);
 
   try {
+    // 서명 제외한 PDF 변환
     const filledDocPath = await fillAttendanceForm(req.body);
 
     const credentials = new ServicePrincipalCredentials({
@@ -111,22 +161,28 @@ app.post("/convert", upload.single("file"), async (req, res) => {
     const outputStream = fs.createWriteStream(outputPath);
     streamAsset.readStream.pipe(outputStream);
 
-    const sanitizeFileName = (fileName) => {
-      return encodeURIComponent(fileName).replace(/['()]/g, escape).replace(/\*/g, '%2A');
-    };
-
     outputStream.on("finish", async () => {
       console.log("PDF File saved successfully:", outputPath);
 
-      const sanitizedFileName = sanitizeFileName(outputFileName);
+      // 서명을 PDF에 추가
+      const signedPdfPath = await addSignatureToPDF(
+        outputPath,
+        path.join(__dirname, uploadDir, "sign.png")
+      );
+
+      // URL 생성 시 중복 발생하지 않도록 주의
+      const signedPdfUrl = `/converted/signed_output.pdf`;
 
       res.setHeader("Content-Type", "application/pdf");
-      res.setHeader("Content-Disposition", `attachment; filename="${sanitizedFileName}"`);
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${path.basename(signedPdfPath)}"`
+      );
 
       res.json({
-        message: "File converted and zipped successfully",
-        path: `/${convertedDir}/${sanitizedFileName}`,
-        name: sanitizedFileName,
+        message: "PDF with signature generated successfully",
+        path: signedPdfUrl,
+        name: path.basename(signedPdfPath),
       });
 
       setTimeout(async () => {
@@ -135,9 +191,9 @@ app.post("/convert", upload.single("file"), async (req, res) => {
             await fs.promises.unlink(outputPath);
           }
         } catch (error) {
-          console.error("Error deleting converted file", error);
+          console.error("Error deleting file", error);
         }
-      }, 60000); 
+      }, 60000);
     });
 
     outputStream.on("error", (err) => {
@@ -146,8 +202,33 @@ app.post("/convert", upload.single("file"), async (req, res) => {
     });
   } catch (error) {
     console.error("Conversion error:", error);
-    res.status(500).send({ message: "Error occurred during conversion.", details: error.toString() });
+    res.status(500).send({
+      message: "Error occurred during conversion.",
+      details: error.toString(),
+    });
   }
+});
+
+app.post("/sign", upload.single("file"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send("No file uploaded.");
+  }
+
+  const file = req.file;
+  const fileName = "sign.png";
+  const filePath = path.join(__dirname, uploadDir, fileName);
+
+  fs.rename(file.path, filePath, (err) => {
+    if (err) {
+      console.error("Error saving signature file:", err);
+      return res.status(500).send("Error saving signature file");
+    }
+    console.log("Signature file saved successfully at:", filePath);
+    res.status(200).json({
+      message: "Signature file uploaded successfully",
+      path: filePath,
+    });
+  });
 });
 
 const port = process.env.PORT || 8080;
