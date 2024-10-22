@@ -15,6 +15,7 @@ const {
   CreatePDFResult,
 } = require("@adobe/pdfservices-node-sdk");
 const { PDFDocument } = require("pdf-lib");
+const dayjs = require("dayjs");
 
 dotenv.config();
 
@@ -41,30 +42,29 @@ const ensureDir = (dirPath) => {
 ensureDir(path.join(__dirname, uploadDir));
 ensureDir(path.join(__dirname, convertedDir));
 
-const formatDateYYMMDD = (date) => {
-  const year = date.getFullYear().toString().slice(-2);
-  const month = `0${date.getMonth() + 1}`.slice(-2);
-  const day = `0${date.getDate()}`.slice(-2);
-  return `${year}${month}${day}`;
+const formatAttendanceDate = (date) => {
+  return dayjs(date).format("YYMMDD");
 };
 
-// PDF에 서명 추가 함수
+const formatVacationDate = (date) => {
+  const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
+  const dateObj = dayjs(date);
+  const weekDay = weekDays[dateObj.day()];
+  return `${dateObj.year()}년 ${
+    dateObj.month() + 1
+  }월 ${dateObj.date()}일 (${weekDay})`;
+};
+
 async function addSignatureToPDF(pdfPath, signaturePath) {
   const existingPdfBytes = fs.readFileSync(pdfPath);
   const pdfDoc = await PDFDocument.load(existingPdfBytes);
-
   const pages = pdfDoc.getPages();
   const firstPage = pages[0];
 
   const pngImageBytes = fs.readFileSync(signaturePath);
   const pngImage = await pdfDoc.embedPng(pngImageBytes);
 
-  firstPage.drawImage(pngImage, {
-    x: 430,
-    y: 430,
-    width: 80,
-    height: 30,
-  });
+  firstPage.drawImage(pngImage, { x: 430, y: 430, width: 80, height: 30 });
 
   const pdfBytes = await pdfDoc.save();
   const signedPdfPath = path.join(__dirname, convertedDir, "signed_output.pdf");
@@ -73,7 +73,6 @@ async function addSignatureToPDF(pdfPath, signaturePath) {
   return signedPdfPath;
 }
 
-// 출석대장 작성 함수
 const fillAttendanceForm = async (values) => {
   const templatePath = path.join(
     __dirname,
@@ -83,17 +82,12 @@ const fillAttendanceForm = async (values) => {
   const content = fs.readFileSync(templatePath, "binary");
 
   const zip = new PizZip(content);
+  const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
 
-  const doc = new Docxtemplater(zip, {
-    paragraphLoop: true,
-    linebreaks: true,
-  });
+  const applicationDate = dayjs().format("YYMMDD");
 
-  const applicationDate = formatDateYYMMDD(new Date());
-
-  // 휴가 신청 시 'reason'을 '휴가'로 설정
   const data = {
-    date: values.date,
+    date: formatAttendanceDate(values.date),
     applicationDate,
     name: values.name,
     checkInTime: values.checkInTime,
@@ -121,7 +115,6 @@ const fillAttendanceForm = async (values) => {
   return outputPath;
 };
 
-// 휴가 계획서 작성 함수
 const fillVacationForm = async (values) => {
   const templatePath = path.join(
     __dirname,
@@ -131,18 +124,14 @@ const fillVacationForm = async (values) => {
   const content = fs.readFileSync(templatePath, "binary");
 
   const zip = new PizZip(content);
-
-  const doc = new Docxtemplater(zip, {
-    paragraphLoop: true,
-    linebreaks: true,
-  });
+  const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
 
   const data = {
     name: values.name,
-    vacationDate: values.vacationDate,
+    vacationDate: formatVacationDate(values.date),
     courseContent: values.courseContent,
     studyPlan: values.studyPlan,
-    specialNote: values.specialNote || "",
+    significant: values.significant || "",
   };
 
   doc.setData(data);
@@ -197,19 +186,17 @@ app.post("/convert", upload.single("file"), async (req, res) => {
   try {
     const filledDocPaths = [];
 
-    // 휴가 신청인 경우 휴가계획서와 출석대장을 각각 처리
     if (req.body.applicationType === "vacation") {
-      const vacationFormPath = await fillVacationForm(req.body); // 휴가계획서 작성
+      const vacationFormPath = await fillVacationForm(req.body);
       filledDocPaths.push({ path: vacationFormPath, type: "vacation" });
 
       const attendanceFormPath = await fillAttendanceForm({
         ...req.body,
-        checkInTime: "10:00", // 고정된 입실 시간
-        checkOutTime: "19:00", // 고정된 퇴실 시간
+        checkInTime: "10:00",
+        checkOutTime: "19:00",
       });
       filledDocPaths.push({ path: attendanceFormPath, type: "attendance" });
     } else {
-      // 출석대장만 작성
       const filledDocPath = await fillAttendanceForm(req.body);
       filledDocPaths.push({ path: filledDocPath, type: "attendance" });
     }
@@ -239,7 +226,6 @@ app.post("/convert", upload.single("file"), async (req, res) => {
       const resultAsset = pdfServicesResponse.result.asset;
       const streamAsset = await pdfServices.getContent({ asset: resultAsset });
 
-      // 최종 파일 경로를 지정해 임시 파일 생성 방지
       const outputFileName = `${path.basename(docInfo.path, ".docx")}.pdf`;
       const finalOutputPath = path.join(
         __dirname,
@@ -254,7 +240,6 @@ app.post("/convert", upload.single("file"), async (req, res) => {
         outputStream.on("error", reject);
       });
 
-      // 출석대장에 서명 추가 처리
       let signedPdfPath = finalOutputPath;
       if (docInfo.type === "attendance") {
         signedPdfPath = await addSignatureToPDF(
@@ -263,20 +248,17 @@ app.post("/convert", upload.single("file"), async (req, res) => {
         );
       }
 
-      // 서명된 파일 경로를 클라이언트에 전달
       processedFiles.push({
         path: `/converted/${path.basename(signedPdfPath)}`,
         name: path.basename(signedPdfPath),
       });
     }
 
-    // 클라이언트로 파일 리스트 반환
     res.json({
       message: "Files processed successfully",
       files: processedFiles,
     });
 
-    // 일정 시간 후 파일 삭제
     setTimeout(async () => {
       for (const docInfo of filledDocPaths) {
         if (fs.existsSync(docInfo.path)) {

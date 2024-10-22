@@ -14,7 +14,7 @@ export interface FormValues {
   vacationDate?: string;
   courseContent?: string;
   studyPlan?: string;
-  specialNote?: string;
+  significant?: string;
 }
 
 export type FileChangeInfo = UploadChangeParam<UploadFile>;
