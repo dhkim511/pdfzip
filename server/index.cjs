@@ -7,7 +7,6 @@ const dotenv = require("dotenv");
 const sharp = require("sharp");
 const PizZip = require("pizzip");
 const Docxtemplater = require("docxtemplater");
-const ImageModule = require("docxtemplater-image-module-free");
 const {
   PDFServices,
   ServicePrincipalCredentials,
