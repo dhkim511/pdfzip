@@ -204,7 +204,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
           </Form.Item>
 
           <Form.Item
-            name="specialNote"
+            name="significant"
             label={<FormLabel icon={<FileTextOutlined />}>특이사항</FormLabel>}
           >
             <TextArea rows={2} placeholder="특이사항을 입력해주세요." />
