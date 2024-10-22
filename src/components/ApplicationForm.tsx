@@ -25,9 +25,12 @@ import FileUpload from "./FileUpload";
 import { submitButton, datePicker } from "../styles/styles";
 import { getDateLabel } from "../utils/labelHandle";
 import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
+import dayjs from "dayjs";
+import "dayjs/locale/ko";
 
 const { Option } = Select;
 const { Text } = Typography;
+const { TextArea } = Input;
 
 interface ApplicationFormProps {
   form: FormInstance;
@@ -47,6 +50,27 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
   isLoading,
 }) => {
   const applicationType = Form.useWatch("applicationType", form);
+
+  const isVacationType = applicationType === "vacation";
+
+  // Format date with day of week for vacation form
+  const getFormattedDate = (date: dayjs.Dayjs) => {
+    const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
+    const weekDay = weekDays[date.day()];
+    return `${date.year()}년 ${
+      date.month() + 1
+    }월 ${date.date()}일 (${weekDay})`;
+  };
+
+  const handleFormSubmit = (values: FormValues) => {
+    if (isVacationType) {
+      // Add default check-in/out times for vacation
+      values.checkInTime = "10:00";
+      values.checkOutTime = "19:00";
+      values.reason = "휴가";
+    }
+    onFinish(values);
+  };
 
   const FormLabel = ({
     icon,
@@ -69,7 +93,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
     <Form
       form={form}
       layout="vertical"
-      onFinish={onFinish}
+      onFinish={handleFormSubmit}
       requiredMark={false}
     >
       <Form.Item
@@ -118,40 +142,100 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
           },
         ]}
       >
-        <DatePicker css={datePicker} format="MM/DD" />
+        <DatePicker
+          css={datePicker}
+          format={isVacationType ? "YYYY-MM-DD" : "MM/DD"}
+          onChange={(date) => {
+            if (date && isVacationType) {
+              form.setFieldValue("vacationDate", getFormattedDate(date));
+            }
+          }}
+        />
       </Form.Item>
 
-      <div css={{ display: "flex", gap: "16px" }}>
-        <Form.Item
-          name="checkInTime"
-          label={
-            <FormLabel icon={<ClockCircleOutlined />}>입실 시간</FormLabel>
-          }
-          rules={[{ required: true, message: "입실 시간을 입력해주세요." }]}
-          css={{ flex: 1 }}
-        >
-          <Input placeholder="ex) 10:00" />
-        </Form.Item>
+      {!isVacationType && (
+        <>
+          <div css={{ display: "flex", gap: "16px" }}>
+            <Form.Item
+              name="checkInTime"
+              label={
+                <FormLabel icon={<ClockCircleOutlined />}>입실 시간</FormLabel>
+              }
+              rules={[{ required: true, message: "입실 시간을 입력해주세요." }]}
+              css={{ flex: 1 }}
+            >
+              <Input placeholder="ex) 10:00" />
+            </Form.Item>
 
-        <Form.Item
-          name="checkOutTime"
-          label={
-            <FormLabel icon={<ClockCircleOutlined />}>퇴실 시간</FormLabel>
-          }
-          rules={[{ required: true, message: "퇴실 시간을 입력해주세요." }]}
-          css={{ flex: 1 }}
-        >
-          <Input placeholder="ex) 19:00" />
-        </Form.Item>
-      </div>
+            <Form.Item
+              name="checkOutTime"
+              label={
+                <FormLabel icon={<ClockCircleOutlined />}>퇴실 시간</FormLabel>
+              }
+              rules={[{ required: true, message: "퇴실 시간을 입력해주세요." }]}
+              css={{ flex: 1 }}
+            >
+              <Input placeholder="ex) 19:00" />
+            </Form.Item>
+          </div>
 
-      <Form.Item
-        name="reason"
-        label={<FormLabel icon={<FileTextOutlined />}>사유</FormLabel>}
-        rules={[{ required: true, message: "사유를 입력해주세요." }]}
-      >
-        <Input.TextArea rows={1} placeholder="사유를 입력해주세요." />
-      </Form.Item>
+          <Form.Item
+            name="reason"
+            label={<FormLabel icon={<FileTextOutlined />}>사유</FormLabel>}
+            rules={[{ required: true, message: "사유를 입력해주세요." }]}
+          >
+            <Input.TextArea rows={1} placeholder="사유를 입력해주세요." />
+          </Form.Item>
+        </>
+      )}
+
+      {isVacationType && (
+        <>
+          <Form.Item
+            name="courseContent"
+            label={
+              <FormLabel icon={<FileTextOutlined />}>
+                불참하는 과정 교육내용
+              </FormLabel>
+            }
+            rules={[
+              {
+                required: true,
+                message: "불참하는 과정 교육내용을 입력해주세요.",
+              },
+            ]}
+          >
+            <TextArea
+              rows={3}
+              placeholder="불참하는 과정 교육내용을 입력해주세요."
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="studyPlan"
+            label={
+              <FormLabel icon={<FileTextOutlined />}>학습 진행 계획</FormLabel>
+            }
+            rules={[
+              { required: true, message: "학습 진행 계획을 입력해주세요." },
+            ]}
+          >
+            <TextArea rows={3} placeholder="학습 진행 계획을 입력해주세요." />
+          </Form.Item>
+
+          <Form.Item
+            name="specialNote"
+            label={<FormLabel icon={<FileTextOutlined />}>특이사항</FormLabel>}
+          >
+            <TextArea rows={2} placeholder="특이사항을 입력해주세요." />
+          </Form.Item>
+
+          {/* Hidden field to store formatted vacation date */}
+          <Form.Item name="vacationDate" hidden>
+            <Input />
+          </Form.Item>
+        </>
+      )}
 
       <FileUpload
         fileList={fileList}

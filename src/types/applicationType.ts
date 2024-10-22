@@ -11,6 +11,10 @@ export interface FormValues {
   name: string;
   date: Dayjs;
   files: UploadFile[];
+  vacationDate?: string;
+  courseContent?: string;
+  studyPlan?: string;
+  specialNote?: string;
 }
 
 export type FileChangeInfo = UploadChangeParam<UploadFile>;
