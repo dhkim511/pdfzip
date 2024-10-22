@@ -21,7 +21,7 @@ const Dashboard: React.FC = () => {
     isLoading,
     onFinish,
     handleFileChange,
-    handleSignFileChange, // 이 부분을 추가
+    handleSignFileChange,
   } = useApplicationForm();
 
   return (
@@ -40,7 +40,7 @@ const Dashboard: React.FC = () => {
                 onFinish={onFinish}
                 fileList={fileList}
                 handleFileChange={handleFileChange}
-                handleSignFileChange={handleSignFileChange} // 이 부분을 추가
+                handleSignFileChange={handleSignFileChange}
                 isLoading={isLoading}
               />
             </Spin>

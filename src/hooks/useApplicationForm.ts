@@ -28,7 +28,6 @@ export const useApplicationForm = () => {
 
     setIsLoading(true);
     try {
-      // 서명 파일 별도 처리
       if (signFile && signFile.originFileObj) {
         const signFormData = new FormData();
         signFormData.append("file", signFile.originFileObj);
@@ -43,7 +42,6 @@ export const useApplicationForm = () => {
         }
       }
 
-      // 다른 파일들 처리
       await createAndDownloadZip(values, files);
     } catch (error) {
       const errorMessage = (error as Error).message;

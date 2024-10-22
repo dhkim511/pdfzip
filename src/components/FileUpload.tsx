@@ -51,7 +51,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           maxCount={1}
         >
           <Button icon={<UploadOutlined />} css={uploadButton}>
-            서명 이미지 선택 (sign.png)
+            서명 첨부
           </Button>
         </Upload>
       </Form.Item>

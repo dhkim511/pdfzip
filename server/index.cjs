@@ -4,6 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const sharp = require("sharp");
 const PizZip = require("pizzip");
 const Docxtemplater = require("docxtemplater");
 const ImageModule = require("docxtemplater-image-module-free");
@@ -48,7 +49,6 @@ const formatDateYYMMDD = (date) => {
   return `${year}${month}${day}`;
 };
 
-// PDF에 서명 이미지 추가하는 함수
 async function addSignatureToPDF(pdfPath, signaturePath) {
   const existingPdfBytes = fs.readFileSync(pdfPath);
   const pdfDoc = await PDFDocument.load(existingPdfBytes);
@@ -59,14 +59,11 @@ async function addSignatureToPDF(pdfPath, signaturePath) {
   const pngImageBytes = fs.readFileSync(signaturePath);
   const pngImage = await pdfDoc.embedPng(pngImageBytes);
 
-  const { width, height } = pngImage.scale(0.5); // 서명 크기 조절
-
-  // 서명 위치를 '학습근로자 서명' 필드 아래로 조정
   firstPage.drawImage(pngImage, {
-    x: 430, // X 좌표: 현재 위치가 적절하므로 그대로 유지
-    y: 430, // Y 좌표: 높이를 더 높여서 필드 안으로 이동
-    width: 80, // 서명 너비
-    height: 30, // 서명 높이
+    x: 430,
+    y: 430,
+    width: 80,
+    height: 30,
   });
 
   const pdfBytes = await pdfDoc.save();
@@ -122,6 +119,34 @@ const fillAttendanceForm = async (values) => {
   return outputPath;
 };
 
+app.post("/sign", upload.single("file"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send("No file uploaded.");
+  }
+
+  const file = req.file;
+  const fileName = "sign.png";
+  const filePath = path.join(__dirname, uploadDir, fileName);
+
+  sharp(file.path)
+    .resize(520, 100)
+    .toFile(filePath, (err) => {
+      if (err) {
+        console.error("Error resizing signature file:", err);
+        return res.status(500).send("Error resizing signature file");
+      }
+
+      console.log(
+        "Signature file resized and saved successfully at:",
+        filePath
+      );
+      res.status(200).json({
+        message: "Signature file uploaded and resized successfully",
+        path: filePath,
+      });
+    });
+});
+
 app.post("/convert", upload.single("file"), async (req, res) => {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
@@ -133,7 +158,6 @@ app.post("/convert", upload.single("file"), async (req, res) => {
   const outputPath = path.join(__dirname, convertedDir, outputFileName);
 
   try {
-    // 서명 제외한 PDF 변환
     const filledDocPath = await fillAttendanceForm(req.body);
 
     const credentials = new ServicePrincipalCredentials({
@@ -164,13 +188,11 @@ app.post("/convert", upload.single("file"), async (req, res) => {
     outputStream.on("finish", async () => {
       console.log("PDF File saved successfully:", outputPath);
 
-      // 서명을 PDF에 추가
       const signedPdfPath = await addSignatureToPDF(
         outputPath,
         path.join(__dirname, uploadDir, "sign.png")
       );
 
-      // URL 생성 시 중복 발생하지 않도록 주의
       const signedPdfUrl = `/converted/signed_output.pdf`;
 
       res.setHeader("Content-Type", "application/pdf");
@@ -207,28 +229,6 @@ app.post("/convert", upload.single("file"), async (req, res) => {
       details: error.toString(),
     });
   }
-});
-
-app.post("/sign", upload.single("file"), (req, res) => {
-  if (!req.file) {
-    return res.status(400).send("No file uploaded.");
-  }
-
-  const file = req.file;
-  const fileName = "sign.png";
-  const filePath = path.join(__dirname, uploadDir, fileName);
-
-  fs.rename(file.path, filePath, (err) => {
-    if (err) {
-      console.error("Error saving signature file:", err);
-      return res.status(500).send("Error saving signature file");
-    }
-    console.log("Signature file saved successfully at:", filePath);
-    res.status(200).json({
-      message: "Signature file uploaded successfully",
-      path: filePath,
-    });
-  });
 });
 
 const port = process.env.PORT || 8080;
