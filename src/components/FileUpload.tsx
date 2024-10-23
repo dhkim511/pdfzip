@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
-import { Form, Upload, Button, Typography, Space } from "antd";
+import { Form, Upload, Button } from "antd";
 import {
   UploadOutlined,
   FileAddOutlined,
@@ -12,8 +12,7 @@ import {
   ConversionType,
 } from "../types/conversionType";
 import { uploadButton } from "../styles/styles";
-
-const { Text } = Typography;
+import { FormLabel } from "./Label";
 
 interface FileUploadProps {
   fileList: FormValues["files"];
@@ -21,23 +20,6 @@ interface FileUploadProps {
   handleSignFileChange: (info: FileChangeInfo) => void;
   conversionType: ConversionType;
 }
-
-const FormLabel = ({
-  icon,
-  children,
-}: {
-  icon: React.ReactNode;
-  children: React.ReactNode;
-}) => (
-  <Space size={4}>
-    {React.cloneElement(icon as React.ReactElement, {
-      style: { fontSize: "16px", color: "#595959" },
-    })}
-    <Text strong style={{ color: "#595959" }}>
-      {children}
-    </Text>
-  </Space>
-);
 
 const FileUpload: React.FC<FileUploadProps> = ({
   fileList,

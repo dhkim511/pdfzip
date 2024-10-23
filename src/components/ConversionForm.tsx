@@ -1,15 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
-import {
-  Form,
-  Select,
-  Input,
-  DatePicker,
-  Button,
-  FormInstance,
-  Typography,
-  Space,
-} from "antd";
+import { Form, Select, Input, DatePicker, Button, FormInstance } from "antd";
 import {
   FileTextOutlined,
   CalendarOutlined,
@@ -26,9 +17,10 @@ import FileUpload from "./FileUpload";
 import { submitButton, datePicker } from "../styles/styles";
 import { getDateLabel } from "../utils/labelHandle";
 import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
+import { FormLabel } from "./Label";
+import { handleFormSubmit } from "../utils/formHandle";
 
 const { Option } = Select;
-const { Text } = Typography;
 const { TextArea } = Input;
 
 interface ConversionFormProps {
@@ -49,40 +41,13 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
   isLoading,
 }) => {
   const conversionType = Form.useWatch("conversionType", form);
-
   const isVacationType = conversionType === "vacation";
-
-  const handleFormSubmit = (values: FormValues) => {
-    if (isVacationType) {
-      values.checkInTime = "10:00";
-      values.checkOutTime = "19:00";
-      values.reason = "휴가";
-    }
-    onFinish(values);
-  };
-
-  const FormLabel = ({
-    icon,
-    children,
-  }: {
-    icon: React.ReactNode;
-    children: React.ReactNode;
-  }) => (
-    <Space size={4}>
-      {React.cloneElement(icon as React.ReactElement, {
-        style: { fontSize: "16px", color: "#595959" },
-      })}
-      <Text strong style={{ color: "#595959" }}>
-        {children}
-      </Text>
-    </Space>
-  );
 
   return (
     <Form
       form={form}
       layout="vertical"
-      onFinish={handleFormSubmit}
+      onFinish={(values) => onFinish(handleFormSubmit(values, isVacationType))}
       requiredMark={false}
     >
       <Form.Item

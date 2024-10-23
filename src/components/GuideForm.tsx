@@ -11,46 +11,18 @@ import {
 import SignatureCanvas from "react-signature-canvas";
 import { downloadButton, downloadButtonGroup, link } from "../styles/styles";
 import { handleDownload } from "../utils/fileDownload";
+import {
+  handleSignatureClear,
+  handleSignatureDownload,
+} from "../utils/signatureHandle";
+import { FormLabel } from "./Label";
 import { DOCS, FORMLINK } from "../constants/resources";
 
-const { Link, Text } = Typography;
-
-const FormLabel = ({
-  icon,
-  children,
-}: {
-  icon: React.ReactNode;
-  children: React.ReactNode;
-}) => (
-  <Space size={4}>
-    {React.cloneElement(icon as React.ReactElement, {
-      style: { fontSize: "16px", color: "#595959" },
-    })}
-    <Text strong style={{ color: "#595959" }}>
-      {children}
-    </Text>
-  </Space>
-);
+const { Link } = Typography;
 
 const GuideForm: React.FC = () => {
   const [form] = Form.useForm();
   const signatureRef = useRef<SignatureCanvas>(null);
-
-  const handleSignatureClear = () => {
-    if (signatureRef.current) {
-      signatureRef.current.clear();
-    }
-  };
-
-  const handleSignatureDownload = () => {
-    if (signatureRef.current) {
-      const dataURL = signatureRef.current.toDataURL();
-      const link = document.createElement("a");
-      link.href = dataURL;
-      link.download = "sign.png";
-      link.click();
-    }
-  };
 
   return (
     <Form
@@ -110,11 +82,13 @@ const GuideForm: React.FC = () => {
               <Space>
                 <Button
                   icon={<DownloadOutlined />}
-                  onClick={handleSignatureDownload}
+                  onClick={() => handleSignatureDownload(signatureRef)}
                 >
                   서명 다운로드
                 </Button>
-                <Button onClick={handleSignatureClear}>지우기</Button>
+                <Button onClick={() => handleSignatureClear(signatureRef)}>
+                  지우기
+                </Button>
               </Space>
             </div>
           </Space>

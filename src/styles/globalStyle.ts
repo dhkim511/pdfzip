@@ -1,0 +1,60 @@
+import { css } from "@emotion/react";
+
+export const globalStyle = css`
+ * {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+ }
+
+ html, body {
+   height: 100%;
+   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+     sans-serif;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+ }
+
+ body {
+   line-height: 1.5;
+   background-color: #F6F6F6;
+ }
+
+ h1, h2, h3, h4, h5, h6 {
+   margin: 0;
+   font-weight: 600;
+ }
+
+ a {
+   color: inherit;
+   text-decoration: none;
+ }
+
+ button,
+ input,
+ optgroup,
+ select,
+ textarea {
+   font-family: inherit;
+   font-size: 100%;
+   line-height: 1.15;
+   margin: 0;
+ }
+
+ button,
+ select {
+   text-transform: none;
+ }
+
+ table {
+   border-collapse: collapse;
+   border-spacing: 0;
+ }
+
+ ul, ol {
+   list-style: none;
+   padding: 0;
+   margin: 0;
+ }
+`;
