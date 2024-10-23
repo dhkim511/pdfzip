@@ -6,8 +6,8 @@ import ko_KR from "antd/locale/ko_KR";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
 import App from "./App";
-import { antThemeConfig } from "./styles/antThemeConfig";
-import { globalStyle } from "./styles/globalStyle";
+import { antThemeConfig } from "./styles/index";
+import { globalStyle } from "./styles/index";
 
 dayjs.locale("ko");
 

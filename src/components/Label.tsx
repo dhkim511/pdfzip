@@ -1,6 +1,8 @@
 import React, { ReactElement } from "react";
 import { Space, Typography } from "antd";
 import { AntdIconProps } from "@ant-design/icons/lib/components/AntdIcon";
+import { labelIcon, labelText } from "../styles/index";
+
 const { Text } = Typography;
 
 interface FormLabelProps {
@@ -10,10 +12,8 @@ interface FormLabelProps {
 
 export const FormLabel: React.FC<FormLabelProps> = ({ icon, children }) => (
   <Space size={4}>
-    {React.cloneElement(icon, {
-      style: { fontSize: "16px", color: "#595959" },
-    })}
-    <Text strong style={{ color: "#595959" }}>
+    {React.cloneElement(icon, { style: labelIcon })}
+    <Text strong style={labelText}>
       {children}
     </Text>
   </Space>

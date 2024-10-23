@@ -14,7 +14,7 @@ import {
   FileChangeInfo,
 } from "../types/conversionType";
 import FileUpload from "./FileUpload";
-import { submitButton, datePicker } from "../styles/styles";
+import { submitButton, datePicker } from "../styles/index";
 import { getDateLabel } from "../utils/labelHandle";
 import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
 import { FormLabel } from "./Label";
@@ -106,7 +106,13 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
             label={
               <FormLabel icon={<ClockCircleOutlined />}>입실 시간</FormLabel>
             }
-            rules={[{ required: true, message: "입실 시간을 입력해주세요." }]}
+            rules={[
+              {
+                required: true,
+                message:
+                  FEEDBACK_MESSAGES.FORM_VALIDATION.CHECKIN_TIME_REQUIRED,
+              },
+            ]}
           >
             <Input placeholder="ex) 10:00" />
           </Form.Item>
@@ -116,7 +122,13 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
             label={
               <FormLabel icon={<ClockCircleOutlined />}>퇴실 시간</FormLabel>
             }
-            rules={[{ required: true, message: "퇴실 시간을 입력해주세요." }]}
+            rules={[
+              {
+                required: true,
+                message:
+                  FEEDBACK_MESSAGES.FORM_VALIDATION.CHECKOUT_TIME_REQUIRED,
+              },
+            ]}
           >
             <Input placeholder="ex) 19:00" />
           </Form.Item>
@@ -124,9 +136,17 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
           <Form.Item
             name="reason"
             label={<FormLabel icon={<FileTextOutlined />}>사유</FormLabel>}
-            rules={[{ required: true, message: "사유를 입력해주세요." }]}
+            rules={[
+              {
+                required: true,
+                message: FEEDBACK_MESSAGES.FORM_VALIDATION.REASON_REQUIRED,
+              },
+            ]}
           >
-            <TextArea rows={1} placeholder="사유를 입력해주세요." />
+            <TextArea
+              rows={1}
+              placeholder="ex) HRD 오류, 병가(질병/입원), 면접, 시험, 예비군"
+            />
           </Form.Item>
         </>
       )}
@@ -143,7 +163,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
             rules={[
               {
                 required: true,
-                message: "불참하는 과정 교육내용을 입력해주세요.",
+                message: FEEDBACK_MESSAGES.FORM_VALIDATION.FIELD_REQUIRED,
               },
             ]}
           >
@@ -159,7 +179,10 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
               <FormLabel icon={<FileTextOutlined />}>학습 진행 계획</FormLabel>
             }
             rules={[
-              { required: true, message: "학습 진행 계획을 입력해주세요." },
+              {
+                required: true,
+                message: FEEDBACK_MESSAGES.FORM_VALIDATION.FIELD_REQUIRED,
+              },
             ]}
           >
             <TextArea rows={1} placeholder="학습 진행 계획을 입력해주세요." />

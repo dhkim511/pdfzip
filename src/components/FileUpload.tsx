@@ -1,21 +1,27 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
-import { Form, Upload, Button } from "antd";
+import { Form, Upload, Button, Typography } from "antd";
 import {
   UploadOutlined,
   FileAddOutlined,
   EditOutlined,
 } from "@ant-design/icons";
+import { UploadFile } from "antd/es/upload/interface";
+import { FileChangeInfo, ConversionType } from "../types/conversionType";
 import {
-  FormValues,
-  FileChangeInfo,
-  ConversionType,
-} from "../types/conversionType";
-import { uploadButton } from "../styles/styles";
+  flexLayout,
+  halfWidth,
+  uploadButton,
+  uploadList,
+} from "../styles/index";
 import { FormLabel } from "./Label";
+import { getFileLabel } from "../utils/labelHandle";
+import { colors, fonts } from "../styles/index";
+
+const { Text } = Typography;
 
 interface FileUploadProps {
-  fileList: FormValues["files"];
+  fileList: UploadFile[];
   handleFileChange: (info: FileChangeInfo) => void;
   handleSignFileChange: (info: FileChangeInfo) => void;
   conversionType: ConversionType;
@@ -25,14 +31,41 @@ const FileUpload: React.FC<FileUploadProps> = ({
   fileList,
   handleFileChange,
   handleSignFileChange,
+  conversionType,
 }) => {
+  const renderFileLabel = (conversionType: ConversionType) => {
+    const label = getFileLabel(conversionType);
+    if (label.includes("(")) {
+      const [mainLabel, highlightedText] = label.split("(");
+      return (
+        <>
+          {mainLabel}
+          <Text
+            style={{
+              color: colors.primary,
+              fontSize: fonts.size.small,
+              fontWeight: fonts.weight.medium,
+            }}
+          >
+            ({highlightedText}
+          </Text>{" "}
+        </>
+      );
+    }
+    return label;
+  };
+
   return (
-    <div css={{ display: "flex", gap: "16px" }}>
+    <div css={flexLayout.container}>
       <Form.Item
         name="files"
-        label={<FormLabel icon={<FileAddOutlined />}>파일 첨부</FormLabel>}
+        label={
+          <FormLabel icon={<FileAddOutlined />}>
+            {renderFileLabel(conversionType)}
+          </FormLabel>
+        }
         rules={[{ required: true, message: "파일을 첨부해주세요" }]}
-        css={{ flex: 1 }}
+        css={[halfWidth, flexLayout.flex1]}
       >
         <Upload
           beforeUpload={() => false}
@@ -40,6 +73,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           multiple
           fileList={fileList}
           listType="picture"
+          css={uploadList}
         >
           <Button icon={<UploadOutlined />} css={uploadButton}>
             파일 선택
@@ -49,13 +83,15 @@ const FileUpload: React.FC<FileUploadProps> = ({
       <Form.Item
         name="signFile"
         label={<FormLabel icon={<EditOutlined />}>서명 첨부</FormLabel>}
-        css={{ flex: 1 }}
+        css={[halfWidth, flexLayout.flex1]}
       >
         <Upload
           beforeUpload={() => false}
           onChange={handleSignFileChange}
           accept=".png"
           maxCount={1}
+          listType="picture"
+          css={uploadList}
         >
           <Button icon={<UploadOutlined />} css={uploadButton}>
             파일 선택

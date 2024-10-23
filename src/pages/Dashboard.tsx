@@ -12,7 +12,7 @@ import {
   rightContainer,
   guideSection,
   formSection,
-} from "../styles/styles";
+} from "../styles/index";
 
 const Dashboard: React.FC = () => {
   const {

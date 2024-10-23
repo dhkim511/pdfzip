@@ -9,14 +9,22 @@ import {
   NotificationOutlined,
 } from "@ant-design/icons";
 import SignatureCanvas from "react-signature-canvas";
-import { downloadButton, downloadButtonGroup, link } from "../styles/styles";
+import {
+  downloadButton,
+  downloadButtonGroup,
+  link,
+  flexLayout,
+  spacing,
+  signatureCanvas,
+  fullWidth,
+} from "../styles/index";
 import { handleDownload } from "../utils/fileDownload";
 import {
   handleSignatureClear,
   handleSignatureDownload,
 } from "../utils/signatureHandle";
 import { FormLabel } from "./Label";
-import { DOCS, FORMLINK } from "../constants/resources";
+import { DOCS, FORMLINK, NOTICELINK } from "../constants/resources";
 
 const { Link } = Typography;
 
@@ -25,24 +33,15 @@ const GuideForm: React.FC = () => {
   const signatureRef = useRef<SignatureCanvas>(null);
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      css={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        padding: "0 0 20px 0",
-      }}
-    >
-      <div css={{ flex: "0 0 auto" }}>
+    <Form form={form} layout="vertical" css={flexLayout.column}>
+      <div css={flexLayout.flex00Auto}>
         <Form.Item
           label={
             <FormLabel icon={<CloudDownloadOutlined />}>
               문서 다운로드
             </FormLabel>
           }
-          css={{ marginBottom: "60px" }}
+          css={spacing.margin.bottom.lg}
         >
           <div css={downloadButtonGroup}>
             <Button
@@ -64,21 +63,21 @@ const GuideForm: React.FC = () => {
 
         <Form.Item
           label={<FormLabel icon={<EditOutlined />}>서명</FormLabel>}
-          css={{ marginBottom: "60px" }}
+          css={spacing.margin.bottom.lg}
         >
-          <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-            <div css={{ display: "flex", justifyContent: "center" }}>
+          <Space direction="vertical" size="middle" css={fullWidth}>
+            <div css={flexLayout.center}>
               <SignatureCanvas
                 ref={signatureRef}
                 canvasProps={{
-                  width: 550,
+                  width: 540,
                   height: 200,
                   className: "signature-canvas",
-                  style: { border: "1px solid #d9d9d9", borderRadius: "6px" },
+                  style: signatureCanvas,
                 }}
               />
             </div>
-            <div css={{ display: "flex", justifyContent: "flex-end" }}>
+            <div css={flexLayout.end}>
               <Space>
                 <Button
                   icon={<DownloadOutlined />}
@@ -100,13 +99,9 @@ const GuideForm: React.FC = () => {
               행정 관련 공지
             </FormLabel>
           }
-          css={{ marginBottom: "40px" }}
+          css={spacing.margin.bottom.md}
         >
-          <Link
-            href="https://sincere-nova-ec6.notion.site/K-Digital-Training-cc413bab49664fa9a0bcbddb18a1e219"
-            target="_blank"
-            css={link}
-          >
+          <Link href={NOTICELINK} target="_blank" css={link}>
             공지사항 바로가기
           </Link>
         </Form.Item>
