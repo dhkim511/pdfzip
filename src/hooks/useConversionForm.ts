@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Form, message } from "antd";
 import type { UploadFile } from "antd/es/upload/interface";
-import { FormValues, FileChangeInfo } from "../types/applicationType";
+import { FormValues, FileChangeInfo } from "../types/conversionType";
 import { createAndDownloadZip } from "../utils/zipArchiver";
 import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
 import { SERVER_URL } from "../constants/environmentConfig";
 
-export const useApplicationForm = () => {
+export const useConversionForm = () => {
   const [form] = Form.useForm<FormValues>();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [signFile, setSignFile] = useState<UploadFile | null>(null);

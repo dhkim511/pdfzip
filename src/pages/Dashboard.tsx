@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
 import { Spin } from "antd";
-import ApplicationForm from "../components/ApplicationForm";
+import ConversionForm from "../components/ConversionForm";
 import GuideForm from "../components/GuideForm";
-import { useApplicationForm } from "../hooks/useApplicationForm";
+import { useConversionForm } from "../hooks/useConversionForm";
 import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
 import {
   appContainer,
@@ -22,7 +22,7 @@ const Dashboard: React.FC = () => {
     onFinish,
     handleFileChange,
     handleSignFileChange,
-  } = useApplicationForm();
+  } = useConversionForm();
 
   return (
     <div css={appContainer}>
@@ -35,7 +35,7 @@ const Dashboard: React.FC = () => {
         <div css={rightContainer}>
           <div css={formSection}>
             <Spin spinning={isLoading} tip={FEEDBACK_MESSAGES.STATUS.LOADING}>
-              <ApplicationForm
+              <ConversionForm
                 form={form}
                 onFinish={onFinish}
                 fileList={fileList}

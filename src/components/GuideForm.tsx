@@ -1,21 +1,39 @@
 /** @jsxImportSource @emotion/react */
 import React, { useRef } from "react";
-import { Tabs, Typography, Button, Alert, Space } from "antd";
-import { DownloadOutlined } from "@ant-design/icons";
-import SignatureCanvas from "react-signature-canvas";
+import { Form, Button, Typography, Space } from "antd";
 import {
-  downloadButton,
-  formLabel,
-  downloadButtonGroup,
-  requiredIcon,
-} from "../styles/styles";
+  DownloadOutlined,
+  CloudDownloadOutlined,
+  EditOutlined,
+  SendOutlined,
+  NotificationOutlined,
+} from "@ant-design/icons";
+import SignatureCanvas from "react-signature-canvas";
+import { downloadButton, downloadButtonGroup, link } from "../styles/styles";
 import { handleDownload } from "../utils/fileDownload";
-import { DOCS } from "../constants/resources";
+import { DOCS, FORMLINK } from "../constants/resources";
 
-const { TabPane } = Tabs;
-const { Text } = Typography;
+const { Link, Text } = Typography;
+
+const FormLabel = ({
+  icon,
+  children,
+}: {
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) => (
+  <Space size={4}>
+    {React.cloneElement(icon as React.ReactElement, {
+      style: { fontSize: "16px", color: "#595959" },
+    })}
+    <Text strong style={{ color: "#595959" }}>
+      {children}
+    </Text>
+  </Space>
+);
 
 const GuideForm: React.FC = () => {
+  const [form] = Form.useForm();
   const signatureRef = useRef<SignatureCanvas>(null);
 
   const handleSignatureClear = () => {
@@ -35,73 +53,99 @@ const GuideForm: React.FC = () => {
   };
 
   return (
-    <Tabs defaultActiveKey="1">
-      <TabPane tab="출결 정정" key="1">
-        <Space direction="vertical" size="large" style={{ width: "100%" }}>
-          <Alert
-            description="모든 출결정정 신청은 영업일 기준 다음날 16시까지만 요청 가능"
-            type="warning"
-            showIcon
-          />
-
-          <Space direction="vertical">
-            <Text strong>필요 서류:</Text>
-            <Text>
-              1. HRD 오류 등으로 인한 QR 미체크 출결정정 → 출석대장, 출석
-              스크린샷 첨부
-            </Text>
-            <Text>2. 기타 → 출석대장, 증빙서류 첨부</Text>
-          </Space>
-
-          <div>
-            <span css={formLabel}>
-              <span css={requiredIcon}>*</span>출석대장 다운로드
-            </span>
-            <div css={downloadButtonGroup}>
-              <Button
-                icon={<DownloadOutlined />}
-                onClick={() => handleDownload(DOCS[0])}
-                css={downloadButton}
-              >
-                출석대장 다운로드
-              </Button>
-            </div>
+    <Form
+      form={form}
+      layout="vertical"
+      css={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        padding: "0 0 20px 0",
+      }}
+    >
+      <div css={{ flex: "0 0 auto" }}>
+        <Form.Item
+          label={
+            <FormLabel icon={<CloudDownloadOutlined />}>
+              문서 다운로드
+            </FormLabel>
+          }
+          css={{ marginBottom: "60px" }}
+        >
+          <div css={downloadButtonGroup}>
+            <Button
+              icon={<DownloadOutlined />}
+              onClick={() => handleDownload(DOCS[0])}
+              css={downloadButton}
+            >
+              출석대장 다운로드
+            </Button>
+            <Button
+              icon={<DownloadOutlined />}
+              onClick={() => handleDownload(DOCS[1])}
+              css={downloadButton}
+            >
+              휴가계획서 다운로드
+            </Button>
           </div>
+        </Form.Item>
 
-          <div>
-            <span css={formLabel}>
-              <span css={requiredIcon}>*</span>서명
-            </span>
-            <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+        <Form.Item
+          label={<FormLabel icon={<EditOutlined />}>서명</FormLabel>}
+          css={{ marginBottom: "60px" }}
+        >
+          <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+            <div css={{ display: "flex", justifyContent: "center" }}>
               <SignatureCanvas
                 ref={signatureRef}
                 canvasProps={{
-                  width: 500,
+                  width: 550,
                   height: 200,
                   className: "signature-canvas",
-                  style: { border: "1px solid #d9d9d9", borderRadius: "2px" },
+                  style: { border: "1px solid #d9d9d9", borderRadius: "6px" },
                 }}
               />
+            </div>
+            <div css={{ display: "flex", justifyContent: "flex-end" }}>
               <Space>
-                <Button onClick={handleSignatureClear}>초기화</Button>
                 <Button
                   icon={<DownloadOutlined />}
                   onClick={handleSignatureDownload}
                 >
                   서명 다운로드
                 </Button>
+                <Button onClick={handleSignatureClear}>지우기</Button>
               </Space>
-            </Space>
-          </div>
-        </Space>
-      </TabPane>
-      <TabPane tab="휴가" key="2">
-        <h3>휴가</h3>
-      </TabPane>
-      <TabPane tab="공가" key="3">
-        <h3>공가</h3>
-      </TabPane>
-    </Tabs>
+            </div>
+          </Space>
+        </Form.Item>
+
+        <Form.Item
+          label={
+            <FormLabel icon={<NotificationOutlined />}>
+              행정 관련 공지
+            </FormLabel>
+          }
+          css={{ marginBottom: "40px" }}
+        >
+          <Link
+            href="https://sincere-nova-ec6.notion.site/K-Digital-Training-cc413bab49664fa9a0bcbddb18a1e219"
+            target="_blank"
+            css={link}
+          >
+            공지사항 바로가기
+          </Link>
+        </Form.Item>
+
+        <Form.Item
+          label={<FormLabel icon={<SendOutlined />}>제출 폼 링크</FormLabel>}
+        >
+          <Link href={FORMLINK} target="_blank" css={link}>
+            제출하러 가기
+          </Link>
+        </Form.Item>
+      </div>
+    </Form>
   );
 };
 

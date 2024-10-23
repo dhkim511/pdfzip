@@ -1,4 +1,4 @@
-import { FormValues } from "../types/applicationType";
+import { FormValues } from "../types/conversionType";
 
 export const isAttendanceScreenshot = (fileName: string): boolean => {
   return (
@@ -11,7 +11,7 @@ export const isAttendanceScreenshot = (fileName: string): boolean => {
 
 export const getSuffix = (
   fileName: string,
-  type: FormValues["applicationType"]
+  type: FormValues["conversionType"]
 ): string => {
   if (type === "officialLeave") {
     if (fileName.includes("출석대장")) return "(출석대장)";
@@ -30,7 +30,7 @@ export const getSuffix = (
   return "";
 };
 
-export const getTypeSuffix = (type: FormValues["applicationType"]): string => {
+export const getTypeSuffix = (type: FormValues["conversionType"]): string => {
   switch (type) {
     case "vacation":
       return "(휴가)";

@@ -1,7 +1,7 @@
-import { ApplicationType } from "../types/applicationType";
+import { ConversionType } from "../types/conversionType";
 
-export const getDateLabel = (applicationType: ApplicationType): string => {
-  switch (applicationType) {
+export const getDateLabel = (conversionType: ConversionType): string => {
+  switch (conversionType) {
     case "vacation":
       return "휴가 예정 날짜";
     case "officialLeave":
@@ -13,7 +13,7 @@ export const getDateLabel = (applicationType: ApplicationType): string => {
   }
 };
 
-export const getFileLabel = (type: ApplicationType): string => {
+export const getFileLabel = (type: ConversionType): string => {
   switch (type) {
     case "attendance":
       return "파일 첨부 (출석대장, 입실/퇴실 스크린샷)";

@@ -1,20 +1,43 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
-import { Form, Upload, Button } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { Form, Upload, Button, Typography, Space } from "antd";
+import {
+  UploadOutlined,
+  FileAddOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import {
   FormValues,
   FileChangeInfo,
-  ApplicationType,
-} from "../types/applicationType";
-import { uploadButton, formLabel } from "../styles/styles";
+  ConversionType,
+} from "../types/conversionType";
+import { uploadButton } from "../styles/styles";
+
+const { Text } = Typography;
 
 interface FileUploadProps {
   fileList: FormValues["files"];
   handleFileChange: (info: FileChangeInfo) => void;
   handleSignFileChange: (info: FileChangeInfo) => void;
-  applicationType: ApplicationType;
+  conversionType: ConversionType;
 }
+
+const FormLabel = ({
+  icon,
+  children,
+}: {
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) => (
+  <Space size={4}>
+    {React.cloneElement(icon as React.ReactElement, {
+      style: { fontSize: "16px", color: "#595959" },
+    })}
+    <Text strong style={{ color: "#595959" }}>
+      {children}
+    </Text>
+  </Space>
+);
 
 const FileUpload: React.FC<FileUploadProps> = ({
   fileList,
@@ -22,11 +45,12 @@ const FileUpload: React.FC<FileUploadProps> = ({
   handleSignFileChange,
 }) => {
   return (
-    <>
+    <div css={{ display: "flex", gap: "16px" }}>
       <Form.Item
         name="files"
-        label={<span css={formLabel}>파일 첨부</span>}
+        label={<FormLabel icon={<FileAddOutlined />}>파일 첨부</FormLabel>}
         rules={[{ required: true, message: "파일을 첨부해주세요" }]}
+        css={{ flex: 1 }}
       >
         <Upload
           beforeUpload={() => false}
@@ -42,7 +66,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
       </Form.Item>
       <Form.Item
         name="signFile"
-        label={<span css={formLabel}>서명 이미지</span>}
+        label={<FormLabel icon={<EditOutlined />}>서명 첨부</FormLabel>}
+        css={{ flex: 1 }}
       >
         <Upload
           beforeUpload={() => false}
@@ -51,11 +76,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
           maxCount={1}
         >
           <Button icon={<UploadOutlined />} css={uploadButton}>
-            서명 첨부
+            파일 선택
           </Button>
         </Upload>
       </Form.Item>
-    </>
+    </div>
   );
 };
 

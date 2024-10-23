@@ -92,7 +92,7 @@ const fillAttendanceForm = async (values) => {
     name: values.name,
     checkInTime: values.checkInTime,
     checkOutTime: values.checkOutTime,
-    reason: values.applicationType === "vacation" ? "휴가" : values.reason,
+    reason: values.conversionType === "vacation" ? "휴가" : values.reason,
   };
 
   doc.setData(data);
@@ -186,7 +186,7 @@ app.post("/convert", upload.single("file"), async (req, res) => {
   try {
     const filledDocPaths = [];
 
-    if (req.body.applicationType === "vacation") {
+    if (req.body.conversionType === "vacation") {
       const vacationFormPath = await fillVacationForm(req.body);
       filledDocPaths.push({ path: vacationFormPath, type: "vacation" });
 

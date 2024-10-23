@@ -11,16 +11,17 @@ import {
   Space,
 } from "antd";
 import {
-  FormOutlined,
+  FileTextOutlined,
   CalendarOutlined,
   ClockCircleOutlined,
-  FileTextOutlined,
+  UserOutlined,
+  CheckSquareOutlined,
 } from "@ant-design/icons";
 import {
   FormValues,
-  ApplicationType,
+  ConversionType,
   FileChangeInfo,
-} from "../types/applicationType";
+} from "../types/conversionType";
 import FileUpload from "./FileUpload";
 import { submitButton, datePicker } from "../styles/styles";
 import { getDateLabel } from "../utils/labelHandle";
@@ -30,7 +31,7 @@ const { Option } = Select;
 const { Text } = Typography;
 const { TextArea } = Input;
 
-interface ApplicationFormProps {
+interface ConversionFormProps {
   form: FormInstance;
   onFinish: (values: FormValues) => void;
   fileList: FormValues["files"];
@@ -39,7 +40,7 @@ interface ApplicationFormProps {
   isLoading: boolean;
 }
 
-const ApplicationForm: React.FC<ApplicationFormProps> = ({
+const ConversionForm: React.FC<ConversionFormProps> = ({
   form,
   onFinish,
   fileList,
@@ -47,9 +48,9 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
   handleSignFileChange,
   isLoading,
 }) => {
-  const applicationType = Form.useWatch("applicationType", form);
+  const conversionType = Form.useWatch("conversionType", form);
 
-  const isVacationType = applicationType === "vacation";
+  const isVacationType = conversionType === "vacation";
 
   const handleFormSubmit = (values: FormValues) => {
     if (isVacationType) {
@@ -85,8 +86,8 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
       requiredMark={false}
     >
       <Form.Item
-        name="applicationType"
-        label={<FormLabel icon={<FormOutlined />}>신청 유형</FormLabel>}
+        name="conversionType"
+        label={<FormLabel icon={<CheckSquareOutlined />}>신청 유형</FormLabel>}
         initialValue="attendance"
         rules={[
           {
@@ -105,7 +106,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
 
       <Form.Item
         name="name"
-        label={<FormLabel icon={<FormOutlined />}>이름</FormLabel>}
+        label={<FormLabel icon={<UserOutlined />}>이름</FormLabel>}
         rules={[
           {
             required: true,
@@ -120,7 +121,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
         name="date"
         label={
           <FormLabel icon={<CalendarOutlined />}>
-            {getDateLabel(applicationType as ApplicationType)}
+            {getDateLabel(conversionType as ConversionType)}
           </FormLabel>
         }
         rules={[
@@ -135,29 +136,25 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
 
       {!isVacationType && (
         <>
-          <div css={{ display: "flex", gap: "16px" }}>
-            <Form.Item
-              name="checkInTime"
-              label={
-                <FormLabel icon={<ClockCircleOutlined />}>입실 시간</FormLabel>
-              }
-              rules={[{ required: true, message: "입실 시간을 입력해주세요." }]}
-              css={{ flex: 1 }}
-            >
-              <Input placeholder="ex) 10:00" />
-            </Form.Item>
+          <Form.Item
+            name="checkInTime"
+            label={
+              <FormLabel icon={<ClockCircleOutlined />}>입실 시간</FormLabel>
+            }
+            rules={[{ required: true, message: "입실 시간을 입력해주세요." }]}
+          >
+            <Input placeholder="ex) 10:00" />
+          </Form.Item>
 
-            <Form.Item
-              name="checkOutTime"
-              label={
-                <FormLabel icon={<ClockCircleOutlined />}>퇴실 시간</FormLabel>
-              }
-              rules={[{ required: true, message: "퇴실 시간을 입력해주세요." }]}
-              css={{ flex: 1 }}
-            >
-              <Input placeholder="ex) 19:00" />
-            </Form.Item>
-          </div>
+          <Form.Item
+            name="checkOutTime"
+            label={
+              <FormLabel icon={<ClockCircleOutlined />}>퇴실 시간</FormLabel>
+            }
+            rules={[{ required: true, message: "퇴실 시간을 입력해주세요." }]}
+          >
+            <Input placeholder="ex) 19:00" />
+          </Form.Item>
 
           <Form.Item
             name="reason"
@@ -186,7 +183,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
             ]}
           >
             <TextArea
-              rows={3}
+              rows={1}
               placeholder="불참하는 과정 교육내용을 입력해주세요."
             />
           </Form.Item>
@@ -200,14 +197,14 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
               { required: true, message: "학습 진행 계획을 입력해주세요." },
             ]}
           >
-            <TextArea rows={3} placeholder="학습 진행 계획을 입력해주세요." />
+            <TextArea rows={1} placeholder="학습 진행 계획을 입력해주세요." />
           </Form.Item>
 
           <Form.Item
             name="significant"
             label={<FormLabel icon={<FileTextOutlined />}>특이사항</FormLabel>}
           >
-            <TextArea rows={2} placeholder="특이사항을 입력해주세요." />
+            <TextArea rows={1} placeholder="특이사항을 입력해주세요." />
           </Form.Item>
         </>
       )}
@@ -216,7 +213,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
         fileList={fileList}
         handleFileChange={handleFileChange}
         handleSignFileChange={handleSignFileChange}
-        applicationType={applicationType as ApplicationType}
+        conversionType={conversionType as ConversionType}
       />
 
       <Form.Item>
@@ -233,4 +230,4 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
   );
 };
 
-export default ApplicationForm;
+export default ConversionForm;

@@ -1,18 +1,18 @@
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-import { FormValues } from "../types/applicationType";
+import { FormValues } from "../types/conversionType";
 import { getSuffix, isAttendanceScreenshot, getTypeSuffix, formatDate } from "./fileNameHandle";
 import { SERVER_URL } from "../constants/environmentConfig";
 
 export const createAndDownloadZip = async (values: FormValues, fileList: File[]) => {
   const zip = new JSZip();
 
-  if (values.applicationType === 'vacation') {
+  if (values.conversionType === 'vacation') {
     const response = await fetch(`${SERVER_URL}/convert`, {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        applicationType: values.applicationType,
+        conversionType: values.conversionType,
         date: values.date.format(),  
         name: values.name,
         courseContent: values.courseContent || '',
@@ -34,8 +34,8 @@ export const createAndDownloadZip = async (values: FormValues, fileList: File[])
       const blob = await fileResponse.blob();
       const baseFileName = `${formatDate(values.date)}_데브캠프_프론트엔드 개발 4회차_${values.name}`;
       const suffix = file.name.includes("vacation") 
-        ? getSuffix("휴가 사용 계획서", values.applicationType)
-        : getSuffix("출석대장", values.applicationType);
+        ? getSuffix("휴가 사용 계획서", values.conversionType)
+        : getSuffix("출석대장", values.conversionType);
       const fileName = `${baseFileName}${suffix}.pdf`;
       zip.file(fileName, blob);
     }
@@ -43,7 +43,7 @@ export const createAndDownloadZip = async (values: FormValues, fileList: File[])
     for (const file of fileList) {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("applicationType", values.applicationType);
+      formData.append("conversionType", values.conversionType);
       formData.append("date", values.date.format());  
       formData.append("name", values.name);
       formData.append("checkInTime", values.checkInTime);
@@ -67,7 +67,7 @@ export const createAndDownloadZip = async (values: FormValues, fileList: File[])
 
       const blob = await fileResponse.blob();
       const baseFileName = `${formatDate(values.date)}_데브캠프_프론트엔드 개발 4회차_${values.name}`;
-      const fileName = `${baseFileName}${getSuffix("출석대장", values.applicationType)}.pdf`;
+      const fileName = `${baseFileName}${getSuffix("출석대장", values.conversionType)}.pdf`;
       zip.file(fileName, blob);
     }
   }
@@ -75,14 +75,14 @@ export const createAndDownloadZip = async (values: FormValues, fileList: File[])
   const screenshotTasks = fileList.filter(file => isAttendanceScreenshot(file.name)).map(async (file) => {
     const fileContent = await file.arrayBuffer();
     const baseFileName = `${formatDate(values.date)}_데브캠프_프론트엔드 개발 4회차_${values.name}`;
-    const fileName = `${baseFileName}${getSuffix(file.name, values.applicationType)}${file.name.slice(file.name.lastIndexOf('.'))}`;
+    const fileName = `${baseFileName}${getSuffix(file.name, values.conversionType)}${file.name.slice(file.name.lastIndexOf('.'))}`;
     zip.file(fileName, fileContent);
   });
 
   await Promise.all(screenshotTasks);
 
   const content = await zip.generateAsync({ type: "blob" });
-  const typeSuffix = getTypeSuffix(values.applicationType);
+  const typeSuffix = getTypeSuffix(values.conversionType);
   const zipDate = formatDate(values.date);
   saveAs(
     content,
