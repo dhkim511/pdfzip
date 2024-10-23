@@ -42,12 +42,17 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
 }) => {
   const conversionType = Form.useWatch("conversionType", form);
   const isVacationType = conversionType === "vacation";
+  const isOfficialLeaveType = conversionType === "officialLeave";
 
   return (
     <Form
       form={form}
       layout="vertical"
-      onFinish={(values) => onFinish(handleFormSubmit(values, isVacationType))}
+      onFinish={(values) =>
+        onFinish(
+          handleFormSubmit(values, isVacationType || isOfficialLeaveType)
+        )
+      }
       requiredMark={false}
     >
       <Form.Item
@@ -78,6 +83,9 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
             message: FEEDBACK_MESSAGES.FORM_VALIDATION.NAME_REQUIRED,
           },
         ]}
+        style={
+          isOfficialLeaveType ? { marginTop: "60px", marginBottom: "74px" } : {}
+        }
       >
         <Input />
       </Form.Item>
@@ -95,11 +103,12 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
             message: FEEDBACK_MESSAGES.FORM_VALIDATION.DATE_REQUIRED,
           },
         ]}
+        style={isOfficialLeaveType ? { marginBottom: "74px" } : {}}
       >
         <DatePicker css={datePicker} />
       </Form.Item>
 
-      {!isVacationType && (
+      {!isVacationType && !isOfficialLeaveType && (
         <>
           <Form.Item
             name="checkInTime"
@@ -195,6 +204,24 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
             <TextArea rows={1} placeholder="특이사항을 입력해주세요." />
           </Form.Item>
         </>
+      )}
+
+      {isOfficialLeaveType && (
+        <Form.Item
+          name="proofFileName"
+          label={
+            <FormLabel icon={<FileTextOutlined />}>증빙서류 이름</FormLabel>
+          }
+          rules={[
+            {
+              required: true,
+              message: "증빙서류 이름을 입력해주세요.",
+            },
+          ]}
+          style={{ marginBottom: "74px" }}
+        >
+          <Input placeholder="ex) 공가 증빙서류" />
+        </Form.Item>
       )}
 
       <FileUpload

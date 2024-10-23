@@ -1,10 +1,10 @@
 import { FormValues } from "../types/conversionType";
 
-export const handleFormSubmit = (values: FormValues, isVacationType: boolean) => {
-  if (isVacationType) {
-    values.checkInTime = "10:00";
-    values.checkOutTime = "19:00";
-    values.reason = "휴가";
+export const handleFormSubmit = (values: FormValues, isSpecialType: boolean) => {
+  if (isSpecialType) {
+    values.checkInTime = ""; 
+    values.checkOutTime = ""; 
+    values.reason = values.conversionType === "vacation" ? "휴가" : "공가";
   }
   return values;
 };
