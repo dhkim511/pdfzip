@@ -209,18 +209,16 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
       {isOfficialLeaveType && (
         <Form.Item
           name="proofFileName"
-          label={
-            <FormLabel icon={<FileTextOutlined />}>증빙서류 이름</FormLabel>
-          }
+          label={<FormLabel icon={<FileTextOutlined />}>증빙서류명</FormLabel>}
           rules={[
             {
               required: true,
-              message: "증빙서류 이름을 입력해주세요.",
+              message: "증빙서류명을 입력해주세요.",
             },
           ]}
           style={{ marginBottom: "74px" }}
         >
-          <Input placeholder="ex) 공가 증빙서류" />
+          <Input placeholder="아직 못만들었음" />
         </Form.Item>
       )}
 
