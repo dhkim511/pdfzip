@@ -244,9 +244,14 @@ app.post("/convert", upload.single("file"), async (req, res) => {
   try {
     const filledDocPaths = [];
 
-    if (req.body.conversionType === "vacation") {
-      const vacationFormPath = await fillVacationForm(req.body);
-      filledDocPaths.push({ path: vacationFormPath, type: "vacation" });
+    if (
+      req.body.conversionType === "vacation" ||
+      req.body.conversionType === "officialLeave"
+    ) {
+      if (req.body.conversionType === "vacation") {
+        const vacationFormPath = await fillVacationForm(req.body);
+        filledDocPaths.push({ path: vacationFormPath, type: "vacation" });
+      }
 
       const attendanceFormPath = await fillAttendanceForm({
         ...req.body,
