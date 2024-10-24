@@ -16,21 +16,21 @@ const processFile = async (file: File, values: FormValues): Promise<ProcessedFil
   const isPDF = fileExtension === 'pdf';
   const isWord = ['doc', 'docx'].includes(fileExtension || '');
   
+  // 스크린샷은 변환 없이 그대로 처리
+  if (isAttendanceScreenshot(file.name)) {
+    return {
+      content: await file.arrayBuffer(),
+      needsConversion: false,
+      documentName: '' // 빈 문자열로 설정하여 파일명 변경에서 제외
+    };
+  }
+
   // 출석대장 체크
   if (file.name.includes('출석대장')) {
     return {
       content: file,
       needsConversion: true,
       documentName: '출석대장'
-    };
-  }
-
-  // 스크린샷은 변환 없이 처리
-  if (isAttendanceScreenshot(file.name)) {
-    return {
-      content: await file.arrayBuffer(),
-      needsConversion: false,
-      documentName: '스크린샷'
     };
   }
   
@@ -101,6 +101,12 @@ export const createAndDownloadZip = async (values: FormValues, fileList: File[])
     for (const file of fileList) {
       const processedFile = await processFile(file, values);
       
+      if (isAttendanceScreenshot(file.name)) {
+        // 스크린샷은 원본 파일명으로 저장
+        zip.file(file.name, processedFile.content);
+        continue;
+      }
+
       if (processedFile.needsConversion) {
         const formData = new FormData();
         formData.append("file", file);

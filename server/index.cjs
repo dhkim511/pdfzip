@@ -104,11 +104,19 @@ async function addSignatureToPDF(pdfPath, signaturePath) {
 }
 
 const fillAttendanceForm = async (values) => {
+  // 템플릿 경로 확인
   const templatePath = path.join(
     __dirname,
     "templates",
     "attendance_template.docx"
   );
+
+  // 템플릿 파일 존재 여부 확인
+  if (!fs.existsSync(templatePath)) {
+    console.error("Template file not found:", templatePath);
+    throw new Error("Attendance template file not found");
+  }
+
   const content = fs.readFileSync(templatePath, "binary");
 
   const zip = new PizZip(content);
@@ -120,8 +128,8 @@ const fillAttendanceForm = async (values) => {
     date: formatAttendanceDate(values.date),
     applicationDate,
     name: values.name,
-    checkInTime: values.checkInTime,
-    checkOutTime: values.checkOutTime,
+    checkInTime: values.checkInTime || "10:00",
+    checkOutTime: values.checkOutTime || "19:00",
     reason:
       values.conversionType === "vacation"
         ? "휴가"
@@ -130,10 +138,8 @@ const fillAttendanceForm = async (values) => {
         : values.reason,
   };
 
-  doc.setData(data);
-
   try {
-    doc.render();
+    doc.render(data);
   } catch (error) {
     console.error("Error during template processing:", error);
     throw error;
@@ -142,20 +148,42 @@ const fillAttendanceForm = async (values) => {
   const buffer = doc.getZip().generate({ type: "nodebuffer" });
   const outputPath = path.join(
     __dirname,
-    convertedDir,
+    "converted",
     "filled_attendance.docx"
   );
-  fs.writeFileSync(outputPath, buffer);
+
+  // converted 디렉토리 존재 확인 및 생성
+  ensureDir(path.join(__dirname, "converted"));
+
+  try {
+    fs.writeFileSync(outputPath, buffer);
+
+    // 파일 생성 확인
+    if (!fs.existsSync(outputPath)) {
+      throw new Error("Failed to create attendance file");
+    }
+  } catch (error) {
+    console.error("Error writing attendance file:", error);
+    throw error;
+  }
 
   return outputPath;
 };
 
 const fillVacationForm = async (values) => {
+  // 템플릿 경로 확인
   const templatePath = path.join(
     __dirname,
     "templates",
     "vacation_template.docx"
   );
+
+  // 템플릿 파일 존재 여부 확인
+  if (!fs.existsSync(templatePath)) {
+    console.error("Template file not found:", templatePath);
+    throw new Error("Vacation template file not found");
+  }
+
   const content = fs.readFileSync(templatePath, "binary");
 
   const zip = new PizZip(content);
@@ -164,15 +192,13 @@ const fillVacationForm = async (values) => {
   const data = {
     name: values.name,
     vacationDate: formatVacationDate(values.date),
-    courseContent: values.courseContent,
-    studyPlan: values.studyPlan,
+    courseContent: values.courseContent || "",
+    studyPlan: values.studyPlan || "",
     significant: values.significant || "",
   };
 
-  doc.setData(data);
-
   try {
-    doc.render();
+    doc.render(data);
   } catch (error) {
     console.error("Error during vacation template processing:", error);
     throw error;
@@ -181,10 +207,24 @@ const fillVacationForm = async (values) => {
   const buffer = doc.getZip().generate({ type: "nodebuffer" });
   const outputPath = path.join(
     __dirname,
-    convertedDir,
+    "converted",
     "filled_vacation_plan.docx"
   );
-  fs.writeFileSync(outputPath, buffer);
+
+  // converted 디렉토리 존재 확인 및 생성
+  ensureDir(path.join(__dirname, "converted"));
+
+  try {
+    fs.writeFileSync(outputPath, buffer);
+
+    // 파일 생성 확인
+    if (!fs.existsSync(outputPath)) {
+      throw new Error("Failed to create vacation file");
+    }
+  } catch (error) {
+    console.error("Error writing vacation file:", error);
+    throw error;
+  }
 
   return outputPath;
 };

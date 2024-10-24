@@ -163,12 +163,6 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
             label={
               <FormLabel icon={<FileTextOutlined />}>증빙서류명</FormLabel>
             }
-            rules={[
-              {
-                required: true,
-                message: "증빙서류명을 입력해주세요",
-              },
-            ]}
           >
             <Input placeholder="ex) 진료확인서, 예비군 필증" />
           </Form.Item>

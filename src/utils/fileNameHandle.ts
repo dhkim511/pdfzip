@@ -14,10 +14,13 @@ export const getSuffix = (
   type: FormValues["conversionType"],
   proofDocumentName?: string
 ): string => {
+  // 스크린샷은 빈 문자열 반환
+  if (isAttendanceScreenshot(fileName)) {
+    return "";
+  }
+
   if (type === "officialLeave") {
     if (fileName.includes("출석대장")) return "(출석대장)";
-    if (isAttendanceScreenshot(fileName)) return "(증빙서류)";
-    // 증빙서류명이 있을 경우 사용
     if (proofDocumentName) return `(${proofDocumentName})`;
     return "(증빙서류)";
   }
@@ -27,8 +30,6 @@ export const getSuffix = (
   }
   if (type === "attendance") {
     if (fileName.includes("출석대장")) return "(출석대장)";
-    if (isAttendanceScreenshot(fileName)) return "";
-    // 증빙서류명이 있을 경우 사용
     if (proofDocumentName) return `(${proofDocumentName})`;
     return "(증빙서류)";
   }
