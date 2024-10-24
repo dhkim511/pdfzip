@@ -19,217 +19,271 @@ const dayjs = require("dayjs");
 
 dotenv.config();
 
-const uploadDir = "uploads";
-const convertedDir = "converted";
+const DIRS = {
+  upload: "uploads",
+  converted: "converted",
+};
+
+const fileUtils = {
+  ensureDir: (dirPath) => {
+    !fs.existsSync(dirPath) && fs.mkdirSync(dirPath);
+  },
+
+  needsConversion: (file) => {
+    const fileExtension = path.extname(file.originalname).toLowerCase();
+    const isWord = [".doc", ".docx"].includes(fileExtension);
+    const isScreenshot =
+      (file.originalname.includes("오전") ||
+        file.originalname.includes("오후")) &&
+      (file.originalname.includes("10") ||
+        file.originalname.includes("2") ||
+        file.originalname.includes("7"));
+
+    if (isScreenshot || fileExtension === ".pdf") return false;
+    if (isWord) return true;
+    return ![".jpg", ".jpeg", ".png"].includes(fileExtension);
+  },
+};
+
+const formatDates = {
+  attendance: (date) => dayjs(date).format("YYMMDD"),
+  vacation: (date) => {
+    const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
+    const dateObj = dayjs(date);
+    return `${dateObj.year()}년 ${dateObj.month() + 1}월 ${dateObj.date()}일 (${
+      weekDays[dateObj.day()]
+    })`;
+  },
+};
+
+const pdfProcessor = {
+  pdfServicesInstance: null,
+
+  getPDFServices: (credentials) => {
+    if (!pdfProcessor.pdfServicesInstance) {
+      pdfProcessor.pdfServicesInstance = new PDFServices({ credentials });
+    }
+    return pdfProcessor.pdfServicesInstance;
+  },
+
+  addSignature: async (pdfPath, signaturePath) => {
+    const pdfDoc = await PDFDocument.load(fs.readFileSync(pdfPath), {
+      updateMetadata: false,
+    });
+
+    const pngImage = await pdfDoc.embedPng(fs.readFileSync(signaturePath));
+    pdfDoc
+      .getPages()[0]
+      .drawImage(pngImage, { x: 430, y: 430, width: 80, height: 30 });
+
+    const signedPdfPath = path.join(
+      __dirname,
+      DIRS.converted,
+      "signed_output.pdf"
+    );
+    fs.writeFileSync(
+      signedPdfPath,
+      await pdfDoc.save({ updateMetadata: false })
+    );
+
+    return signedPdfPath;
+  },
+
+  convertToPDF: async (docInfo, credentials) => {
+    if (docInfo.type === "original" && path.extname(docInfo.path) === ".pdf") {
+      return {
+        path: `/converted/${path.basename(docInfo.path)}`,
+        name: path.basename(docInfo.path),
+      };
+    }
+
+    const pdfServices = pdfProcessor.getPDFServices(credentials);
+
+    try {
+      const readStream = fs.createReadStream(docInfo.path);
+
+      const inputAsset = await pdfServices.upload({
+        readStream,
+        mimeType: MimeType.DOCX,
+      });
+
+      const job = new CreatePDFJob({ inputAsset });
+
+      const [pollingURL, outputFileName] = await Promise.all([
+        pdfServices.submit({ job }),
+        Promise.resolve(`${path.basename(docInfo.path, ".docx")}.pdf`),
+      ]);
+
+      const {
+        result: { asset: resultAsset },
+      } = await pdfServices.getJobResult({
+        pollingURL,
+        resultType: CreatePDFResult,
+      });
+
+      const streamAsset = await pdfServices.getContent({ asset: resultAsset });
+      const finalOutputPath = path.join(
+        __dirname,
+        DIRS.converted,
+        outputFileName
+      );
+
+      await new Promise((resolve, reject) => {
+        const writeStream = fs.createWriteStream(finalOutputPath, {
+          flags: "w",
+          encoding: "binary",
+        });
+
+        streamAsset.readStream
+          .pipe(writeStream)
+          .on("finish", () => {
+            writeStream.end();
+            resolve(finalOutputPath);
+          })
+          .on("error", (error) => {
+            writeStream.end();
+            reject(error);
+          });
+      });
+
+      return finalOutputPath;
+    } catch (error) {
+      console.error("PDF conversion error:", error);
+      throw new Error(`PDF conversion failed: ${error.message}`);
+    }
+  },
+
+  processFiles: async (filledDocPaths, credentials) => {
+    const processFile = async (docInfo) => {
+      try {
+        const finalOutputPath = await pdfProcessor.convertToPDF(
+          docInfo,
+          credentials
+        );
+
+        const outputPath =
+          docInfo.type === "attendance"
+            ? await pdfProcessor.addSignature(
+                finalOutputPath,
+                path.join(__dirname, DIRS.upload, "sign.png")
+              )
+            : finalOutputPath;
+
+        return {
+          path: `/converted/${path.basename(outputPath)}`,
+          name: path.basename(outputPath),
+        };
+      } catch (error) {
+        console.error(`Error processing file ${docInfo.path}:`, error);
+        throw error;
+      }
+    };
+
+    return Promise.all(filledDocPaths.map(processFile));
+  },
+};
+
+const documentGenerator = {
+  fillAttendanceForm: async (values) => {
+    const templatePath = path.join(
+      __dirname,
+      "templates",
+      "attendance_template.docx"
+    );
+    if (!fs.existsSync(templatePath)) {
+      throw new Error("Attendance template file not found");
+    }
+
+    const doc = new Docxtemplater(
+      new PizZip(fs.readFileSync(templatePath, "binary")),
+      {
+        paragraphLoop: true,
+        linebreaks: true,
+      }
+    );
+
+    doc.render({
+      date: formatDates.attendance(values.date),
+      applicationDate: dayjs().format("YYMMDD"),
+      name: values.name,
+      checkInTime: values.checkInTime,
+      checkOutTime: values.checkOutTime,
+      reason:
+        values.conversionType === "vacation"
+          ? "휴가"
+          : values.conversionType === "officialLeave"
+          ? "공가"
+          : values.reason,
+    });
+
+    const outputPath = path.join(
+      __dirname,
+      DIRS.converted,
+      "filled_attendance.docx"
+    );
+    fs.writeFileSync(outputPath, doc.getZip().generate({ type: "nodebuffer" }));
+
+    return outputPath;
+  },
+
+  fillVacationForm: async (values) => {
+    const templatePath = path.join(
+      __dirname,
+      "templates",
+      "vacation_template.docx"
+    );
+    if (!fs.existsSync(templatePath)) {
+      throw new Error("Vacation template file not found");
+    }
+
+    const doc = new Docxtemplater(
+      new PizZip(fs.readFileSync(templatePath, "binary")),
+      {
+        paragraphLoop: true,
+        linebreaks: true,
+      }
+    );
+
+    doc.render({
+      name: values.name,
+      vacationDate: formatDates.vacation(values.date),
+      courseContent: values.courseContent || "",
+      studyPlan: values.studyPlan || "",
+      significant: values.significant || "",
+    });
+
+    const outputPath = path.join(
+      __dirname,
+      DIRS.converted,
+      "filled_vacation_plan.docx"
+    );
+    fs.writeFileSync(outputPath, doc.getZip().generate({ type: "nodebuffer" }));
+
+    return outputPath;
+  },
+};
 
 const app = express();
-const upload = multer({ dest: path.join(__dirname, uploadDir) });
+const upload = multer({ dest: path.join(__dirname, DIRS.upload) });
 
-const corsOptions = {
-  origin: "*",
-};
-
-app.use(cors(corsOptions));
+app.use(cors({ origin: "*" }));
 app.use(express.json());
-app.use(`/${convertedDir}`, express.static(path.join(__dirname, convertedDir)));
+app.use(
+  `/${DIRS.converted}`,
+  express.static(path.join(__dirname, DIRS.converted))
+);
 
-const ensureDir = (dirPath) => {
-  if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath);
-  }
-};
-
-ensureDir(path.join(__dirname, uploadDir));
-ensureDir(path.join(__dirname, convertedDir));
-
-const formatAttendanceDate = (date) => {
-  return dayjs(date).format("YYMMDD");
-};
-
-const formatVacationDate = (date) => {
-  const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
-  const dateObj = dayjs(date);
-  const weekDay = weekDays[dateObj.day()];
-  return `${dateObj.year()}년 ${
-    dateObj.month() + 1
-  }월 ${dateObj.date()}일 (${weekDay})`;
-};
-
-const needsConversion = (file) => {
-  const fileExtension = path.extname(file.originalname).toLowerCase();
-  const isWord = [".doc", ".docx"].includes(fileExtension);
-  const isScreenshot =
-    (file.originalname.includes("오전") ||
-      file.originalname.includes("오후")) &&
-    (file.originalname.includes("10") ||
-      file.originalname.includes("2") ||
-      file.originalname.includes("7"));
-
-  if (isScreenshot || fileExtension === ".pdf") {
-    return false;
-  }
-
-  if (isWord) {
-    return true;
-  }
-
-  const imageExtensions = [".jpg", ".jpeg", ".png"];
-  if (imageExtensions.includes(fileExtension)) {
-    return false;
-  }
-
-  return true;
-};
-
-async function addSignatureToPDF(pdfPath, signaturePath) {
-  const existingPdfBytes = fs.readFileSync(pdfPath);
-  const pdfDoc = await PDFDocument.load(existingPdfBytes);
-  const pages = pdfDoc.getPages();
-  const firstPage = pages[0];
-
-  const pngImageBytes = fs.readFileSync(signaturePath);
-  const pngImage = await pdfDoc.embedPng(pngImageBytes);
-
-  firstPage.drawImage(pngImage, { x: 430, y: 430, width: 80, height: 30 });
-
-  const pdfBytes = await pdfDoc.save();
-  const signedPdfPath = path.join(__dirname, convertedDir, "signed_output.pdf");
-  fs.writeFileSync(signedPdfPath, pdfBytes);
-
-  return signedPdfPath;
-}
-
-const fillAttendanceForm = async (values) => {
-  const templatePath = path.join(
-    __dirname,
-    "templates",
-    "attendance_template.docx"
-  );
-
-  if (!fs.existsSync(templatePath)) {
-    console.error("Template file not found:", templatePath);
-    throw new Error("Attendance template file not found");
-  }
-
-  const content = fs.readFileSync(templatePath, "binary");
-
-  const zip = new PizZip(content);
-  const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
-
-  const applicationDate = dayjs().format("YYMMDD");
-
-  const data = {
-    date: formatAttendanceDate(values.date),
-    applicationDate,
-    name: values.name,
-    checkInTime: values.checkInTime,
-    checkOutTime: values.checkOutTime,
-    reason:
-      values.conversionType === "vacation"
-        ? "휴가"
-        : values.conversionType === "officialLeave"
-        ? "공가"
-        : values.reason,
-  };
-
-  try {
-    doc.render(data);
-  } catch (error) {
-    console.error("Error during template processing:", error);
-    throw error;
-  }
-
-  const buffer = doc.getZip().generate({ type: "nodebuffer" });
-  const outputPath = path.join(
-    __dirname,
-    "converted",
-    "filled_attendance.docx"
-  );
-
-  ensureDir(path.join(__dirname, "converted"));
-
-  try {
-    fs.writeFileSync(outputPath, buffer);
-
-    if (!fs.existsSync(outputPath)) {
-      throw new Error("Failed to create attendance file");
-    }
-  } catch (error) {
-    console.error("Error writing attendance file:", error);
-    throw error;
-  }
-
-  return outputPath;
-};
-
-const fillVacationForm = async (values) => {
-  const templatePath = path.join(
-    __dirname,
-    "templates",
-    "vacation_template.docx"
-  );
-
-  if (!fs.existsSync(templatePath)) {
-    console.error("Template file not found:", templatePath);
-    throw new Error("Vacation template file not found");
-  }
-
-  const content = fs.readFileSync(templatePath, "binary");
-
-  const zip = new PizZip(content);
-  const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
-
-  const data = {
-    name: values.name,
-    vacationDate: formatVacationDate(values.date),
-    courseContent: values.courseContent || "",
-    studyPlan: values.studyPlan || "",
-    significant: values.significant || "",
-  };
-
-  try {
-    doc.render(data);
-  } catch (error) {
-    console.error("Error during vacation template processing:", error);
-    throw error;
-  }
-
-  const buffer = doc.getZip().generate({ type: "nodebuffer" });
-  const outputPath = path.join(
-    __dirname,
-    "converted",
-    "filled_vacation_plan.docx"
-  );
-
-  ensureDir(path.join(__dirname, "converted"));
-
-  try {
-    fs.writeFileSync(outputPath, buffer);
-
-    if (!fs.existsSync(outputPath)) {
-      throw new Error("Failed to create vacation file");
-    }
-  } catch (error) {
-    console.error("Error writing vacation file:", error);
-    throw error;
-  }
-
-  return outputPath;
-};
+[DIRS.upload, DIRS.converted].forEach((dir) =>
+  fileUtils.ensureDir(path.join(__dirname, dir))
+);
 
 app.post("/sign", upload.single("file"), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).send("No file uploaded.");
-  }
-
-  const file = req.file;
-  const fileName = "sign.png";
-  const filePath = path.join(__dirname, uploadDir, fileName);
+  if (!req.file) return res.status(400).send("No file uploaded.");
 
   try {
-    await sharp(file.path).resize(520, 100).toFile(filePath);
+    const filePath = path.join(__dirname, DIRS.upload, "sign.png");
+    await sharp(req.file.path).resize(520, 100).toFile(filePath);
 
-    console.log("Signature file resized and saved successfully at:", filePath);
     res.status(200).json({
       message: "Signature file uploaded and resized successfully",
       path: filePath,
@@ -243,102 +297,52 @@ app.post("/sign", upload.single("file"), async (req, res) => {
 app.post("/convert", upload.single("file"), async (req, res) => {
   try {
     const filledDocPaths = [];
+    const isLeaveRequest = ["vacation", "officialLeave"].includes(
+      req.body.conversionType
+    );
 
-    if (
-      req.body.conversionType === "vacation" ||
-      req.body.conversionType === "officialLeave"
-    ) {
+    if (isLeaveRequest) {
       if (req.body.conversionType === "vacation") {
-        const vacationFormPath = await fillVacationForm(req.body);
-        filledDocPaths.push({ path: vacationFormPath, type: "vacation" });
+        filledDocPaths.push({
+          path: await documentGenerator.fillVacationForm(req.body),
+          type: "vacation",
+        });
       }
 
-      const attendanceFormPath = await fillAttendanceForm({
-        ...req.body,
-        checkInTime: "",
-        checkOutTime: "",
+      filledDocPaths.push({
+        path: await documentGenerator.fillAttendanceForm({
+          ...req.body,
+          checkInTime: "",
+          checkOutTime: "",
+        }),
+        type: "attendance",
       });
-      filledDocPaths.push({ path: attendanceFormPath, type: "attendance" });
-    } else {
-      if (req.file && needsConversion(req.file)) {
-        const filledDocPath = await fillAttendanceForm(req.body);
-        filledDocPaths.push({ path: filledDocPath, type: "attendance" });
-      } else if (req.file) {
-        const fileExtension = path.extname(req.file.originalname);
+    } else if (req.file) {
+      if (fileUtils.needsConversion(req.file)) {
+        filledDocPaths.push({
+          path: await documentGenerator.fillAttendanceForm(req.body),
+          type: "attendance",
+        });
+      } else {
         const outputPath = path.join(
           __dirname,
-          convertedDir,
-          `original${fileExtension}`
+          DIRS.converted,
+          `original${path.extname(req.file.originalname)}`
         );
         fs.copyFileSync(req.file.path, outputPath);
         filledDocPaths.push({ path: outputPath, type: "original" });
       }
     }
 
-    const processedFiles = await Promise.all(
-      filledDocPaths.map(async (docInfo) => {
-        const credentials = new ServicePrincipalCredentials({
-          clientId: process.env.PDF_SERVICES_CLIENT_ID,
-          clientSecret: process.env.PDF_SERVICES_CLIENT_SECRET,
-          organizationId: process.env.PDF_SERVICES_ORG_ID,
-        });
+    const credentials = new ServicePrincipalCredentials({
+      clientId: process.env.PDF_SERVICES_CLIENT_ID,
+      clientSecret: process.env.PDF_SERVICES_CLIENT_SECRET,
+      organizationId: process.env.PDF_SERVICES_ORG_ID,
+    });
 
-        const pdfServices = new PDFServices({ credentials });
-
-        if (
-          docInfo.type === "original" &&
-          path.extname(docInfo.path) === ".pdf"
-        ) {
-          return {
-            path: `/converted/${path.basename(docInfo.path)}`,
-            name: path.basename(docInfo.path),
-          };
-        }
-
-        const inputAsset = await pdfServices.upload({
-          readStream: fs.createReadStream(docInfo.path),
-          mimeType: MimeType.DOCX,
-        });
-
-        const job = new CreatePDFJob({ inputAsset });
-        const pollingURL = await pdfServices.submit({ job });
-        const pdfServicesResponse = await pdfServices.getJobResult({
-          pollingURL,
-          resultType: CreatePDFResult,
-        });
-
-        const resultAsset = pdfServicesResponse.result.asset;
-        const streamAsset = await pdfServices.getContent({
-          asset: resultAsset,
-        });
-
-        const outputFileName = `${path.basename(docInfo.path, ".docx")}.pdf`;
-        const finalOutputPath = path.join(
-          __dirname,
-          convertedDir,
-          outputFileName
-        );
-
-        await new Promise((resolve, reject) => {
-          const outputStream = fs.createWriteStream(finalOutputPath);
-          streamAsset.readStream.pipe(outputStream);
-          outputStream.on("finish", resolve);
-          outputStream.on("error", reject);
-        });
-
-        let signedPdfPath = finalOutputPath;
-        if (docInfo.type === "attendance") {
-          signedPdfPath = await addSignatureToPDF(
-            finalOutputPath,
-            path.join(__dirname, uploadDir, "sign.png")
-          );
-        }
-
-        return {
-          path: `/converted/${path.basename(signedPdfPath)}`,
-          name: path.basename(signedPdfPath),
-        };
-      })
+    const processedFiles = await pdfProcessor.processFiles(
+      filledDocPaths,
+      credentials
     );
 
     res.json({
@@ -347,13 +351,19 @@ app.post("/convert", upload.single("file"), async (req, res) => {
     });
 
     setTimeout(async () => {
-      await Promise.all(
-        filledDocPaths.map(async (docInfo) => {
-          if (fs.existsSync(docInfo.path)) {
-            await fs.promises.unlink(docInfo.path).catch(() => {});
-          }
-        })
-      );
+      filledDocPaths.forEach((docInfo) => {
+        fs.existsSync(docInfo.path) &&
+          fs.promises.unlink(docInfo.path).catch(() => {});
+      });
+
+      [DIRS.upload, DIRS.converted].forEach(async (dir) => {
+        const dirPath = path.join(__dirname, dir);
+        const files = await fs.promises.readdir(dirPath);
+        files.forEach((file) => {
+          const filePath = path.join(dirPath, file);
+          fs.promises.unlink(filePath).catch(() => {});
+        });
+      });
     }, 60000);
   } catch (error) {
     console.error("Conversion error:", error);
@@ -365,6 +375,4 @@ app.post("/convert", upload.single("file"), async (req, res) => {
 });
 
 const port = process.env.PORT || 8080;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+app.listen(port, () => console.log(`Server running on port ${port}`));
