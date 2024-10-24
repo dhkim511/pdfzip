@@ -11,6 +11,7 @@ import { FileChangeInfo, ConversionType } from "../types/conversionType";
 import {
   flexLayout,
   halfWidth,
+  redTextStyle,
   uploadButton,
   uploadList,
 } from "../styles/index";
@@ -82,7 +83,12 @@ const FileUpload: React.FC<FileUploadProps> = ({
       </Form.Item>
       <Form.Item
         name="signFile"
-        label={<FormLabel icon={<EditOutlined />}>서명 첨부</FormLabel>}
+        label={
+          <FormLabel icon={<EditOutlined />}>
+            {" "}
+            파일 선택 <span css={redTextStyle}>(sign.png)</span>
+          </FormLabel>
+        }
         css={[halfWidth, flexLayout.flex1]}
       >
         <Upload
