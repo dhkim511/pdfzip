@@ -32,6 +32,6 @@ export const antThemeConfig: ThemeConfig = {
     },
     Form: {
       marginLG: 24,
-    }
+    },
   },
 };

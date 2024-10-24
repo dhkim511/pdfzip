@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { colors, sizes } from "./theme";
+import { colors, sizes, fonts } from "./theme";
 
 export const submitButton = css`
   width: 100%;
@@ -7,7 +7,7 @@ export const submitButton = css`
   color: ${colors.primary};
   border-color: ${colors.primary};
   border-radius: ${sizes.borderRadius.large};
-  
+
   &:hover {
     color: ${colors.primaryHover};
     border-color: ${colors.primaryHover};
@@ -40,7 +40,7 @@ export const datePicker = css`
 export const link = css`
   margin-left: 20px;
   color: ${colors.primary};
-  
+
   &:hover {
     color: ${colors.primaryHover};
   }
@@ -53,7 +53,7 @@ export const signatureCanvas = {
 
 export const uploadList = css`
   .ant-upload-list-item {
-    max-width: 100%;
+    max-width: 320px;
   }
 `;
 
@@ -64,3 +64,9 @@ export const labelIcon = {
 export const labelText = {
   color: colors.text.primary,
 };
+
+export const redTextStyle = css`
+  font-size: ${fonts.size.small};
+  color: ${colors.primary};
+  font-weight: ${fonts.weight.medium};
+`;

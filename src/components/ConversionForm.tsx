@@ -14,11 +14,16 @@ import {
   FileChangeInfo,
 } from "../types/conversionType";
 import FileUpload from "./FileUpload";
-import { submitButton, datePicker } from "../styles/index";
+import {
+  submitButton,
+  datePicker,
+  flexLayout,
+  halfWidth,
+  redTextStyle,
+} from "../styles/index";
 import { getDateLabel } from "../utils/labelHandle";
 import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
 import { FormLabel } from "./Label";
-import { handleFormSubmit } from "../utils/formHandle";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -48,11 +53,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
     <Form
       form={form}
       layout="vertical"
-      onFinish={(values) =>
-        onFinish(
-          handleFormSubmit(values, isVacationType || isOfficialLeaveType)
-        )
-      }
+      onFinish={(values) => onFinish(values as FormValues)}
       requiredMark={false}
     >
       <Form.Item
@@ -110,41 +111,52 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
 
       {!isVacationType && !isOfficialLeaveType && (
         <>
-          <Form.Item
-            name="checkInTime"
-            label={
-              <FormLabel icon={<ClockCircleOutlined />}>입실 시간</FormLabel>
-            }
-            rules={[
-              {
-                required: true,
-                message:
-                  FEEDBACK_MESSAGES.FORM_VALIDATION.CHECKIN_TIME_REQUIRED,
-              },
-            ]}
-          >
-            <Input placeholder="ex) 10:00" />
-          </Form.Item>
+          <div css={flexLayout.container}>
+            <Form.Item
+              name="checkInTime"
+              label={
+                <FormLabel icon={<ClockCircleOutlined />}>입실 시간</FormLabel>
+              }
+              rules={[
+                {
+                  required: true,
+                  message:
+                    FEEDBACK_MESSAGES.FORM_VALIDATION.CHECKIN_TIME_REQUIRED,
+                },
+              ]}
+              css={halfWidth}
+            >
+              <Input placeholder="ex) 10:00" />
+            </Form.Item>
 
-          <Form.Item
-            name="checkOutTime"
-            label={
-              <FormLabel icon={<ClockCircleOutlined />}>퇴실 시간</FormLabel>
-            }
-            rules={[
-              {
-                required: true,
-                message:
-                  FEEDBACK_MESSAGES.FORM_VALIDATION.CHECKOUT_TIME_REQUIRED,
-              },
-            ]}
-          >
-            <Input placeholder="ex) 19:00" />
-          </Form.Item>
+            <Form.Item
+              name="checkOutTime"
+              label={
+                <FormLabel icon={<ClockCircleOutlined />}>퇴실 시간</FormLabel>
+              }
+              rules={[
+                {
+                  required: true,
+                  message:
+                    FEEDBACK_MESSAGES.FORM_VALIDATION.CHECKOUT_TIME_REQUIRED,
+                },
+              ]}
+              css={halfWidth}
+            >
+              <Input placeholder="ex) 19:00" />
+            </Form.Item>
+          </div>
 
           <Form.Item
             name="reason"
-            label={<FormLabel icon={<FileTextOutlined />}>사유</FormLabel>}
+            label={
+              <FormLabel icon={<FileTextOutlined />}>
+                사유{" "}
+                <span css={redTextStyle}>
+                  (HRD 관련 오류는 증빙서류명 작성 필요없음)
+                </span>
+              </FormLabel>
+            }
             rules={[
               {
                 required: true,
@@ -161,7 +173,12 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
           <Form.Item
             name="proofDocumentName"
             label={
-              <FormLabel icon={<FileTextOutlined />}>증빙서류명</FormLabel>
+              <FormLabel icon={<FileTextOutlined />}>
+                증빙서류명{" "}
+                <span css={redTextStyle}>
+                  (증빙서류는 이미지 파일 형식으로 첨부)
+                </span>
+              </FormLabel>
             }
           >
             <Input placeholder="ex) 진료확인서, 예비군 필증" />
@@ -218,7 +235,14 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
       {isOfficialLeaveType && (
         <Form.Item
           name="proofDocumentName"
-          label={<FormLabel icon={<FileTextOutlined />}>증빙서류명</FormLabel>}
+          label={
+            <FormLabel icon={<FileTextOutlined />}>
+              증빙서류명{" "}
+              <span css={redTextStyle}>
+                (증빙서류는 이미지 파일 형식으로 첨부해주세요.)
+              </span>
+            </FormLabel>
+          }
           rules={[
             {
               required: true,

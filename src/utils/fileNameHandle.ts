@@ -12,9 +12,8 @@ export const isAttendanceScreenshot = (fileName: string): boolean => {
 export const getSuffix = (
   fileName: string,
   type: FormValues["conversionType"],
-  proofDocumentName?: string
+  proofDocumentName?: string,
 ): string => {
-  // 스크린샷은 빈 문자열 반환
   if (isAttendanceScreenshot(fileName)) {
     return "";
   }

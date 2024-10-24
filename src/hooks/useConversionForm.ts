@@ -31,7 +31,7 @@ export const useConversionForm = () => {
       if (signFile && signFile.originFileObj) {
         const signFormData = new FormData();
         signFormData.append("file", signFile.originFileObj);
-        
+
         const signResponse = await fetch(`${SERVER_URL}/sign`, {
           method: "POST",
           body: signFormData,
@@ -45,7 +45,9 @@ export const useConversionForm = () => {
       await createAndDownloadZip(values, files);
     } catch (error) {
       const errorMessage = (error as Error).message;
-      message.error(`${FEEDBACK_MESSAGES.ERRORS.GENERAL_ERROR} - ${errorMessage}`);
+      message.error(
+        `${FEEDBACK_MESSAGES.ERRORS.GENERAL_ERROR} - ${errorMessage}`,
+      );
     } finally {
       setIsLoading(false);
     }
@@ -54,7 +56,7 @@ export const useConversionForm = () => {
   const handleFileChange = (info: FileChangeInfo) => {
     setFileList([...info.fileList]);
   };
-  
+
   const handleSignFileChange = (info: FileChangeInfo) => {
     setSignFile(info.fileList[0] || null);
   };

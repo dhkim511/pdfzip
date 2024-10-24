@@ -16,7 +16,7 @@ export const getDateLabel = (conversionType: ConversionType): string => {
 export const getFileLabel = (type: ConversionType): string => {
   switch (type) {
     case "attendance":
-      return "파일 첨부 (출석대장, 스크린샷 및 증빙서류)";
+      return "파일 첨부 (출석대장, 스크린샷 or 증빙서류)";
     case "vacation":
       return "파일 첨부 (출석대장, 휴가계획서)";
     case "officialLeave":

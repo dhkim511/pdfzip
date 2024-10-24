@@ -8,11 +8,12 @@ export const globalStyle = css`
     box-sizing: border-box;
   }
 
-  html, body {
+  html,
+  body {
     height: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+      "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+      "Helvetica Neue", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -22,7 +23,12 @@ export const globalStyle = css`
     background-color: ${colors.background.main};
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     margin: 0;
     font-weight: 600;
   }
@@ -53,7 +59,8 @@ export const globalStyle = css`
     border-spacing: 0;
   }
 
-  ul, ol {
+  ul,
+  ol {
     list-style: none;
     padding: 0;
     margin: 0;

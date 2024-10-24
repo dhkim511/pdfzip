@@ -17,5 +17,5 @@ createRoot(document.getElementById("root")!).render(
     <ConfigProvider locale={ko_KR} theme={antThemeConfig}>
       <App />
     </ConfigProvider>
-  </StrictMode>
+  </StrictMode>,
 );

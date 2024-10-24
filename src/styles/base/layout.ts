@@ -19,13 +19,13 @@ export const formContainer = css`
 `;
 
 export const leftContainer = css`
-  width: 45%;
+  width: 42%;
   display: flex;
   flex-direction: column;
 `;
 
 export const rightContainer = css`
-  width: 55%;
+  width: 58%;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -72,7 +72,7 @@ export const flexLayout = {
   `,
   flex00Auto: css`
     flex: 0 0 auto;
-  `
+  `,
 };
 
 export const fullWidth = css`
@@ -81,5 +81,5 @@ export const fullWidth = css`
 
 export const halfWidth = css`
   flex: 1;
-  max-width: 50%;  
+  max-width: 50%;
 `;

@@ -1,7 +1,12 @@
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { FormValues } from "../types/conversionType";
-import { getSuffix, isAttendanceScreenshot, getTypeSuffix, formatDate } from "./fileNameHandle";
+import {
+  getSuffix,
+  isAttendanceScreenshot,
+  getTypeSuffix,
+  formatDate,
+} from "./fileNameHandle";
 import { SERVER_URL } from "../constants/environmentConfig";
 
 interface ProcessedFile {
@@ -10,71 +15,74 @@ interface ProcessedFile {
   documentName: string;
 }
 
-const processFile = async (file: File, values: FormValues): Promise<ProcessedFile> => {
-  const fileExtension = file.name.toLowerCase().split('.').pop();
-  const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension || '');
-  const isPDF = fileExtension === 'pdf';
-  const isWord = ['doc', 'docx'].includes(fileExtension || '');
-  
-  // 스크린샷은 변환 없이 그대로 처리
+const processFile = async (
+  file: File,
+  values: FormValues,
+): Promise<ProcessedFile> => {
+  const fileExtension = file.name.toLowerCase().split(".").pop();
+  const isImage = ["jpg", "jpeg", "png", "gif"].includes(fileExtension || "");
+  const isPDF = fileExtension === "pdf";
+  const isWord = ["doc", "docx"].includes(fileExtension || "");
+
   if (isAttendanceScreenshot(file.name)) {
     return {
       content: await file.arrayBuffer(),
       needsConversion: false,
-      documentName: '' // 빈 문자열로 설정하여 파일명 변경에서 제외
+      documentName: "",
     };
   }
 
-  // 출석대장 체크
-  if (file.name.includes('출석대장')) {
+  if (file.name.includes("출석대장")) {
     return {
       content: file,
       needsConversion: true,
-      documentName: '출석대장'
+      documentName: "출석대장",
     };
   }
-  
-  // 증빙서류 처리
-  const isProofDocument = !file.name.includes('출석대장') && !isAttendanceScreenshot(file.name);
+
+  const isProofDocument =
+    !file.name.includes("출석대장") && !isAttendanceScreenshot(file.name);
   if (isProofDocument && values.proofDocumentName) {
     if (isImage || isPDF) {
       return {
         content: await file.arrayBuffer(),
         needsConversion: false,
-        documentName: values.proofDocumentName
+        documentName: values.proofDocumentName,
       };
     }
     if (isWord) {
       return {
         content: file,
         needsConversion: true,
-        documentName: values.proofDocumentName
+        documentName: values.proofDocumentName,
       };
     }
   }
-  
-  // 기본적으로 변환 필요
+
   return {
     content: file,
     needsConversion: true,
-    documentName: values.proofDocumentName || '증빙서류'
+    documentName: values.proofDocumentName || "증빙서류",
   };
 };
 
-export const createAndDownloadZip = async (values: FormValues, fileList: File[]) => {
+export const createAndDownloadZip = async (
+  values: FormValues,
+  fileList: File[],
+) => {
   const zip = new JSZip();
 
-  if (values.conversionType === 'vacation') {
+  if (values.conversionType === "vacation") {
     const response = await fetch(`${SERVER_URL}/convert`, {
       method: "POST",
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         conversionType: values.conversionType,
-        date: values.date.format(),  
+        date: values.date.format(),
         name: values.name,
-        courseContent: values.courseContent || '',
-        studyPlan: values.studyPlan || '',
-        significant: values.significant || '',
+        courseContent: values.courseContent || "",
+        studyPlan: values.studyPlan || "",
+        significant: values.significant || "",
       }),
     });
 
@@ -90,19 +98,17 @@ export const createAndDownloadZip = async (values: FormValues, fileList: File[])
       }
       const blob = await fileResponse.blob();
       const baseFileName = `${formatDate(values.date)}_데브캠프_프론트엔드 개발 4회차_${values.name}`;
-      const suffix = file.name.includes("vacation") 
+      const suffix = file.name.includes("vacation")
         ? getSuffix("휴가 사용 계획서", values.conversionType)
         : getSuffix("출석대장", values.conversionType);
       const fileName = `${baseFileName}${suffix}.pdf`;
       zip.file(fileName, blob);
     }
   } else {
-    // 출결정정 및 공가 처리
     for (const file of fileList) {
       const processedFile = await processFile(file, values);
-      
+
       if (isAttendanceScreenshot(file.name)) {
-        // 스크린샷은 원본 파일명으로 저장
         zip.file(file.name, processedFile.content);
         continue;
       }
@@ -111,7 +117,7 @@ export const createAndDownloadZip = async (values: FormValues, fileList: File[])
         const formData = new FormData();
         formData.append("file", file);
         formData.append("conversionType", values.conversionType);
-        formData.append("date", values.date.format());  
+        formData.append("date", values.date.format());
         formData.append("name", values.name);
         formData.append("checkInTime", values.checkInTime);
         formData.append("checkOutTime", values.checkOutTime);
@@ -128,7 +134,9 @@ export const createAndDownloadZip = async (values: FormValues, fileList: File[])
         }
 
         const result = await response.json();
-        const fileResponse = await fetch(`${SERVER_URL}${result.files[0].path}`);
+        const fileResponse = await fetch(
+          `${SERVER_URL}${result.files[0].path}`,
+        );
         if (!fileResponse.ok) {
           throw new Error(`File fetch error: ${fileResponse.status}`);
         }
@@ -139,7 +147,7 @@ export const createAndDownloadZip = async (values: FormValues, fileList: File[])
         zip.file(fileName, blob);
       } else {
         const baseFileName = `${formatDate(values.date)}_데브캠프_프론트엔드 개발 4회차_${values.name}`;
-        const fileExtension = file.name.slice(file.name.lastIndexOf('.'));
+        const fileExtension = file.name.slice(file.name.lastIndexOf("."));
         const fileName = `${baseFileName}(${processedFile.documentName})${fileExtension}`;
         zip.file(fileName, processedFile.content);
       }
@@ -151,6 +159,6 @@ export const createAndDownloadZip = async (values: FormValues, fileList: File[])
   const zipDate = formatDate(values.date);
   saveAs(
     content,
-    `${zipDate}_데브캠프_프론트엔드 개발 4회차_${values.name}${typeSuffix}.zip`
+    `${zipDate}_데브캠프_프론트엔드 개발 4회차_${values.name}${typeSuffix}.zip`,
   );
 };

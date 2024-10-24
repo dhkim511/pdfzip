@@ -70,7 +70,7 @@ const GuideForm: React.FC = () => {
               <SignatureCanvas
                 ref={signatureRef}
                 canvasProps={{
-                  width: 540,
+                  width: 500,
                   height: 200,
                   className: "signature-canvas",
                   style: signatureCanvas,

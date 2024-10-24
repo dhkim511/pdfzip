@@ -65,23 +65,19 @@ const needsConversion = (file) => {
       file.originalname.includes("2") ||
       file.originalname.includes("7"));
 
-  // 스크린샷이나 PDF는 변환하지 않음
   if (isScreenshot || fileExtension === ".pdf") {
     return false;
   }
 
-  // 워드 문서는 변환
   if (isWord) {
     return true;
   }
 
-  // 이미지 파일은 변환하지 않음
   const imageExtensions = [".jpg", ".jpeg", ".png", ".gif"];
   if (imageExtensions.includes(fileExtension)) {
     return false;
   }
 
-  // 그 외의 경우 변환 (출석대장 등)
   return true;
 };
 
@@ -104,14 +100,12 @@ async function addSignatureToPDF(pdfPath, signaturePath) {
 }
 
 const fillAttendanceForm = async (values) => {
-  // 템플릿 경로 확인
   const templatePath = path.join(
     __dirname,
     "templates",
-    "attendance_template.docx"
+    "attendance_template.docx",
   );
 
-  // 템플릿 파일 존재 여부 확인
   if (!fs.existsSync(templatePath)) {
     console.error("Template file not found:", templatePath);
     throw new Error("Attendance template file not found");
@@ -128,14 +122,14 @@ const fillAttendanceForm = async (values) => {
     date: formatAttendanceDate(values.date),
     applicationDate,
     name: values.name,
-    checkInTime: values.checkInTime || "10:00",
-    checkOutTime: values.checkOutTime || "19:00",
+    checkInTime: values.checkInTime,
+    checkOutTime: values.checkOutTime,
     reason:
       values.conversionType === "vacation"
         ? "휴가"
         : values.conversionType === "officialLeave"
-        ? "공가"
-        : values.reason,
+          ? "공가"
+          : values.reason,
   };
 
   try {
@@ -149,16 +143,14 @@ const fillAttendanceForm = async (values) => {
   const outputPath = path.join(
     __dirname,
     "converted",
-    "filled_attendance.docx"
+    "filled_attendance.docx",
   );
 
-  // converted 디렉토리 존재 확인 및 생성
   ensureDir(path.join(__dirname, "converted"));
 
   try {
     fs.writeFileSync(outputPath, buffer);
 
-    // 파일 생성 확인
     if (!fs.existsSync(outputPath)) {
       throw new Error("Failed to create attendance file");
     }
@@ -171,14 +163,12 @@ const fillAttendanceForm = async (values) => {
 };
 
 const fillVacationForm = async (values) => {
-  // 템플릿 경로 확인
   const templatePath = path.join(
     __dirname,
     "templates",
-    "vacation_template.docx"
+    "vacation_template.docx",
   );
 
-  // 템플릿 파일 존재 여부 확인
   if (!fs.existsSync(templatePath)) {
     console.error("Template file not found:", templatePath);
     throw new Error("Vacation template file not found");
@@ -208,16 +198,14 @@ const fillVacationForm = async (values) => {
   const outputPath = path.join(
     __dirname,
     "converted",
-    "filled_vacation_plan.docx"
+    "filled_vacation_plan.docx",
   );
 
-  // converted 디렉토리 존재 확인 및 생성
   ensureDir(path.join(__dirname, "converted"));
 
   try {
     fs.writeFileSync(outputPath, buffer);
 
-    // 파일 생성 확인
     if (!fs.existsSync(outputPath)) {
       throw new Error("Failed to create vacation file");
     }
@@ -248,7 +236,7 @@ app.post("/sign", upload.single("file"), (req, res) => {
 
       console.log(
         "Signature file resized and saved successfully at:",
-        filePath
+        filePath,
       );
       res.status(200).json({
         message: "Signature file uploaded and resized successfully",
@@ -267,22 +255,20 @@ app.post("/convert", upload.single("file"), async (req, res) => {
 
       const attendanceFormPath = await fillAttendanceForm({
         ...req.body,
-        checkInTime: "10:00",
-        checkOutTime: "19:00",
+        checkInTime: "",
+        checkOutTime: "",
       });
       filledDocPaths.push({ path: attendanceFormPath, type: "attendance" });
     } else {
-      // 파일이 변환이 필요한지 확인
       if (req.file && needsConversion(req.file)) {
         const filledDocPath = await fillAttendanceForm(req.body);
         filledDocPaths.push({ path: filledDocPath, type: "attendance" });
       } else if (req.file) {
-        // 변환이 필요없는 파일은 그대로 복사
         const fileExtension = path.extname(req.file.originalname);
         const outputPath = path.join(
           __dirname,
           convertedDir,
-          `original${fileExtension}`
+          `original${fileExtension}`,
         );
         fs.copyFileSync(req.file.path, outputPath);
         filledDocPaths.push({ path: outputPath, type: "original" });
@@ -303,7 +289,6 @@ app.post("/convert", upload.single("file"), async (req, res) => {
         docInfo.type === "original" &&
         path.extname(docInfo.path) === ".pdf"
       ) {
-        // PDF 파일은 변환 없이 그대로 사용
         processedFiles.push({
           path: `/converted/${path.basename(docInfo.path)}`,
           name: path.basename(docInfo.path),
@@ -330,7 +315,7 @@ app.post("/convert", upload.single("file"), async (req, res) => {
       const finalOutputPath = path.join(
         __dirname,
         convertedDir,
-        outputFileName
+        outputFileName,
       );
 
       await new Promise((resolve, reject) => {
@@ -344,7 +329,7 @@ app.post("/convert", upload.single("file"), async (req, res) => {
       if (docInfo.type === "attendance") {
         signedPdfPath = await addSignatureToPDF(
           finalOutputPath,
-          path.join(__dirname, uploadDir, "sign.png")
+          path.join(__dirname, uploadDir, "sign.png"),
         );
       }
 
