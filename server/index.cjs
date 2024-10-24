@@ -73,7 +73,7 @@ const needsConversion = (file) => {
     return true;
   }
 
-  const imageExtensions = [".jpg", ".jpeg", ".png", ".gif"];
+  const imageExtensions = [".jpg", ".jpeg", ".png"];
   if (imageExtensions.includes(fileExtension)) {
     return false;
   }
