@@ -126,7 +126,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
               ]}
               css={halfWidth}
             >
-              <Input placeholder="ex) 10:00" />
+              <Input />
             </Form.Item>
 
             <Form.Item
@@ -143,7 +143,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
               ]}
               css={halfWidth}
             >
-              <Input placeholder="ex) 19:00" />
+              <Input />
             </Form.Item>
           </div>
 
@@ -152,9 +152,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
             label={
               <FormLabel icon={<FileTextOutlined />}>
                 사유{" "}
-                <span css={redTextStyle}>
-                  (HRD 관련 오류는 증빙서류명 작성 필요없음)
-                </span>
+                <span css={redTextStyle}>(HRD 오류는 증빙서류명 작성 X)</span>
               </FormLabel>
             }
             rules={[
@@ -166,7 +164,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
           >
             <TextArea
               rows={1}
-              placeholder="ex) HRD 오류, 병가(질병/입원), 면접, 시험, 예비군"
+              placeholder="ex) HRD 오류, 면접, 시험, 질병, 예비군"
             />
           </Form.Item>
 
@@ -202,10 +200,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
               },
             ]}
           >
-            <TextArea
-              rows={1}
-              placeholder="불참하는 과정 교육내용을 입력해주세요."
-            />
+            <TextArea rows={1} />
           </Form.Item>
 
           <Form.Item
@@ -220,14 +215,14 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
               },
             ]}
           >
-            <TextArea rows={1} placeholder="학습 진행 계획을 입력해주세요." />
+            <TextArea rows={1} />
           </Form.Item>
 
           <Form.Item
             name="significant"
             label={<FormLabel icon={<FileTextOutlined />}>특이사항</FormLabel>}
           >
-            <TextArea rows={1} placeholder="특이사항을 입력해주세요." />
+            <TextArea rows={1} />
           </Form.Item>
         </>
       )}
