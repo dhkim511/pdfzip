@@ -91,7 +91,8 @@ export const createAndDownloadZip = async (
     }
 
     const result = await response.json();
-    for (const file of result.files) {
+
+    const filePromises = result.files.map(async (file: any) => {
       const fileResponse = await fetch(`${SERVER_URL}${file.path}`);
       if (!fileResponse.ok) {
         throw new Error(`File fetch error: ${fileResponse.status}`);
@@ -103,14 +104,16 @@ export const createAndDownloadZip = async (
         : getSuffix("출석대장", values.conversionType);
       const fileName = `${baseFileName}${suffix}.pdf`;
       zip.file(fileName, blob);
-    }
+    });
+
+    await Promise.all(filePromises); 
   } else {
-    for (const file of fileList) {
+    const fileProcessingPromises = fileList.map(async (file: File) => {
       const processedFile = await processFile(file, values);
 
       if (isAttendanceScreenshot(file.name)) {
         zip.file(file.name, processedFile.content);
-        continue;
+        return;
       }
 
       if (processedFile.needsConversion) {
@@ -151,7 +154,9 @@ export const createAndDownloadZip = async (
         const fileName = `${baseFileName}(${processedFile.documentName})${fileExtension}`;
         zip.file(fileName, processedFile.content);
       }
-    }
+    });
+
+    await Promise.all(fileProcessingPromises); 
   }
 
   const content = await zip.generateAsync({ type: "blob" });

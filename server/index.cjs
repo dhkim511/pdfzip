@@ -103,7 +103,7 @@ const fillAttendanceForm = async (values) => {
   const templatePath = path.join(
     __dirname,
     "templates",
-    "attendance_template.docx",
+    "attendance_template.docx"
   );
 
   if (!fs.existsSync(templatePath)) {
@@ -128,8 +128,8 @@ const fillAttendanceForm = async (values) => {
       values.conversionType === "vacation"
         ? "휴가"
         : values.conversionType === "officialLeave"
-          ? "공가"
-          : values.reason,
+        ? "공가"
+        : values.reason,
   };
 
   try {
@@ -143,7 +143,7 @@ const fillAttendanceForm = async (values) => {
   const outputPath = path.join(
     __dirname,
     "converted",
-    "filled_attendance.docx",
+    "filled_attendance.docx"
   );
 
   ensureDir(path.join(__dirname, "converted"));
@@ -166,7 +166,7 @@ const fillVacationForm = async (values) => {
   const templatePath = path.join(
     __dirname,
     "templates",
-    "vacation_template.docx",
+    "vacation_template.docx"
   );
 
   if (!fs.existsSync(templatePath)) {
@@ -198,7 +198,7 @@ const fillVacationForm = async (values) => {
   const outputPath = path.join(
     __dirname,
     "converted",
-    "filled_vacation_plan.docx",
+    "filled_vacation_plan.docx"
   );
 
   ensureDir(path.join(__dirname, "converted"));
@@ -217,7 +217,7 @@ const fillVacationForm = async (values) => {
   return outputPath;
 };
 
-app.post("/sign", upload.single("file"), (req, res) => {
+app.post("/sign", upload.single("file"), async (req, res) => {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
   }
@@ -226,23 +226,18 @@ app.post("/sign", upload.single("file"), (req, res) => {
   const fileName = "sign.png";
   const filePath = path.join(__dirname, uploadDir, fileName);
 
-  sharp(file.path)
-    .resize(520, 100)
-    .toFile(filePath, (err) => {
-      if (err) {
-        console.error("Error resizing signature file:", err);
-        return res.status(500).send("Error resizing signature file");
-      }
+  try {
+    await sharp(file.path).resize(520, 100).toFile(filePath);
 
-      console.log(
-        "Signature file resized and saved successfully at:",
-        filePath,
-      );
-      res.status(200).json({
-        message: "Signature file uploaded and resized successfully",
-        path: filePath,
-      });
+    console.log("Signature file resized and saved successfully at:", filePath);
+    res.status(200).json({
+      message: "Signature file uploaded and resized successfully",
+      path: filePath,
     });
+  } catch (err) {
+    console.error("Error resizing signature file:", err);
+    res.status(500).send("Error resizing signature file");
+  }
 });
 
 app.post("/convert", upload.single("file"), async (req, res) => {
@@ -268,76 +263,78 @@ app.post("/convert", upload.single("file"), async (req, res) => {
         const outputPath = path.join(
           __dirname,
           convertedDir,
-          `original${fileExtension}`,
+          `original${fileExtension}`
         );
         fs.copyFileSync(req.file.path, outputPath);
         filledDocPaths.push({ path: outputPath, type: "original" });
       }
     }
 
-    const processedFiles = [];
-    const credentials = new ServicePrincipalCredentials({
-      clientId: process.env.PDF_SERVICES_CLIENT_ID,
-      clientSecret: process.env.PDF_SERVICES_CLIENT_SECRET,
-      organizationId: process.env.PDF_SERVICES_ORG_ID,
-    });
-
-    const pdfServices = new PDFServices({ credentials });
-
-    for (const docInfo of filledDocPaths) {
-      if (
-        docInfo.type === "original" &&
-        path.extname(docInfo.path) === ".pdf"
-      ) {
-        processedFiles.push({
-          path: `/converted/${path.basename(docInfo.path)}`,
-          name: path.basename(docInfo.path),
+    const processedFiles = await Promise.all(
+      filledDocPaths.map(async (docInfo) => {
+        const credentials = new ServicePrincipalCredentials({
+          clientId: process.env.PDF_SERVICES_CLIENT_ID,
+          clientSecret: process.env.PDF_SERVICES_CLIENT_SECRET,
+          organizationId: process.env.PDF_SERVICES_ORG_ID,
         });
-        continue;
-      }
 
-      const inputAsset = await pdfServices.upload({
-        readStream: fs.createReadStream(docInfo.path),
-        mimeType: MimeType.DOCX,
-      });
+        const pdfServices = new PDFServices({ credentials });
 
-      const job = new CreatePDFJob({ inputAsset });
-      const pollingURL = await pdfServices.submit({ job });
-      const pdfServicesResponse = await pdfServices.getJobResult({
-        pollingURL,
-        resultType: CreatePDFResult,
-      });
+        if (
+          docInfo.type === "original" &&
+          path.extname(docInfo.path) === ".pdf"
+        ) {
+          return {
+            path: `/converted/${path.basename(docInfo.path)}`,
+            name: path.basename(docInfo.path),
+          };
+        }
 
-      const resultAsset = pdfServicesResponse.result.asset;
-      const streamAsset = await pdfServices.getContent({ asset: resultAsset });
+        const inputAsset = await pdfServices.upload({
+          readStream: fs.createReadStream(docInfo.path),
+          mimeType: MimeType.DOCX,
+        });
 
-      const outputFileName = `${path.basename(docInfo.path, ".docx")}.pdf`;
-      const finalOutputPath = path.join(
-        __dirname,
-        convertedDir,
-        outputFileName,
-      );
+        const job = new CreatePDFJob({ inputAsset });
+        const pollingURL = await pdfServices.submit({ job });
+        const pdfServicesResponse = await pdfServices.getJobResult({
+          pollingURL,
+          resultType: CreatePDFResult,
+        });
 
-      await new Promise((resolve, reject) => {
-        const outputStream = fs.createWriteStream(finalOutputPath);
-        streamAsset.readStream.pipe(outputStream);
-        outputStream.on("finish", resolve);
-        outputStream.on("error", reject);
-      });
+        const resultAsset = pdfServicesResponse.result.asset;
+        const streamAsset = await pdfServices.getContent({
+          asset: resultAsset,
+        });
 
-      let signedPdfPath = finalOutputPath;
-      if (docInfo.type === "attendance") {
-        signedPdfPath = await addSignatureToPDF(
-          finalOutputPath,
-          path.join(__dirname, uploadDir, "sign.png"),
+        const outputFileName = `${path.basename(docInfo.path, ".docx")}.pdf`;
+        const finalOutputPath = path.join(
+          __dirname,
+          convertedDir,
+          outputFileName
         );
-      }
 
-      processedFiles.push({
-        path: `/converted/${path.basename(signedPdfPath)}`,
-        name: path.basename(signedPdfPath),
-      });
-    }
+        await new Promise((resolve, reject) => {
+          const outputStream = fs.createWriteStream(finalOutputPath);
+          streamAsset.readStream.pipe(outputStream);
+          outputStream.on("finish", resolve);
+          outputStream.on("error", reject);
+        });
+
+        let signedPdfPath = finalOutputPath;
+        if (docInfo.type === "attendance") {
+          signedPdfPath = await addSignatureToPDF(
+            finalOutputPath,
+            path.join(__dirname, uploadDir, "sign.png")
+          );
+        }
+
+        return {
+          path: `/converted/${path.basename(signedPdfPath)}`,
+          name: path.basename(signedPdfPath),
+        };
+      })
+    );
 
     res.json({
       message: "Files processed successfully",
@@ -345,11 +342,13 @@ app.post("/convert", upload.single("file"), async (req, res) => {
     });
 
     setTimeout(async () => {
-      for (const docInfo of filledDocPaths) {
-        if (fs.existsSync(docInfo.path)) {
-          await fs.promises.unlink(docInfo.path).catch(() => {});
-        }
-      }
+      await Promise.all(
+        filledDocPaths.map(async (docInfo) => {
+          if (fs.existsSync(docInfo.path)) {
+            await fs.promises.unlink(docInfo.path).catch(() => {});
+          }
+        })
+      );
     }, 60000);
   } catch (error) {
     console.error("Conversion error:", error);
