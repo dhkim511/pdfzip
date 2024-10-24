@@ -15,6 +15,7 @@ export interface FormValues {
   courseContent?: string;
   studyPlan?: string;
   significant?: string;
+  proofDocumentName?: string;
 }
 
 export type FileChangeInfo = UploadChangeParam<UploadFile>;

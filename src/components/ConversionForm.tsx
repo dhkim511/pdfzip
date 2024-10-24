@@ -157,6 +157,21 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
               placeholder="ex) HRD 오류, 병가(질병/입원), 면접, 시험, 예비군"
             />
           </Form.Item>
+
+          <Form.Item
+            name="proofDocumentName"
+            label={
+              <FormLabel icon={<FileTextOutlined />}>증빙서류명</FormLabel>
+            }
+            rules={[
+              {
+                required: true,
+                message: "증빙서류명을 입력해주세요",
+              },
+            ]}
+          >
+            <Input placeholder="ex) 진료확인서, 예비군 필증" />
+          </Form.Item>
         </>
       )}
 
@@ -208,17 +223,17 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
 
       {isOfficialLeaveType && (
         <Form.Item
-          name="proofFileName"
+          name="proofDocumentName"
           label={<FormLabel icon={<FileTextOutlined />}>증빙서류명</FormLabel>}
           rules={[
             {
               required: true,
-              message: "증빙서류명을 입력해주세요.",
+              message: "증빙서류명을 입력해주세요",
             },
           ]}
           style={{ marginBottom: "74px" }}
         >
-          <Input placeholder="아직 못만들었음" />
+          <Input placeholder="ex) 진료확인서, 예비군 필증" />
         </Form.Item>
       )}
 

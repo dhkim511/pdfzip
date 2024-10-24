@@ -11,11 +11,14 @@ export const isAttendanceScreenshot = (fileName: string): boolean => {
 
 export const getSuffix = (
   fileName: string,
-  type: FormValues["conversionType"]
+  type: FormValues["conversionType"],
+  proofDocumentName?: string
 ): string => {
   if (type === "officialLeave") {
     if (fileName.includes("출석대장")) return "(출석대장)";
     if (isAttendanceScreenshot(fileName)) return "(증빙서류)";
+    // 증빙서류명이 있을 경우 사용
+    if (proofDocumentName) return `(${proofDocumentName})`;
     return "(증빙서류)";
   }
   if (type === "vacation") {
@@ -25,6 +28,8 @@ export const getSuffix = (
   if (type === "attendance") {
     if (fileName.includes("출석대장")) return "(출석대장)";
     if (isAttendanceScreenshot(fileName)) return "";
+    // 증빙서류명이 있을 경우 사용
+    if (proofDocumentName) return `(${proofDocumentName})`;
     return "(증빙서류)";
   }
   return "";

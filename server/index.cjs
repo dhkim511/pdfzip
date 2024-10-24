@@ -55,6 +55,36 @@ const formatVacationDate = (date) => {
   }월 ${dateObj.date()}일 (${weekDay})`;
 };
 
+const needsConversion = (file) => {
+  const fileExtension = path.extname(file.originalname).toLowerCase();
+  const isWord = [".doc", ".docx"].includes(fileExtension);
+  const isScreenshot =
+    (file.originalname.includes("오전") ||
+      file.originalname.includes("오후")) &&
+    (file.originalname.includes("10") ||
+      file.originalname.includes("2") ||
+      file.originalname.includes("7"));
+
+  // 스크린샷이나 PDF는 변환하지 않음
+  if (isScreenshot || fileExtension === ".pdf") {
+    return false;
+  }
+
+  // 워드 문서는 변환
+  if (isWord) {
+    return true;
+  }
+
+  // 이미지 파일은 변환하지 않음
+  const imageExtensions = [".jpg", ".jpeg", ".png", ".gif"];
+  if (imageExtensions.includes(fileExtension)) {
+    return false;
+  }
+
+  // 그 외의 경우 변환 (출석대장 등)
+  return true;
+};
+
 async function addSignatureToPDF(pdfPath, signaturePath) {
   const existingPdfBytes = fs.readFileSync(pdfPath);
   const pdfDoc = await PDFDocument.load(existingPdfBytes);
@@ -92,7 +122,12 @@ const fillAttendanceForm = async (values) => {
     name: values.name,
     checkInTime: values.checkInTime,
     checkOutTime: values.checkOutTime,
-    reason: values.conversionType === "vacation" ? "휴가" : values.reason,
+    reason:
+      values.conversionType === "vacation"
+        ? "휴가"
+        : values.conversionType === "officialLeave"
+        ? "공가"
+        : values.reason,
   };
 
   doc.setData(data);
@@ -197,8 +232,21 @@ app.post("/convert", upload.single("file"), async (req, res) => {
       });
       filledDocPaths.push({ path: attendanceFormPath, type: "attendance" });
     } else {
-      const filledDocPath = await fillAttendanceForm(req.body);
-      filledDocPaths.push({ path: filledDocPath, type: "attendance" });
+      // 파일이 변환이 필요한지 확인
+      if (req.file && needsConversion(req.file)) {
+        const filledDocPath = await fillAttendanceForm(req.body);
+        filledDocPaths.push({ path: filledDocPath, type: "attendance" });
+      } else if (req.file) {
+        // 변환이 필요없는 파일은 그대로 복사
+        const fileExtension = path.extname(req.file.originalname);
+        const outputPath = path.join(
+          __dirname,
+          convertedDir,
+          `original${fileExtension}`
+        );
+        fs.copyFileSync(req.file.path, outputPath);
+        filledDocPaths.push({ path: outputPath, type: "original" });
+      }
     }
 
     const processedFiles = [];
@@ -211,6 +259,18 @@ app.post("/convert", upload.single("file"), async (req, res) => {
     const pdfServices = new PDFServices({ credentials });
 
     for (const docInfo of filledDocPaths) {
+      if (
+        docInfo.type === "original" &&
+        path.extname(docInfo.path) === ".pdf"
+      ) {
+        // PDF 파일은 변환 없이 그대로 사용
+        processedFiles.push({
+          path: `/converted/${path.basename(docInfo.path)}`,
+          name: path.basename(docInfo.path),
+        });
+        continue;
+      }
+
       const inputAsset = await pdfServices.upload({
         readStream: fs.createReadStream(docInfo.path),
         mimeType: MimeType.DOCX,
