@@ -7,6 +7,7 @@ export const submitButton = css`
   color: ${colors.primary};
   border-color: ${colors.primary};
   border-radius: ${sizes.borderRadius.large};
+  margin-top: 20px;
 
   &:hover {
     color: ${colors.primaryHover};
@@ -65,8 +66,8 @@ export const labelText = {
   color: colors.text.primary,
 };
 
-export const redTextStyle = css`
-  font-size: ${fonts.size.small};
-  color: ${colors.primary};
+export const leftTextStyle = css`
+  color: ${colors.text.secondary};
   font-weight: ${fonts.weight.medium};
+  margin-left: 4px;
 `;

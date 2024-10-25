@@ -19,7 +19,7 @@ import {
   datePicker,
   flexLayout,
   halfWidth,
-  redTextStyle,
+  leftTextStyle,
 } from "../styles/index";
 import { getDateLabel } from "../utils/labelHandle";
 import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
@@ -152,7 +152,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
             label={
               <FormLabel icon={<FileTextOutlined />}>
                 사유{" "}
-                <span css={redTextStyle}>(HRD 오류는 증빙서류명 작성 X)</span>
+                <span css={leftTextStyle}>(HRD 오류는 증빙서류명 작성 X)</span>
               </FormLabel>
             }
             rules={[
@@ -173,7 +173,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
             label={
               <FormLabel icon={<FileTextOutlined />}>
                 증빙서류명{" "}
-                <span css={redTextStyle}>
+                <span css={leftTextStyle}>
                   (증빙서류는 이미지 파일 형식으로 첨부)
                 </span>
               </FormLabel>
@@ -233,7 +233,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
           label={
             <FormLabel icon={<FileTextOutlined />}>
               증빙서류명{" "}
-              <span css={redTextStyle}>
+              <span css={leftTextStyle}>
                 (증빙서류는 이미지 파일 형식으로 첨부)
               </span>
             </FormLabel>

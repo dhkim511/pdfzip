@@ -11,7 +11,7 @@ import { FileChangeInfo, ConversionType } from "../types/conversionType";
 import {
   flexLayout,
   halfWidth,
-  redTextStyle,
+  leftTextStyle,
   uploadButton,
   uploadList,
 } from "../styles/index";
@@ -43,8 +43,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           {mainLabel}
           <Text
             style={{
-              color: colors.primary,
-              fontSize: fonts.size.small,
+              color: colors.text.secondary,
               fontWeight: fonts.weight.medium,
             }}
           >
@@ -86,9 +85,10 @@ const FileUpload: React.FC<FileUploadProps> = ({
         label={
           <FormLabel icon={<EditOutlined />}>
             {" "}
-            서명 첨부 <span css={redTextStyle}>(sign.png)</span>
+            서명 첨부 <span css={leftTextStyle}>(sign.png)</span>
           </FormLabel>
         }
+        rules={[{ required: true, message: "파일을 첨부해주세요" }]}
         css={[halfWidth, flexLayout.flex1]}
       >
         <Upload
