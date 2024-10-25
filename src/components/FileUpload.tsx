@@ -86,7 +86,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         label={
           <FormLabel icon={<EditOutlined />}>
             {" "}
-            파일 선택 <span css={redTextStyle}>(sign.png)</span>
+            서명 첨부 <span css={redTextStyle}>(sign.png)</span>
           </FormLabel>
         }
         css={[halfWidth, flexLayout.flex1]}

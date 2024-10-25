@@ -126,7 +126,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
               ]}
               css={halfWidth}
             >
-              <Input />
+              <Input placeholder="ex) 10:00" />
             </Form.Item>
 
             <Form.Item
@@ -143,7 +143,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
               ]}
               css={halfWidth}
             >
-              <Input />
+              <Input placeholder="ex) 19:00" />
             </Form.Item>
           </div>
 
@@ -234,7 +234,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
             <FormLabel icon={<FileTextOutlined />}>
               증빙서류명{" "}
               <span css={redTextStyle}>
-                (증빙서류는 이미지 파일 형식으로 첨부해주세요.)
+                (증빙서류는 이미지 파일 형식으로 첨부)
               </span>
             </FormLabel>
           }
