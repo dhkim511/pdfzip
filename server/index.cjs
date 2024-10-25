@@ -46,10 +46,12 @@ const fileUtils = {
 };
 
 const formatDates = {
-  attendance: (date) => dayjs(date).format("YYMMDD"),
+  attendance: (date) => {
+    return dayjs(date).add(9, "hour").format("YYMMDD");
+  },
   vacation: (date) => {
     const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
-    const dateObj = dayjs(date);
+    const dateObj = dayjs(date).add(9, "hour");
     return `${dateObj.year()}년 ${dateObj.month() + 1}월 ${dateObj.date()}일 (${
       weekDays[dateObj.day()]
     })`;
