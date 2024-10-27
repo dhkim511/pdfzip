@@ -120,7 +120,7 @@ const GuideForm: React.FC = () => {
                 css={downloadButton}
                 icon={<NotificationOutlined />}
               >
-                행정 관련 공지
+                공지사항
               </Button>
 
               <Button
@@ -129,7 +129,7 @@ const GuideForm: React.FC = () => {
                 css={downloadButton}
                 icon={<SendOutlined />}
               >
-                제출 폼
+                제출하기
               </Button>
             </div>
           </Form.Item>
