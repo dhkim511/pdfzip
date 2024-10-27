@@ -62,6 +62,10 @@ export const flexLayout = {
     display: flex;
     justify-content: center;
   `,
+  spaceBetween: css`
+    display: flex;
+    justify-content: space-between;
+  `,
   end: css`
     display: flex;
     justify-content: flex-end;

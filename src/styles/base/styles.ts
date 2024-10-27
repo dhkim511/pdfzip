@@ -38,12 +38,7 @@ export const datePicker = css`
 `;
 
 export const link = css`
-  margin-left: 20px;
-  color: ${colors.primary};
-
-  &:hover {
-    color: ${colors.primaryHover};
-  }
+  margin-left: 19px;
 `;
 
 export const signatureCanvas = {
@@ -65,3 +60,6 @@ export const labelText = {
   color: colors.text.primary,
 };
 
+export const typographyTextStyle = css`
+  color: ${colors.text.primary};
+`;

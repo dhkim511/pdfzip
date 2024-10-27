@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import React, { useRef } from "react";
-import { Form, Button, Typography, Space } from "antd";
+import { Form, Button, Typography, Space, Alert } from "antd";
 import {
   DownloadOutlined,
   CloudDownloadOutlined,
@@ -16,6 +16,7 @@ import {
   flexLayout,
   spacing,
   signatureCanvas,
+  typographyTextStyle,
   fullWidth,
 } from "../styles/index";
 import {
@@ -62,7 +63,7 @@ const GuideForm: React.FC = () => {
 
         <Form.Item
           label={<FormLabel icon={<EditOutlined />}>서명</FormLabel>}
-          css={spacing.margin.bottom.md}
+          css={spacing.margin.bottom.lg}
         >
           <Space direction="vertical" size="middle" css={fullWidth}>
             <div css={flexLayout.center}>
@@ -92,26 +93,48 @@ const GuideForm: React.FC = () => {
           </Space>
         </Form.Item>
 
-        <Form.Item
-          label={
-            <FormLabel icon={<NotificationOutlined />}>
-              행정 관련 공지
-            </FormLabel>
-          }
-          // css={spacing.margin.bottom.md}
-        >
-          <Link href={NOTICELINK} target="_blank" css={link}>
-            공지사항 바로가기
-          </Link>
-        </Form.Item>
+        <div css={[flexLayout.spaceBetween, spacing.margin.bottom.al]}>
+          <Form.Item
+            label={
+              <FormLabel icon={<NotificationOutlined />}>
+                행정 관련 공지
+              </FormLabel>
+            }
+            style={{ flex: 1 }}
+          >
+            <Link href={NOTICELINK} target="_blank" css={link}>
+              공지사항 바로가기
+            </Link>
+          </Form.Item>
 
-        <Form.Item
-          label={<FormLabel icon={<SendOutlined />}>제출 폼 링크</FormLabel>}
-        >
-          <Link href={FORMLINK} target="_blank" css={link}>
-            제출하러 가기
-          </Link>
-        </Form.Item>
+          <Form.Item
+            label={<FormLabel icon={<SendOutlined />}>제출 폼 링크</FormLabel>}
+            style={{ flex: 1 }}
+          >
+            <Link href={FORMLINK} target="_blank" css={link}>
+              제출하러 가기
+            </Link>
+          </Form.Item>
+        </div>
+        <Alert
+          description={
+            <>
+              <Typography.Text css={typographyTextStyle}>
+                1. HRD 관련 오류는 증빙서류명 작성 생략
+              </Typography.Text>
+              <br />
+              <Typography.Text css={typographyTextStyle}>
+                2. 증빙서류는 이미지 파일 형식으로 첨부
+              </Typography.Text>
+              <br />
+              <Typography.Text css={typographyTextStyle}>
+                3. 서명 이미지는 'sign.png'로 첨부
+              </Typography.Text>
+            </>
+          }
+          type="warning"
+          showIcon
+        />
       </div>
     </Form>
   );
