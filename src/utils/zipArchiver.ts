@@ -1,30 +1,45 @@
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { FormValues } from "../types/conversionType";
-import { formatDate, getSuffix, getTypeSuffix } from "./fileNameHandle";
+import { formatDate, getSuffix, getTypeSuffix, isAttendanceScreenshot } from "./fileNameHandle";
 import { processFile } from "./fileProcessor";
 import {
   convertVacationFiles,
   convertFile,
   fetchConvertedFile,
 } from "../api/fileConversion";
-import { isAttendanceScreenshot } from "./fileNameHandle";
+
+interface ConvertedFile {
+  content: Blob | ArrayBuffer | string;
+  path: string;
+  name: string;
+}
 
 const createBaseFileName = (values: FormValues) =>
   `${formatDate(values.date)}_데브캠프_프론트엔드 개발 4회차_${values.name}`;
+
+const addFileToZip = async (
+  zip: JSZip,
+  baseFileName: string,
+  file: ConvertedFile,
+  suffix: string,
+  isBlob: boolean = true
+) => {
+  const blob = isBlob ? await fetchConvertedFile(file.path) : file.content;
+  const fileName = `${baseFileName}${suffix}.pdf`;
+  zip.file(fileName, blob);
+};
 
 const processVacationFiles = async (zip: JSZip, values: FormValues) => {
   const result = await convertVacationFiles(values);
   const baseFileName = createBaseFileName(values);
 
   await Promise.all(
-    result.files.map(async (file: any) => {
-      const blob = await fetchConvertedFile(file.path);
+    result.files.map(async (file: ConvertedFile) => {
       const suffix = file.name.includes("vacation")
         ? getSuffix("휴가 사용 계획서", values.conversionType)
         : getSuffix("출석대장", values.conversionType);
-      const fileName = `${baseFileName}${suffix}.pdf`;
-      zip.file(fileName, blob);
+      await addFileToZip(zip, baseFileName, file, suffix);
     })
   );
 };
@@ -46,9 +61,8 @@ const processRegularFiles = async (
 
       if (processedFile.needsConversion) {
         const result = await convertFile(file, values);
-        const blob = await fetchConvertedFile(result.files[0].path);
-        const fileName = `${baseFileName}(${processedFile.documentName}).pdf`;
-        zip.file(fileName, blob);
+        const suffix = `(${processedFile.documentName})`;
+        await addFileToZip(zip, baseFileName, result.files[0], suffix);
       } else {
         const fileExtension = file.name.slice(file.name.lastIndexOf("."));
         const fileName = `${baseFileName}(${processedFile.documentName})${fileExtension}`;
@@ -73,6 +87,6 @@ export const createAndDownloadZip = async (
   const content = await zip.generateAsync({ type: "blob" });
   const typeSuffix = getTypeSuffix(values.conversionType);
   const zipFileName = `${createBaseFileName(values)}${typeSuffix}.zip`;
-  
+
   saveAs(content, zipFileName);
 };

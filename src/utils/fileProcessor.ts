@@ -16,51 +16,42 @@ const getFileType = (fileName: string) => {
   };
 };
 
+const createProcessedFile = async (
+  file: File,
+  needsConversion: boolean,
+  documentName: string,
+  isArrayBuffer: boolean = false
+): Promise<ProcessedFile> => {
+  const content = isArrayBuffer ? await file.arrayBuffer() : file;
+  return { content, needsConversion, documentName };
+};
+
 export const processFile = async (
   file: File,
   values: FormValues,
 ): Promise<ProcessedFile> => {
   const { isImage, isPDF, isWord } = getFileType(file.name);
+  const isAttendance = isAttendanceScreenshot(file.name);
+  const isAttendanceDocument = file.name.includes("출석대장");
 
-  if (isAttendanceScreenshot(file.name)) {
-    return {
-      content: await file.arrayBuffer(),
-      needsConversion: false,
-      documentName: "",
-    };
+  if (isAttendance) {
+    return createProcessedFile(file, false, "", true);
   }
 
-  if (file.name.includes("출석대장")) {
-    return {
-      content: file,
-      needsConversion: true,
-      documentName: "출석대장",
-    };
+  if (isAttendanceDocument) {
+    return createProcessedFile(file, true, "출석대장");
   }
 
-  const isProofDocument =
-    !file.name.includes("출석대장") && !isAttendanceScreenshot(file.name);
-  
+  const isProofDocument = !isAttendanceDocument && !isAttendance;
+
   if (isProofDocument && values.proofDocumentName) {
     if (isImage || isPDF) {
-      return {
-        content: await file.arrayBuffer(),
-        needsConversion: false,
-        documentName: values.proofDocumentName,
-      };
+      return createProcessedFile(file, false, values.proofDocumentName, true);
     }
     if (isWord) {
-      return {
-        content: file,
-        needsConversion: true,
-        documentName: values.proofDocumentName,
-      };
+      return createProcessedFile(file, true, values.proofDocumentName);
     }
   }
 
-  return {
-    content: file,
-    needsConversion: true,
-    documentName: values.proofDocumentName || "증빙서류",
-  };
+  return createProcessedFile(file, true, values.proofDocumentName || "증빙서류");
 };

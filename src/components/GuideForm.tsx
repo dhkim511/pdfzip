@@ -18,11 +18,11 @@ import {
   signatureCanvas,
   fullWidth,
 } from "../styles/index";
-import { handleDownload } from "../utils/fileDownload";
 import {
   handleSignatureClear,
   handleSignatureDownload,
-} from "../utils/signatureHandle";
+  handleDownload,
+} from "../utils/fileUtils";
 import { FormLabel } from "./Label";
 import { DOCS, FORMLINK, NOTICELINK } from "../constants/resources";
 

@@ -9,6 +9,12 @@ export const isAttendanceScreenshot = (fileName: string): boolean => {
   );
 };
 
+const getProofDocumentSuffix = (fileName: string, proofDocumentName?: string): string => {
+  if (fileName.includes("출석대장")) return "(출석대장)";
+  if (proofDocumentName) return `(${proofDocumentName})`;
+  return "(증빙서류)";
+};
+
 export const getSuffix = (
   fileName: string,
   type: FormValues["conversionType"],
@@ -18,21 +24,17 @@ export const getSuffix = (
     return "";
   }
 
-  if (type === "officialLeave") {
-    if (fileName.includes("출석대장")) return "(출석대장)";
-    if (proofDocumentName) return `(${proofDocumentName})`;
-    return "(증빙서류)";
+  switch (type) {
+    case "officialLeave":
+      return getProofDocumentSuffix(fileName, proofDocumentName);
+    case "vacation":
+      if (fileName.includes("휴가 사용 계획서")) return "(휴가계획서)";
+      return getProofDocumentSuffix(fileName);
+    case "attendance":
+      return getProofDocumentSuffix(fileName, proofDocumentName);
+    default:
+      return "";
   }
-  if (type === "vacation") {
-    if (fileName.includes("출석대장")) return "(출석대장)";
-    if (fileName.includes("휴가 사용 계획서")) return "(휴가계획서)";
-  }
-  if (type === "attendance") {
-    if (fileName.includes("출석대장")) return "(출석대장)";
-    if (proofDocumentName) return `(${proofDocumentName})`;
-    return "(증빙서류)";
-  }
-  return "";
 };
 
 export const getTypeSuffix = (type: FormValues["conversionType"]): string => {
