@@ -6,7 +6,7 @@ import { UploadFile } from "antd/es/upload/interface";
 import { FileChangeInfo, ConversionType } from "../types/conversionType";
 import {
   flexLayout,
-  halfWidth,
+  fullWidth,
   uploadButton,
   uploadList,
 } from "../styles/index";
@@ -36,7 +36,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
           {mainLabel}
           <Text
             style={{
-              color: colors.text.secondary,
+              color: colors.primary,
+              fontSize: fonts.size.small,
               fontWeight: fonts.weight.medium,
             }}
           >
@@ -58,7 +59,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           </FormLabel>
         }
         rules={[{ required: true, message: "파일을 첨부해주세요" }]}
-        css={[halfWidth, flexLayout.flex1]}
+        css={[fullWidth]}
       >
         <Upload
           beforeUpload={() => false}

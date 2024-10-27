@@ -15,20 +15,19 @@ export const formContainer = css`
   width: 100%;
   max-width: ${sizes.width.maxContent};
   border-radius: ${sizes.borderRadius.large};
-  gap: 20px;
+  gap: 16px;
 `;
 
 export const leftContainer = css`
-  width: 42%;
+  width: 45%; 
   display: flex;
   flex-direction: column;
 `;
 
 export const rightContainer = css`
-  width: 58%;
+  width: 55%; 
   display: flex;
   flex-direction: column;
-  gap: 20px;
 `;
 
 export const baseSection = css`

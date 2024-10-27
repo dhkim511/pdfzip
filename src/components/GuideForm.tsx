@@ -41,7 +41,6 @@ const GuideForm: React.FC = () => {
               문서 다운로드
             </FormLabel>
           }
-          css={spacing.margin.bottom.lg}
         >
           <div css={downloadButtonGroup}>
             <Button
@@ -63,14 +62,14 @@ const GuideForm: React.FC = () => {
 
         <Form.Item
           label={<FormLabel icon={<EditOutlined />}>서명</FormLabel>}
-          css={spacing.margin.bottom.lg}
+          css={spacing.margin.bottom.md}
         >
           <Space direction="vertical" size="middle" css={fullWidth}>
             <div css={flexLayout.center}>
               <SignatureCanvas
                 ref={signatureRef}
                 canvasProps={{
-                  width: 500,
+                  width: 540,
                   height: 200,
                   className: "signature-canvas",
                   style: signatureCanvas,
@@ -99,7 +98,7 @@ const GuideForm: React.FC = () => {
               행정 관련 공지
             </FormLabel>
           }
-          css={spacing.margin.bottom.md}
+          // css={spacing.margin.bottom.md}
         >
           <Link href={NOTICELINK} target="_blank" css={link}>
             공지사항 바로가기

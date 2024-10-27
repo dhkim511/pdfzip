@@ -19,7 +19,6 @@ import {
   datePicker,
   flexLayout,
   halfWidth,
-  leftTextStyle,
 } from "../styles/index";
 import { getDateLabel } from "../utils/labelHandle";
 import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
@@ -86,7 +85,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
           isOfficialLeaveType ? { marginTop: "60px", marginBottom: "74px" } : {}
         }
       >
-        <Input />
+        <Input placeholder="이름 입력" />
       </Form.Item>
 
       <Form.Item
@@ -147,12 +146,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
 
           <Form.Item
             name="reason"
-            label={
-              <FormLabel icon={<FileTextOutlined />}>
-                사유{" "}
-                <span css={leftTextStyle}>(HRD 오류는 증빙서류명 작성 X)</span>
-              </FormLabel>
-            }
+            label={<FormLabel icon={<FileTextOutlined />}>사유</FormLabel>}
             rules={[
               {
                 required: true,
@@ -162,22 +156,17 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
           >
             <TextArea
               rows={1}
-              placeholder="ex) HRD 오류, 면접, 시험, 질병, 예비군"
+              placeholder="ex) HRD 오류, 면접, 시험, 질병, 예비군 ..."
             />
           </Form.Item>
 
           <Form.Item
             name="proofDocumentName"
             label={
-              <FormLabel icon={<FileTextOutlined />}>
-                증빙서류명{" "}
-                <span css={leftTextStyle}>
-                  (증빙서류는 이미지 파일 형식으로 첨부)
-                </span>
-              </FormLabel>
+              <FormLabel icon={<FileTextOutlined />}>증빙서류명</FormLabel>
             }
           >
-            <Input placeholder="ex) 진료확인서, 예비군 필증" />
+            <Input placeholder="ex) 진료확인서, 면접확인서, 예비군 필증..." />
           </Form.Item>
         </>
       )}
@@ -198,7 +187,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
               },
             ]}
           >
-            <TextArea rows={1} />
+            <TextArea rows={1} placeholder="내용 작성" />
           </Form.Item>
 
           <Form.Item
@@ -213,14 +202,14 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
               },
             ]}
           >
-            <TextArea rows={1} />
+            <TextArea rows={1} placeholder="자세히 작성" />
           </Form.Item>
 
           <Form.Item
             name="significant"
             label={<FormLabel icon={<FileTextOutlined />}>특이사항</FormLabel>}
           >
-            <TextArea rows={1} />
+            <TextArea rows={1} placeholder="없을 시 생략 가능" />
           </Form.Item>
         </>
       )}
@@ -228,14 +217,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
       {isOfficialLeaveType && (
         <Form.Item
           name="proofDocumentName"
-          label={
-            <FormLabel icon={<FileTextOutlined />}>
-              증빙서류명{" "}
-              <span css={leftTextStyle}>
-                (증빙서류는 이미지 파일 형식으로 첨부)
-              </span>
-            </FormLabel>
-          }
+          label={<FormLabel icon={<FileTextOutlined />}>증빙서류명</FormLabel>}
           rules={[
             {
               required: true,
@@ -244,7 +226,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
           ]}
           style={{ marginBottom: "74px" }}
         >
-          <Input placeholder="ex) 진료확인서, 예비군 필증" />
+          <Input placeholder="ex) 진료확인서, 면접확인서, 예비군 필증..." />
         </Form.Item>
       )}
 
