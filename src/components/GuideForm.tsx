@@ -7,6 +7,7 @@ import {
   EditOutlined,
   SendOutlined,
   NotificationOutlined,
+  LinkOutlined,
 } from "@ant-design/icons";
 import SignatureCanvas from "react-signature-canvas";
 import {
@@ -110,7 +111,7 @@ const GuideForm: React.FC = () => {
 
         <div css={flexLayout.flex00Auto}>
           <Form.Item
-            label={<FormLabel icon={<NotificationOutlined />}>링크</FormLabel>}
+            label={<FormLabel icon={<LinkOutlined />}>링크</FormLabel>}
           >
             <div css={buttonGroup}>
               <Button
