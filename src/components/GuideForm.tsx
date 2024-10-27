@@ -11,8 +11,7 @@ import {
 import SignatureCanvas from "react-signature-canvas";
 import {
   downloadButton,
-  downloadButtonGroup,
-  link,
+  buttonGroup,
   flexLayout,
   spacing,
   signatureCanvas,
@@ -26,8 +25,6 @@ import {
 } from "../utils/fileUtils";
 import { FormLabel } from "./Label";
 import { DOCS, FORMLINK, NOTICELINK } from "../constants/resources";
-
-const { Link } = Typography;
 
 const GuideForm: React.FC = () => {
   const [form] = Form.useForm();
@@ -43,7 +40,7 @@ const GuideForm: React.FC = () => {
             </FormLabel>
           }
         >
-          <div css={downloadButtonGroup}>
+          <div css={buttonGroup}>
             <Button
               icon={<DownloadOutlined />}
               onClick={() => handleDownload(DOCS[0])}
@@ -61,10 +58,7 @@ const GuideForm: React.FC = () => {
           </div>
         </Form.Item>
 
-        <Form.Item
-          label={<FormLabel icon={<EditOutlined />}>서명</FormLabel>}
-          css={spacing.margin.bottom.lg}
-        >
+        <Form.Item label={<FormLabel icon={<EditOutlined />}>서명</FormLabel>}>
           <Space direction="vertical" size="middle" css={fullWidth}>
             <div css={flexLayout.center}>
               <SignatureCanvas
@@ -93,29 +87,6 @@ const GuideForm: React.FC = () => {
           </Space>
         </Form.Item>
 
-        <div css={[flexLayout.spaceBetween, spacing.margin.bottom.al]}>
-          <Form.Item
-            label={
-              <FormLabel icon={<NotificationOutlined />}>
-                행정 관련 공지
-              </FormLabel>
-            }
-            style={{ flex: 1 }}
-          >
-            <Link href={NOTICELINK} target="_blank" css={link}>
-              공지사항 바로가기
-            </Link>
-          </Form.Item>
-
-          <Form.Item
-            label={<FormLabel icon={<SendOutlined />}>제출 폼 링크</FormLabel>}
-            style={{ flex: 1 }}
-          >
-            <Link href={FORMLINK} target="_blank" css={link}>
-              제출하러 가기
-            </Link>
-          </Form.Item>
-        </div>
         <Alert
           description={
             <>
@@ -134,7 +105,34 @@ const GuideForm: React.FC = () => {
           }
           type="warning"
           showIcon
+          css={spacing.margin.bottom.lg}
         />
+
+        <div css={flexLayout.flex00Auto}>
+          <Form.Item
+            label={<FormLabel icon={<NotificationOutlined />}>링크</FormLabel>}
+          >
+            <div css={buttonGroup}>
+              <Button
+                href={NOTICELINK}
+                target="_blank"
+                css={downloadButton}
+                icon={<NotificationOutlined />}
+              >
+                행정 관련 공지
+              </Button>
+
+              <Button
+                href={FORMLINK}
+                target="_blank"
+                css={downloadButton}
+                icon={<SendOutlined />}
+              >
+                제출 폼
+              </Button>
+            </div>
+          </Form.Item>
+        </div>
       </div>
     </Form>
   );

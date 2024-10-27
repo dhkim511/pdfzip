@@ -20,7 +20,7 @@ export const uploadButton = css`
   border-radius: ${sizes.borderRadius.small};
 `;
 
-export const downloadButtonGroup = css`
+export const buttonGroup = css`
   display: flex;
   justify-content: space-between;
   width: 100%;
