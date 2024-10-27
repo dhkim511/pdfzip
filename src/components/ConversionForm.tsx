@@ -33,7 +33,6 @@ interface ConversionFormProps {
   onFinish: (values: FormValues) => void;
   fileList: FormValues["files"];
   handleFileChange: (info: FileChangeInfo) => void;
-  handleSignFileChange: (info: FileChangeInfo) => void;
   isLoading: boolean;
 }
 
@@ -42,7 +41,6 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
   onFinish,
   fileList,
   handleFileChange,
-  handleSignFileChange,
   isLoading,
 }) => {
   const conversionType = Form.useWatch("conversionType", form);
@@ -253,7 +251,6 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
       <FileUpload
         fileList={fileList}
         handleFileChange={handleFileChange}
-        handleSignFileChange={handleSignFileChange}
         conversionType={conversionType as ConversionType}
       />
 

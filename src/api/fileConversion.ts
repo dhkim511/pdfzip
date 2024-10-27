@@ -45,6 +45,22 @@ export const convertFile = async (file: File, values: FormValues) => {
   return await response.json();
 };
 
+export const uploadSignFile = async (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch(`${SERVER_URL}/sign`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error("서명 파일 업로드 실패");
+  }
+
+  return await response.json();
+};
+
 export const fetchConvertedFile = async (filePath: string) => {
   const response = await fetch(`${SERVER_URL}${filePath}`);
   if (!response.ok) {

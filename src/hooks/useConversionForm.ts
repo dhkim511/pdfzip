@@ -9,11 +9,10 @@ import { SERVER_URL } from "../constants/environmentConfig";
 export const useConversionForm = () => {
   const [form] = Form.useForm<FormValues>();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [signFile, setSignFile] = useState<UploadFile | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const onFinish = async (values: FormValues) => {
-    if (fileList.length === 0 && !signFile) {
+    if (fileList.length === 0) {
       message.error(FEEDBACK_MESSAGES.ERRORS.NO_FILE);
       return;
     }
@@ -28,9 +27,13 @@ export const useConversionForm = () => {
 
     setIsLoading(true);
     try {
-      if (signFile && signFile.originFileObj) {
+      const signFile = files.find((file) =>
+        file.name.toLowerCase().includes("sign")
+      );
+
+      if (signFile) {
         const signFormData = new FormData();
-        signFormData.append("file", signFile.originFileObj);
+        signFormData.append("file", signFile);
 
         const signResponse = await fetch(`${SERVER_URL}/sign`, {
           method: "POST",
@@ -42,11 +45,15 @@ export const useConversionForm = () => {
         }
       }
 
-      await createAndDownloadZip(values, files);
+      const otherFiles = files.filter(
+        (file) => !file.name.toLowerCase().includes("sign")
+      );
+
+      await createAndDownloadZip(values, otherFiles);
     } catch (error) {
       const errorMessage = (error as Error).message;
       message.error(
-        `${FEEDBACK_MESSAGES.ERRORS.GENERAL_ERROR} - ${errorMessage}`,
+        `${FEEDBACK_MESSAGES.ERRORS.GENERAL_ERROR} - ${errorMessage}`
       );
     } finally {
       setIsLoading(false);
@@ -57,17 +64,11 @@ export const useConversionForm = () => {
     setFileList([...info.fileList]);
   };
 
-  const handleSignFileChange = (info: FileChangeInfo) => {
-    setSignFile(info.fileList[0] || null);
-  };
-
   return {
     form,
     fileList,
-    signFile,
     isLoading,
     onFinish,
     handleFileChange,
-    handleSignFileChange,
   };
 };

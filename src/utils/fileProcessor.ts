@@ -1,4 +1,5 @@
 import { FormValues } from "../types/conversionType";
+import { uploadSignFile } from "../api/fileConversion";
 import { isAttendanceScreenshot } from "./fileNameHandle";
 
 interface ProcessedFile {
@@ -28,11 +29,16 @@ const createProcessedFile = async (
 
 export const processFile = async (
   file: File,
-  values: FormValues,
-): Promise<ProcessedFile> => {
+  values: FormValues
+): Promise<ProcessedFile | null> => {
   const { isImage, isPDF, isWord } = getFileType(file.name);
   const isAttendance = isAttendanceScreenshot(file.name);
   const isAttendanceDocument = file.name.includes("출석대장");
+
+  if (file.name.toLowerCase().includes("sign")) {
+    await uploadSignFile(file);
+    return null; 
+  }
 
   if (isAttendance) {
     return createProcessedFile(file, false, "", true);

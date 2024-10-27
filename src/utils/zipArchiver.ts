@@ -52,6 +52,10 @@ const processRegularFiles = async (
   await Promise.all(
     fileList.map(async (file: File) => {
       const processedFile = await processFile(file, values);
+      if (!processedFile) {
+        return;
+      }
+
       const baseFileName = createBaseFileName(values);
 
       if (isAttendanceScreenshot(file.name)) {

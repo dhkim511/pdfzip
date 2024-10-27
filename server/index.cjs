@@ -326,14 +326,21 @@ app.post("/convert", upload.single("file"), async (req, res) => {
           type: "attendance",
         });
       } else {
+        const originalFileName = `original_${Date.now()}${path.extname(
+          req.file.originalname
+        )}`;
         const outputPath = path.join(
           __dirname,
           DIRS.converted,
-          `original${path.extname(req.file.originalname)}`
+          originalFileName
         );
         fs.copyFileSync(req.file.path, outputPath);
         filledDocPaths.push({ path: outputPath, type: "original" });
       }
+    }
+
+    if (filledDocPaths.length === 0) {
+      return res.status(400).send("No files to process.");
     }
 
     const credentials = new ServicePrincipalCredentials({

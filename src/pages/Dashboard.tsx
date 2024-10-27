@@ -15,14 +15,8 @@ import {
 } from "../styles/index";
 
 const Dashboard: React.FC = () => {
-  const {
-    form,
-    fileList,
-    isLoading,
-    onFinish,
-    handleFileChange,
-    handleSignFileChange,
-  } = useConversionForm();
+  const { form, fileList, isLoading, onFinish, handleFileChange } =
+    useConversionForm();
 
   return (
     <div css={appContainer}>
@@ -40,7 +34,6 @@ const Dashboard: React.FC = () => {
                 onFinish={onFinish}
                 fileList={fileList}
                 handleFileChange={handleFileChange}
-                handleSignFileChange={handleSignFileChange}
                 isLoading={isLoading}
               />
             </Spin>

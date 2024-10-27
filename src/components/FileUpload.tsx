@@ -1,17 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
 import { Form, Upload, Button, Typography } from "antd";
-import {
-  UploadOutlined,
-  FileAddOutlined,
-  EditOutlined,
-} from "@ant-design/icons";
+import { UploadOutlined, FileAddOutlined } from "@ant-design/icons";
 import { UploadFile } from "antd/es/upload/interface";
 import { FileChangeInfo, ConversionType } from "../types/conversionType";
 import {
   flexLayout,
   halfWidth,
-  leftTextStyle,
   uploadButton,
   uploadList,
 } from "../styles/index";
@@ -24,14 +19,12 @@ const { Text } = Typography;
 interface FileUploadProps {
   fileList: UploadFile[];
   handleFileChange: (info: FileChangeInfo) => void;
-  handleSignFileChange: (info: FileChangeInfo) => void;
   conversionType: ConversionType;
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({
   fileList,
   handleFileChange,
-  handleSignFileChange,
   conversionType,
 }) => {
   const renderFileLabel = (conversionType: ConversionType) => {
@@ -48,7 +41,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
             }}
           >
             ({highlightedText}
-          </Text>{" "}
+          </Text>
         </>
       );
     }
@@ -72,30 +65,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
           onChange={handleFileChange}
           multiple
           fileList={fileList}
-          listType="picture"
-          css={uploadList}
-        >
-          <Button icon={<UploadOutlined />} css={uploadButton}>
-            파일 선택
-          </Button>
-        </Upload>
-      </Form.Item>
-      <Form.Item
-        name="signFile"
-        label={
-          <FormLabel icon={<EditOutlined />}>
-            {" "}
-            서명 첨부 <span css={leftTextStyle}>(sign.png)</span>
-          </FormLabel>
-        }
-        rules={[{ required: true, message: "파일을 첨부해주세요" }]}
-        css={[halfWidth, flexLayout.flex1]}
-      >
-        <Upload
-          beforeUpload={() => false}
-          onChange={handleSignFileChange}
-          accept=".png"
-          maxCount={1}
           listType="picture"
           css={uploadList}
         >
