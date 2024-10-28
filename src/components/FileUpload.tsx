@@ -36,9 +36,9 @@ const FileUpload: React.FC<FileUploadProps> = ({
           {mainLabel}
           <Text
             style={{
-              color: colors.primary,
-              fontSize: fonts.size.small,
-              fontWeight: fonts.weight.medium,
+              color: colors.text.primary,
+              fontSize: 14,
+              fontWeight: fonts.weight.normal,
             }}
           >
             ({highlightedText}

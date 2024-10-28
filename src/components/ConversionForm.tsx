@@ -237,7 +237,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
           css={submitButton}
           disabled={isLoading}
         >
-          변환 & 압축
+          실행
         </Button>
       </Form.Item>
     </Form>

@@ -5,6 +5,7 @@ import {
   DownloadOutlined,
   CloudDownloadOutlined,
   EditOutlined,
+  RedoOutlined,
   SendOutlined,
   NotificationOutlined,
   LinkOutlined,
@@ -75,13 +76,16 @@ const GuideForm: React.FC = () => {
             <div css={flexLayout.end}>
               <Space>
                 <Button
+                  icon={<RedoOutlined />}
+                  onClick={() => handleSignatureClear(signatureRef)}
+                >
+                  초기화
+                </Button>
+                <Button
                   icon={<DownloadOutlined />}
                   onClick={() => handleSignatureDownload(signatureRef)}
                 >
                   서명 다운로드
-                </Button>
-                <Button onClick={() => handleSignatureClear(signatureRef)}>
-                  지우기
                 </Button>
               </Space>
             </div>
