@@ -29,8 +29,10 @@ export const buttonGroup = css`
 
 export const downloadButton = css`
   width: 49%;
-  height: ${sizes.height.control};
+  height: auto;
+  min-height: ${sizes.height.control};
   border-radius: ${sizes.borderRadius.small};
+  white-space: normal;
 `;
 
 export const datePicker = css`
@@ -44,8 +46,9 @@ export const link = css`
 export const signatureCanvas = {
   border: `1px solid ${colors.border}`,
   borderRadius: sizes.borderRadius.small,
+  width: '100%',
+  maxWidth: '100%'
 };
-
 export const uploadList = css`
   .ant-upload-list-item {
     max-width: 100%;

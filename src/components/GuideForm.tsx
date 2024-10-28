@@ -73,8 +73,8 @@ const GuideForm: React.FC = () => {
                 }}
               />
             </div>
-            <div css={flexLayout.end}>
-              <Space>
+            <div css={[flexLayout.end, fullWidth]}>
+              <Space wrap>
                 <Button
                   icon={<RedoOutlined />}
                   onClick={() => handleSignatureClear(signatureRef)}
