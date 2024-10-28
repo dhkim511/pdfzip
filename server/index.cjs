@@ -31,7 +31,20 @@ const fileUtils = {
 
   needsConversion: (file) => {
     const fileExtension = path.extname(file.originalname).toLowerCase();
-    const isWord = [".doc", ".docx"].includes(fileExtension);
+    const mimeType = file.mimetype.toLowerCase();
+
+    const isImage =
+      ["image/jpeg", "image/jpg", "image/png"].includes(mimeType) ||
+      [".jpg", ".jpeg", ".png"].includes(fileExtension);
+
+    const isWord =
+      [".doc", ".docx"].includes(fileExtension) ||
+      mimeType === "application/msword" ||
+      mimeType ===
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
+    const isPDF = fileExtension === ".pdf" || mimeType === "application/pdf";
+
     const isScreenshot =
       (file.originalname.includes("오전") ||
         file.originalname.includes("오후")) &&
@@ -39,9 +52,10 @@ const fileUtils = {
         file.originalname.includes("2") ||
         file.originalname.includes("7"));
 
-    if (isScreenshot || fileExtension === ".pdf") return false;
+    if (isScreenshot || isPDF) return false;
     if (isWord) return true;
-    return ![".jpg", ".jpeg", ".png"].includes(fileExtension);
+    if (isImage) return false;
+    return true;
   },
 };
 
