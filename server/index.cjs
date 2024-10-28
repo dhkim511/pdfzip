@@ -51,11 +51,6 @@ const fileUtils = {
       return false;
     }
 
-    const wordExtensions = [".doc", ".docx"];
-    if (wordExtensions.includes(fileExtension)) {
-      return true;
-    }
-
     return true;
   },
 };

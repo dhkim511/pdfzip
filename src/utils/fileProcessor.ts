@@ -6,10 +6,11 @@ interface ProcessedFile {
   content: ArrayBuffer | File;
   needsConversion: boolean;
   documentName: string;
+  isAttendanceLog?: boolean;  
 }
 
 const getFileType = (fileName: string) => {
-  const fileExtension = fileName.toLowerCase().split(".").pop() || "";
+  const fileExtension = fileName.split(".").pop()?.toLowerCase() || "";
   return {
     isImage: ["jpg", "jpeg", "png"].includes(fileExtension),
     isPDF: fileExtension === "pdf",
@@ -21,10 +22,11 @@ const createProcessedFile = async (
   file: File,
   needsConversion: boolean,
   documentName: string,
-  isArrayBuffer: boolean = false
+  isArrayBuffer: boolean = false,
+  isAttendanceLog: boolean = false
 ): Promise<ProcessedFile> => {
   const content = isArrayBuffer ? await file.arrayBuffer() : file;
-  return { content, needsConversion, documentName };
+  return { content, needsConversion, documentName, isAttendanceLog };
 };
 
 export const processFile = async (
@@ -33,7 +35,7 @@ export const processFile = async (
 ): Promise<ProcessedFile | null> => {
   const { isImage, isPDF, isWord } = getFileType(file.name);
   const isAttendance = isAttendanceScreenshot(file.name);
-  const isAttendanceDocument = file.name.includes("출석대장");
+  const isAttendanceDocument = file.name.toLowerCase().includes("출석대장");
 
   if (file.name.toLowerCase().includes("sign")) {
     await uploadSignFile(file);
@@ -45,38 +47,27 @@ export const processFile = async (
   }
 
   if (isAttendanceDocument) {
-    return createProcessedFile(file, true, "출석대장");
+    return createProcessedFile(file, true, "출석대장", false, true);
   }
 
   const isProofDocument = !isAttendanceDocument && !isAttendance;
   if (isProofDocument) {
-    return processProofDocument(file, values, isWord, isImage, isPDF);
+    if (values.conversionType === "vacation") {
+      if (file.name.includes("휴가") || file.name.includes("계획서")) {
+        return createProcessedFile(file, true, "휴가계획서");
+      }
+    }
+
+    if (values.proofDocumentName) {
+      if (isWord) {
+        return createProcessedFile(file, true, values.proofDocumentName);
+      }
+      if (isImage || isPDF) {
+        return createProcessedFile(file, false, values.proofDocumentName, true);
+      }
+    }
+    return createProcessedFile(file, true, "증빙서류");
   }
 
   return createProcessedFile(file, false, "", true);
-};
-
-const processProofDocument = async (
-  file: File,
-  values: FormValues,
-  isWord: boolean,
-  isImage: boolean,
-  isPDF: boolean
-): Promise<ProcessedFile> => {
-  if (values.conversionType === "vacation") {
-    if (file.name.includes("휴가") || file.name.includes("계획서")) {
-      return createProcessedFile(file, true, "휴가계획서");
-    }
-  }
-
-  if (values.proofDocumentName) {
-    if (isWord) {
-      return createProcessedFile(file, true, values.proofDocumentName);
-    }
-    if (isImage || isPDF) {
-      return createProcessedFile(file, false, values.proofDocumentName, true);
-    }
-  }
-
-  return createProcessedFile(file, true, "증빙서류");
 };
