@@ -37,7 +37,7 @@ export const processFile = async (
 
   if (file.name.toLowerCase().includes("sign")) {
     await uploadSignFile(file);
-    return null; 
+    return null;
   }
 
   if (isAttendance) {
@@ -50,14 +50,17 @@ export const processFile = async (
 
   const isProofDocument = !isAttendanceDocument && !isAttendance;
 
-  if (isProofDocument && values.proofDocumentName) {
-    if (isImage || isPDF) {
-      return createProcessedFile(file, false, values.proofDocumentName, true);
+  if (isProofDocument) {
+    if (values.proofDocumentName) {
+      if (isImage || isPDF) {
+        return createProcessedFile(file, false, values.proofDocumentName, true);
+      }
+      if (isWord) {
+        return createProcessedFile(file, true, values.proofDocumentName);
+      }
     }
-    if (isWord) {
-      return createProcessedFile(file, true, values.proofDocumentName);
-    }
+    return createProcessedFile(file, true, "");
   }
 
-  return createProcessedFile(file, true, values.proofDocumentName || "증빙서류");
+  return createProcessedFile(file, false, "", true);
 };

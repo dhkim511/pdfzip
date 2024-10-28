@@ -32,6 +32,11 @@ const fileUtils = {
   needsConversion: (file) => {
     const fileExtension = path.extname(file.originalname).toLowerCase();
     const mimeType = file.mimetype.toLowerCase();
+    const fileName = file.originalname.toLowerCase();
+
+    if (fileName.includes("출석대장")) {
+      return true;
+    }
 
     const isImage =
       ["image/jpeg", "image/jpg", "image/png"].includes(mimeType) ||
