@@ -6,13 +6,11 @@ export const appContainer = css`
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: 16px;
   background-color: ${colors.background.main};
 `;
 
 export const formContainer = css`
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
   width: 100%;
   max-width: ${sizes.width.maxContent};
@@ -21,13 +19,13 @@ export const formContainer = css`
 `;
 
 export const leftContainer = css`
-  flex: 1 1 578px;
+  width: 45%; 
   display: flex;
   flex-direction: column;
 `;
 
 export const rightContainer = css`
-  flex: 1 1 706px;
+  width: 55%; 
   display: flex;
   flex-direction: column;
 `;
@@ -52,7 +50,6 @@ export const formSection = css`
 export const flexLayout = {
   container: css`
     display: flex;
-    flex-wrap: wrap;
     gap: 16px;
   `,
   column: css`
@@ -86,5 +83,6 @@ export const fullWidth = css`
 `;
 
 export const halfWidth = css`
-  flex: 1 1 200px;
+  flex: 1;
+  max-width: 50%;
 `;
