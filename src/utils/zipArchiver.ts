@@ -65,11 +65,12 @@ const processRegularFiles = async (
 
       if (processedFile.needsConversion) {
         const result = await convertFile(file, values);
-        const suffix = processedFile.documentName ? `(${processedFile.documentName})` : "";
+        const suffix = getSuffix(file.name, values.conversionType, processedFile.documentName);
         await addFileToZip(zip, baseFileName, result.files[0], suffix);
       } else {
         const fileExtension = file.name.slice(file.name.lastIndexOf("."));
-        const fileName = `${baseFileName}${processedFile.documentName ? `(${processedFile.documentName})` : ""}${fileExtension}`;
+        const documentSuffix = getSuffix(file.name, values.conversionType, processedFile.documentName);
+        const fileName = `${baseFileName}${documentSuffix}${fileExtension}`;
         zip.file(fileName, processedFile.content);
       }
     })

@@ -31,35 +31,31 @@ const fileUtils = {
 
   needsConversion: (file) => {
     const fileExtension = path.extname(file.originalname).toLowerCase();
-    const mimeType = file.mimetype.toLowerCase();
     const fileName = file.originalname.toLowerCase();
 
     if (fileName.includes("출석대장")) {
       return true;
     }
 
-    const isImage =
-      ["image/jpeg", "image/jpg", "image/png"].includes(mimeType) ||
-      [".jpg", ".jpeg", ".png"].includes(fileExtension);
+    if (
+      (fileName.includes("오전") || fileName.includes("오후")) &&
+      (fileName.includes("10") ||
+        fileName.includes("2") ||
+        fileName.includes("7"))
+    ) {
+      return false;
+    }
 
-    const isWord =
-      [".doc", ".docx"].includes(fileExtension) ||
-      mimeType === "application/msword" ||
-      mimeType ===
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    const noConversionExtensions = [".jpg", ".jpeg", ".png", ".pdf"];
+    if (noConversionExtensions.includes(fileExtension)) {
+      return false;
+    }
 
-    const isPDF = fileExtension === ".pdf" || mimeType === "application/pdf";
+    const wordExtensions = [".doc", ".docx"];
+    if (wordExtensions.includes(fileExtension)) {
+      return true;
+    }
 
-    const isScreenshot =
-      (file.originalname.includes("오전") ||
-        file.originalname.includes("오후")) &&
-      (file.originalname.includes("10") ||
-        file.originalname.includes("2") ||
-        file.originalname.includes("7"));
-
-    if (isScreenshot || isPDF) return false;
-    if (isWord) return true;
-    if (isImage) return false;
     return true;
   },
 };

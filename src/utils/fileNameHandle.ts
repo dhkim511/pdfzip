@@ -29,7 +29,7 @@ export const getSuffix = (
       return getProofDocumentSuffix(fileName, proofDocumentName);
     case "vacation":
       if (fileName.includes("휴가 사용 계획서")) return "(휴가계획서)";
-      return getProofDocumentSuffix(fileName);
+      return getProofDocumentSuffix(fileName, proofDocumentName);
     case "attendance":
       return getProofDocumentSuffix(fileName, proofDocumentName);
     default:

@@ -49,18 +49,34 @@ export const processFile = async (
   }
 
   const isProofDocument = !isAttendanceDocument && !isAttendance;
-
   if (isProofDocument) {
-    if (values.proofDocumentName) {
-      if (isImage || isPDF) {
-        return createProcessedFile(file, false, values.proofDocumentName, true);
-      }
-      if (isWord) {
-        return createProcessedFile(file, true, values.proofDocumentName);
-      }
-    }
-    return createProcessedFile(file, true, "");
+    return processProofDocument(file, values, isWord, isImage, isPDF);
   }
 
   return createProcessedFile(file, false, "", true);
+};
+
+const processProofDocument = async (
+  file: File,
+  values: FormValues,
+  isWord: boolean,
+  isImage: boolean,
+  isPDF: boolean
+): Promise<ProcessedFile> => {
+  if (values.conversionType === "vacation") {
+    if (file.name.includes("휴가") || file.name.includes("계획서")) {
+      return createProcessedFile(file, true, "휴가계획서");
+    }
+  }
+
+  if (values.proofDocumentName) {
+    if (isWord) {
+      return createProcessedFile(file, true, values.proofDocumentName);
+    }
+    if (isImage || isPDF) {
+      return createProcessedFile(file, false, values.proofDocumentName, true);
+    }
+  }
+
+  return createProcessedFile(file, true, "증빙서류");
 };
