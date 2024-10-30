@@ -76,16 +76,16 @@ const GuideForm: React.FC = () => {
             <div css={[flexLayout.end, fullWidth]}>
               <Space wrap>
                 <Button
-                  icon={<RedoOutlined />}
-                  onClick={() => handleSignatureClear(signatureRef)}
-                >
-                  초기화
-                </Button>
-                <Button
                   icon={<DownloadOutlined />}
                   onClick={() => handleSignatureDownload(signatureRef)}
                 >
                   서명 다운로드
+                </Button>
+                <Button
+                  icon={<RedoOutlined />}
+                  onClick={() => handleSignatureClear(signatureRef)}
+                >
+                  초기화
                 </Button>
               </Space>
             </div>
