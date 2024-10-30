@@ -15,11 +15,14 @@ const getProofDocumentSuffix = (
   proofDocumentName?: string, 
   isAttendanceLog?: boolean
 ): string => {
-  if (isAttendanceLog || fileName.toLowerCase().includes("출석대장")) {
+  if (isAttendanceLog) {
     return "(출석대장)";
   }
   if (proofDocumentName) {
     return `(${proofDocumentName})`;
+  }
+  if (fileName.toLowerCase().includes("출석대장")) {
+    return "(출석대장)";
   }
   return "(증빙서류)";
 };
