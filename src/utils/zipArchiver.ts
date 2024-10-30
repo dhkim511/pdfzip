@@ -2,7 +2,7 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { FormValues } from "../types/conversionType";
 import { formatDate, getSuffix, getTypeSuffix, isAttendanceScreenshot } from "./fileNameHandle";
-import { processFile } from "./fileProcessor";
+import { processFile, getFileType } from "./fileProcessor";
 import {
   convertVacationFiles,
   convertFile,
@@ -22,10 +22,9 @@ const addFileToZip = async (
   zip: JSZip,
   baseFileName: string,
   file: ConvertedFile,
-  suffix: string,
-  isBlob: boolean = true
+  suffix: string
 ) => {
-  const blob = isBlob ? await fetchConvertedFile(file.path) : file.content;
+  const blob = await fetchConvertedFile(file.path);
   const fileName = `${baseFileName}${suffix}.pdf`;
   zip.file(fileName, blob);
 };
@@ -51,38 +50,42 @@ const processRegularFiles = async (
 ) => {
   await Promise.all(
     fileList.map(async (file: File) => {
+      const { isImage, isPDF } = getFileType(file.name);
+      const baseFileName = createBaseFileName(values);
+      
+      if (isAttendanceScreenshot(file.name)) {
+        const content = await file.arrayBuffer();
+        zip.file(file.name, content);
+        return;
+      }
+
+      if ((isImage || isPDF) && !file.name.toLowerCase().includes("출석대장")) {
+        const content = await file.arrayBuffer();
+        const fileExtension = file.name.slice(file.name.lastIndexOf("."));
+        const documentSuffix = getSuffix(
+          file.name,
+          values.conversionType,
+          values.proofDocumentName,
+          false
+        );
+        const fileName = `${baseFileName}${documentSuffix}${fileExtension}`;
+        zip.file(fileName, content);
+        return;
+      }
+
       const processedFile = await processFile(file, values);
       if (!processedFile) {
         return;
       }
 
-      const baseFileName = createBaseFileName(values);
-
-      if (isAttendanceScreenshot(file.name)) {
-        zip.file(file.name, processedFile.content);
-        return;
-      }
-
-      if (processedFile.needsConversion) {
-        const result = await convertFile(file, values);
-        const suffix = getSuffix(
-          file.name, 
-          values.conversionType, 
-          processedFile.documentName, 
-          processedFile.isAttendanceLog
-        );
-        await addFileToZip(zip, baseFileName, result.files[0], suffix);
-      } else {
-        const fileExtension = file.name.slice(file.name.lastIndexOf("."));
-        const documentSuffix = getSuffix(
-          file.name, 
-          values.conversionType, 
-          processedFile.documentName, 
-          processedFile.isAttendanceLog
-        );
-        const fileName = `${baseFileName}${documentSuffix}${fileExtension}`;
-        zip.file(fileName, processedFile.content);
-      }
+      const result = await convertFile(file, values);
+      const suffix = getSuffix(
+        file.name,
+        values.conversionType,
+        processedFile.documentName,
+        processedFile.isAttendanceLog
+      );
+      await addFileToZip(zip, baseFileName, result.files[0], suffix);
     })
   );
 };

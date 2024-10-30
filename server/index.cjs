@@ -47,11 +47,7 @@ const fileUtils = {
     }
 
     const noConversionExtensions = [".jpg", ".jpeg", ".png", ".pdf"];
-    if (noConversionExtensions.includes(fileExtension)) {
-      return false;
-    }
-
-    return true;
+    return !noConversionExtensions.includes(fileExtension);
   },
 };
 
