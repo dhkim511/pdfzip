@@ -9,8 +9,7 @@ export const submitButton = css`
   border-radius: ${sizes.borderRadius.large};
 
   &:hover {
-    color: ${colors.primaryHover};
-    border-color: ${colors.primaryHover};
+    opacity: 0.65;
   }
 `;
 
@@ -49,6 +48,7 @@ export const signatureCanvas = {
   width: '100%',
   maxWidth: '100%'
 };
+
 export const uploadList = css`
   .ant-upload-list-item {
     max-width: 100%;
@@ -65,4 +65,28 @@ export const labelText = {
 
 export const typographyTextStyle = css`
   color: ${colors.text.primary};
+`;
+
+export const alertStyle = css`
+  &.ant-alert-warning {
+    background-color: rgba(252, 28, 73, 0.03);
+    border: 1px solid rgba(252, 28, 73, 0.4);
+
+    .ant-alert-icon {
+      color: #ff4d6d;
+    }
+
+    .ant-alert-message {
+      color: #ff4d6d;
+    }
+
+    .ant-alert-description {
+      color: #ff4d6d;
+      
+      .ant-typography {
+        color: #ff4d6d;
+        margin-left: 8px;
+      }
+    }
+  }
 `;

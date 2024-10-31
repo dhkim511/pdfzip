@@ -19,6 +19,7 @@ import {
   signatureCanvas,
   typographyTextStyle,
   fullWidth,
+  alertStyle,
 } from "../styles/index";
 import {
   handleSignatureClear,
@@ -60,14 +61,14 @@ const GuideForm: React.FC = () => {
           <SignatureCanvas
             ref={signatureRef}
             canvasProps={{
-              width: 540,
-              height: 200,
+              width: 480,
+              height: 240,
               className: "signature-canvas",
               style: signatureCanvas,
             }}
           />
         </div>
-        <div css={[flexLayout.end, fullWidth, spacing.margin.bottom.sm]}>
+        <div css={[flexLayout.end, fullWidth, { marginBottom: spacing.sm }]}>
           <Space wrap>
             <Button
               icon={<DownloadOutlined />}
@@ -105,7 +106,7 @@ const GuideForm: React.FC = () => {
       }
       type="warning"
       showIcon
-      css={spacing.margin.bottom.lg}
+      css={[alertStyle, { marginBottom: spacing.lg }]}
     />
   );
 
