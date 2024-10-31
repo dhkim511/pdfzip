@@ -37,7 +37,7 @@ const processVacationFiles = async (zip: JSZip, values: FormValues) => {
     result.files.map(async (file: ConvertedFile) => {
       const suffix = file.name.includes("vacation")
         ? getSuffix("휴가 사용 계획서", values.conversionType)
-        : getSuffix("출석대장", values.conversionType, undefined, true);
+        : getSuffix("출석대장", values.conversionType);
       await addFileToZip(zip, baseFileName, file, suffix);
     })
   );
@@ -65,8 +65,7 @@ const processRegularFiles = async (
         const documentSuffix = getSuffix(
           file.name,
           values.conversionType,
-          values.proofDocumentName,
-          false
+          values.proofDocumentName
         );
         const fileName = `${baseFileName}${documentSuffix}${fileExtension}`;
         zip.file(fileName, content);
@@ -82,8 +81,7 @@ const processRegularFiles = async (
       const suffix = getSuffix(
         file.name,
         values.conversionType,
-        processedFile.documentName,
-        processedFile.isAttendanceLog
+        processedFile.documentName
       );
       await addFileToZip(zip, baseFileName, result.files[0], suffix);
     })

@@ -12,17 +12,13 @@ export const isAttendanceScreenshot = (fileName: string): boolean => {
 
 const getProofDocumentSuffix = (
   fileName: string, 
-  proofDocumentName?: string, 
-  isAttendanceLog?: boolean
+  proofDocumentName?: string
 ): string => {
-  if (isAttendanceLog) {
+  if (fileName.toLowerCase().includes("출석대장")) {
     return "(출석대장)";
   }
   if (proofDocumentName) {
     return `(${proofDocumentName})`;
-  }
-  if (fileName.toLowerCase().includes("출석대장")) {
-    return "(출석대장)";
   }
   return "(증빙서류)";
 };
@@ -30,8 +26,7 @@ const getProofDocumentSuffix = (
 export const getSuffix = (
   fileName: string,
   type: FormValues["conversionType"],
-  proofDocumentName?: string,
-  isAttendanceLog?: boolean
+  proofDocumentName?: string
 ): string => {
   if (isAttendanceScreenshot(fileName)) {
     return "";
@@ -39,12 +34,12 @@ export const getSuffix = (
 
   switch (type) {
     case "officialLeave":
-      return getProofDocumentSuffix(fileName, proofDocumentName, isAttendanceLog);
+      return getProofDocumentSuffix(fileName, proofDocumentName);
     case "vacation":
       if (fileName.includes("휴가 사용 계획서")) return "(휴가계획서)";
-      return getProofDocumentSuffix(fileName, proofDocumentName, isAttendanceLog);
+      return getProofDocumentSuffix(fileName, proofDocumentName);
     case "attendance":
-      return getProofDocumentSuffix(fileName, proofDocumentName, isAttendanceLog);
+      return getProofDocumentSuffix(fileName, proofDocumentName);
     default:
       return "";
   }

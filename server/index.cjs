@@ -24,6 +24,17 @@ const DIRS = {
   converted: "converted",
 };
 
+const cachedTemplates = {
+  attendance: fs.readFileSync(
+    path.join(__dirname, "templates", "attendance_template.docx"),
+    "binary"
+  ),
+  vacation: fs.readFileSync(
+    path.join(__dirname, "templates", "vacation_template.docx"),
+    "binary"
+  ),
+};
+
 const fileUtils = {
   ensureDir: (dirPath) => {
     !fs.existsSync(dirPath) && fs.mkdirSync(dirPath);
@@ -82,7 +93,7 @@ const pdfProcessor = {
     const pngImage = await pdfDoc.embedPng(fs.readFileSync(signaturePath));
     pdfDoc
       .getPages()[0]
-      .drawImage(pngImage, { x: 435, y: 430, width: 80, height: 30 });
+      .drawImage(pngImage, { x: 430, y: 435, width: 80, height: 30 });
 
     const signedPdfPath = path.join(
       __dirname,
@@ -162,7 +173,7 @@ const pdfProcessor = {
   },
 
   processFiles: async (filledDocPaths, credentials) => {
-    const processFile = async (docInfo) => {
+    const tasks = filledDocPaths.map(async (docInfo) => {
       try {
         const finalOutputPath = await pdfProcessor.convertToPDF(
           docInfo,
@@ -185,30 +196,18 @@ const pdfProcessor = {
         console.error(`Error processing file ${docInfo.path}:`, error);
         throw error;
       }
-    };
+    });
 
-    return Promise.all(filledDocPaths.map(processFile));
+    return await Promise.all(Array.isArray(tasks) ? tasks : [tasks]);
   },
 };
 
 const documentGenerator = {
   fillAttendanceForm: async (values) => {
-    const templatePath = path.join(
-      __dirname,
-      "templates",
-      "attendance_template.docx"
-    );
-    if (!fs.existsSync(templatePath)) {
-      throw new Error("Attendance template file not found");
-    }
-
-    const doc = new Docxtemplater(
-      new PizZip(fs.readFileSync(templatePath, "binary")),
-      {
-        paragraphLoop: true,
-        linebreaks: true,
-      }
-    );
+    const doc = new Docxtemplater(new PizZip(cachedTemplates.attendance), {
+      paragraphLoop: true,
+      linebreaks: true,
+    });
 
     doc.render({
       date: formatDates.attendance(values.date),
@@ -235,22 +234,10 @@ const documentGenerator = {
   },
 
   fillVacationForm: async (values) => {
-    const templatePath = path.join(
-      __dirname,
-      "templates",
-      "vacation_template.docx"
-    );
-    if (!fs.existsSync(templatePath)) {
-      throw new Error("Vacation template file not found");
-    }
-
-    const doc = new Docxtemplater(
-      new PizZip(fs.readFileSync(templatePath, "binary")),
-      {
-        paragraphLoop: true,
-        linebreaks: true,
-      }
-    );
+    const doc = new Docxtemplater(new PizZip(cachedTemplates.vacation), {
+      paragraphLoop: true,
+      linebreaks: true,
+    });
 
     doc.render({
       name: values.name,
@@ -290,7 +277,7 @@ app.post("/sign", upload.single("file"), async (req, res) => {
 
   try {
     const filePath = path.join(__dirname, DIRS.upload, "sign.png");
-    await sharp(req.file.path).resize(520, 100).toFile(filePath);
+    await sharp(req.file.path).resize(520, 120).toFile(filePath);
 
     res.status(200).json({
       message: "Signature file uploaded and resized successfully",
@@ -366,19 +353,25 @@ app.post("/convert", upload.single("file"), async (req, res) => {
     });
 
     setTimeout(async () => {
-      filledDocPaths.forEach((docInfo) => {
-        fs.existsSync(docInfo.path) &&
-          fs.promises.unlink(docInfo.path).catch(() => {});
-      });
+      await Promise.all(
+        filledDocPaths.map(async (docInfo) => {
+          if (fs.existsSync(docInfo.path)) {
+            await fs.promises.unlink(docInfo.path).catch(() => {});
+          }
+        })
+      );
 
-      [DIRS.upload, DIRS.converted].forEach(async (dir) => {
-        const dirPath = path.join(__dirname, dir);
-        const files = await fs.promises.readdir(dirPath);
-        files.forEach((file) => {
-          const filePath = path.join(dirPath, file);
-          fs.promises.unlink(filePath).catch(() => {});
-        });
-      });
+      await Promise.all(
+        [DIRS.upload, DIRS.converted].map(async (dir) => {
+          const dirPath = path.join(__dirname, dir);
+          const files = await fs.promises.readdir(dirPath);
+          return Promise.all(
+            files.map((file) =>
+              fs.promises.unlink(path.join(dirPath, file)).catch(() => {})
+            )
+          );
+        })
+      );
     }, 60000);
   } catch (error) {
     console.error("Conversion error:", error);

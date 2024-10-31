@@ -5,7 +5,6 @@ interface ProcessedFile {
   content: File;
   needsConversion: boolean;
   documentName: string;
-  isAttendanceLog?: boolean;  
 }
 
 export const getFileType = (fileName: string) => {
@@ -20,10 +19,9 @@ export const getFileType = (fileName: string) => {
 const createProcessedFile = (
   file: File,
   needsConversion: boolean,
-  documentName: string,
-  isAttendanceLog: boolean = false
+  documentName: string
 ): ProcessedFile => {
-  return { content: file, needsConversion, documentName, isAttendanceLog };
+  return { content: file, needsConversion, documentName };
 };
 
 export const processFile = async (
@@ -39,7 +37,7 @@ export const processFile = async (
   const isAttendanceDocument = file.name.toLowerCase().includes("출석대장");
 
   if (isAttendanceDocument) {
-    return createProcessedFile(file, true, "출석대장", true);
+    return createProcessedFile(file, true, "출석대장");
   }
 
   if (values.conversionType === "vacation" && isWord) {

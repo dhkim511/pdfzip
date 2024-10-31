@@ -73,7 +73,7 @@ const GuideForm: React.FC = () => {
                 }}
               />
             </div>
-            <div css={[flexLayout.end, fullWidth]}>
+            <div css={[flexLayout.end, fullWidth, spacing.margin.bottom.sm]}>
               <Space wrap>
                 <Button
                   icon={<DownloadOutlined />}

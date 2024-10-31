@@ -19,13 +19,13 @@ export const formContainer = css`
 `;
 
 export const leftContainer = css`
-  width: 45%; 
+  width: 40%; 
   display: flex;
   flex-direction: column;
 `;
 
 export const rightContainer = css`
-  width: 55%; 
+  width: 60%; 
   display: flex;
   flex-direction: column;
 `;
