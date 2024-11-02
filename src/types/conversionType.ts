@@ -1,7 +1,7 @@
 import type { UploadFile, UploadChangeParam } from "antd/es/upload/interface";
 import type { Dayjs } from "dayjs";
 
-export type ConversionType = "vacation" | "officialLeave" | "attendance";
+export type ConversionType = "vacation" | "officialLeave" | "attendance" | "finalVacation";
 
 export interface FormValues {
   reason: string | Blob;
@@ -16,6 +16,9 @@ export interface FormValues {
   studyPlan?: string;
   significant?: string;
   proofDocumentName?: string;
+  currentTasks?: string;
+  taskAdjustments?: string;
+  workPlan?: string;
 }
 
 export type FileChangeInfo = UploadChangeParam<UploadFile>;

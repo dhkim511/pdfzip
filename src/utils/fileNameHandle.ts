@@ -36,6 +36,7 @@ export const getSuffix = (
     case "officialLeave":
       return getProofDocumentSuffix(fileName, proofDocumentName);
     case "vacation":
+    case "finalVacation":
       if (fileName.includes("휴가 사용 계획서")) return "(휴가계획서)";
       return getProofDocumentSuffix(fileName, proofDocumentName);
     case "attendance":
@@ -48,6 +49,7 @@ export const getSuffix = (
 export const getTypeSuffix = (type: FormValues["conversionType"]): string => {
   switch (type) {
     case "vacation":
+    case "finalVacation":
       return "(휴가)";
     case "officialLeave":
       return "(공가)";

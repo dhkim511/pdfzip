@@ -33,6 +33,10 @@ const cachedTemplates = {
     path.join(__dirname, "templates", "vacation_template.docx"),
     "binary"
   ),
+  finalVacation: fs.readFileSync(
+    path.join(__dirname, "templates", "final_vacation_template.docx"),
+    "binary"
+  ),
 };
 
 const fileUtils = {
@@ -175,10 +179,8 @@ const pdfProcessor = {
   processFiles: async (filledDocPaths, credentials) => {
     const tasks = filledDocPaths.map(async (docInfo) => {
       try {
-        const finalOutputPath = await pdfProcessor.convertToPDF(
-          docInfo,
-          credentials
-        );
+        let finalOutputPath;
+        finalOutputPath = await pdfProcessor.convertToPDF(docInfo, credentials);
 
         const outputPath =
           docInfo.type === "attendance"
@@ -256,6 +258,32 @@ const documentGenerator = {
 
     return outputPath;
   },
+
+  fillFinalVacationForm: async (values) => {
+    const doc = new Docxtemplater(new PizZip(cachedTemplates.finalVacation), {
+      paragraphLoop: true,
+      linebreaks: true,
+    });
+
+    doc.render({
+      name: values.name,
+      vacationDate: formatDates.vacation(values.date),
+      courseContent: values.courseContent || "",
+      currentTasks: values.currentTasks || "",
+      taskAdjustments: values.taskAdjustments || "",
+      workPlan: values.workPlan || "",
+      significant: values.significant || "",
+    });
+
+    const outputPath = path.join(
+      __dirname,
+      DIRS.converted,
+      "filled_final_vacation_plan.docx"
+    );
+    fs.writeFileSync(outputPath, doc.getZip().generate({ type: "nodebuffer" }));
+
+    return outputPath;
+  },
 };
 
 const app = express();
@@ -292,9 +320,11 @@ app.post("/sign", upload.single("file"), async (req, res) => {
 app.post("/convert", upload.single("file"), async (req, res) => {
   try {
     const filledDocPaths = [];
-    const isLeaveRequest = ["vacation", "officialLeave"].includes(
-      req.body.conversionType
-    );
+    const isLeaveRequest = [
+      "vacation",
+      "officialLeave",
+      "finalVacation",
+    ].includes(req.body.conversionType);
 
     if (isLeaveRequest) {
       if (req.body.conversionType === "vacation") {
@@ -302,16 +332,39 @@ app.post("/convert", upload.single("file"), async (req, res) => {
           path: await documentGenerator.fillVacationForm(req.body),
           type: "vacation",
         });
+        filledDocPaths.push({
+          path: await documentGenerator.fillAttendanceForm({
+            ...req.body,
+            checkInTime: "",
+            checkOutTime: "",
+            reason: "휴가",
+          }),
+          type: "attendance",
+        });
+      } else if (req.body.conversionType === "finalVacation") {
+        filledDocPaths.push({
+          path: await documentGenerator.fillFinalVacationForm(req.body),
+          type: "finalVacation",
+        });
+        filledDocPaths.push({
+          path: await documentGenerator.fillAttendanceForm({
+            ...req.body,
+            checkInTime: "",
+            checkOutTime: "",
+            reason: "휴가",
+          }),
+          type: "attendance",
+        });
+      } else {
+        filledDocPaths.push({
+          path: await documentGenerator.fillAttendanceForm({
+            ...req.body,
+            checkInTime: "",
+            checkOutTime: "",
+          }),
+          type: "attendance",
+        });
       }
-
-      filledDocPaths.push({
-        path: await documentGenerator.fillAttendanceForm({
-          ...req.body,
-          checkInTime: "",
-          checkOutTime: "",
-        }),
-        type: "attendance",
-      });
     } else if (req.file) {
       if (fileUtils.needsConversion(req.file)) {
         filledDocPaths.push({
@@ -355,7 +408,7 @@ app.post("/convert", upload.single("file"), async (req, res) => {
     setTimeout(async () => {
       await Promise.all(
         filledDocPaths.map(async (docInfo) => {
-          if (fs.existsSync(docInfo.path)) {
+          if (docInfo.path && fs.existsSync(docInfo.path)) {
             await fs.promises.unlink(docInfo.path).catch(() => {});
           }
         })

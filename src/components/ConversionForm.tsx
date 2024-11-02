@@ -149,6 +149,77 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
     </>
   );
 
+  const renderFinalVacationFields = () => (
+    <>
+      <Form.Item
+        name="courseContent"
+        label={
+          <FormLabel icon={<FileTextOutlined />}>
+            불참하는 과정 교육내용
+          </FormLabel>
+        }
+        rules={[
+          {
+            required: true,
+            message: FEEDBACK_MESSAGES.FORM_VALIDATION.FIELD_REQUIRED,
+          },
+        ]}
+      >
+        <TextArea rows={1} placeholder="내용 작성" />
+      </Form.Item>
+
+      <Form.Item
+        name="currentTasks"
+        label={
+          <FormLabel icon={<FileTextOutlined />}>진행하고 있는 업무</FormLabel>
+        }
+        rules={[
+          {
+            required: true,
+            message: FEEDBACK_MESSAGES.FORM_VALIDATION.FIELD_REQUIRED,
+          },
+        ]}
+      >
+        <TextArea rows={3} placeholder="진행 중인 업무를 작성해주세요." />
+      </Form.Item>
+
+      <Form.Item
+        name="taskAdjustments"
+        label={
+          <FormLabel icon={<FileTextOutlined />}>조정 필요한 업무</FormLabel>
+        }
+        rules={[
+          {
+            required: true,
+            message: FEEDBACK_MESSAGES.FORM_VALIDATION.FIELD_REQUIRED,
+          },
+        ]}
+      >
+        <TextArea rows={2} placeholder="조정이 필요한 업무를 작성해주세요." />
+      </Form.Item>
+
+      <Form.Item
+        name="workPlan"
+        label={<FormLabel icon={<FileTextOutlined />}>업무 계획</FormLabel>}
+        rules={[
+          {
+            required: true,
+            message: FEEDBACK_MESSAGES.FORM_VALIDATION.FIELD_REQUIRED,
+          },
+        ]}
+      >
+        <TextArea rows={3} placeholder="상세한 업무 계획을 작성해주세요." />
+      </Form.Item>
+
+      <Form.Item
+        name="significant"
+        label={<FormLabel icon={<FileTextOutlined />}>특이사항</FormLabel>}
+      >
+        <TextArea rows={1} placeholder="없을 시 생략 가능" />
+      </Form.Item>
+    </>
+  );
+
   const renderOfficialLeaveFields = () => (
     <Form.Item
       name="proofDocumentName"
@@ -181,6 +252,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
         <Select>
           <Option value="attendance">출결 정정</Option>
           <Option value="vacation">휴가</Option>
+          <Option value="finalVacation">휴가 (파이널 프로젝트)</Option>
           <Option value="officialLeave">공가</Option>
         </Select>
       </Form.Item>
@@ -225,6 +297,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
 
       {conversionType === "attendance" && renderAttendanceFields()}
       {conversionType === "vacation" && renderVacationFields()}
+      {conversionType === "finalVacation" && renderFinalVacationFields()}
       {conversionType === "officialLeave" && renderOfficialLeaveFields()}
 
       <FileUpload

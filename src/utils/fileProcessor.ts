@@ -40,7 +40,7 @@ export const processFile = async (
     return createProcessedFile(file, true, "출석대장");
   }
 
-  if (values.conversionType === "vacation" && isWord) {
+  if ((values.conversionType === "vacation" || values.conversionType === "finalVacation") && isWord) {
     if (file.name.includes("휴가") || file.name.includes("계획서")) {
       return createProcessedFile(file, true, "휴가계획서");
     }

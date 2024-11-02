@@ -94,7 +94,7 @@ export const createAndDownloadZip = async (
 ) => {
   const zip = new JSZip();
 
-  if (values.conversionType === "vacation") {
+  if (values.conversionType === "vacation" || values.conversionType === "finalVacation") {
     await processVacationFiles(zip, values);
   } else {
     await processRegularFiles(zip, values, fileList);

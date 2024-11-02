@@ -10,8 +10,11 @@ export const convertVacationFiles = async (values: FormValues) => {
       date: values.date.format(),
       name: values.name,
       courseContent: values.courseContent || "",
-      studyPlan: values.studyPlan || "",
+      studyPlan: values.conversionType === "vacation" ? (values.studyPlan || "") : "",
       significant: values.significant || "",
+      currentTasks: values.currentTasks || "",
+      taskAdjustments: values.taskAdjustments || "",
+      workPlan: values.workPlan || "",
     }),
   });
 
