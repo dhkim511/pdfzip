@@ -37,7 +37,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           <Text
             style={{
               color: colors.text.primary,
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: fonts.weight.normal,
             }}
           >

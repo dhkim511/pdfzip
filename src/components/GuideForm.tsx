@@ -3,7 +3,6 @@ import React, { useRef } from "react";
 import { Form, Button, Typography, Space, Alert } from "antd";
 import {
   DownloadOutlined,
-  CloudDownloadOutlined,
   EditOutlined,
   RedoOutlined,
   SendOutlined,
@@ -24,39 +23,21 @@ import {
 import {
   handleSignatureClear,
   handleSignatureDownload,
-  handleDownload,
 } from "../utils/fileUtils";
 import { FormLabel } from "./Label";
-import { DOCS, FORMLINK, NOTICELINK } from "../constants/resources";
+import { FORMLINK, NOTICELINK } from "../constants/resources";
 
 const GuideForm: React.FC = () => {
   const [form] = Form.useForm();
   const signatureRef = useRef<SignatureCanvas>(null);
 
-  const renderDownloadButtons = () => (
-    <Form.Item
-      label={
-        <FormLabel icon={<CloudDownloadOutlined />}>문서 다운로드</FormLabel>
-      }
-    >
-      <div css={buttonGroup}>
-        {DOCS.map((doc, index) => (
-          <Button
-            key={index}
-            icon={<DownloadOutlined />}
-            onClick={() => handleDownload(doc)}
-            css={downloadButton}
-          >
-            {index === 0 ? "출석대장 다운로드" : "휴가계획서 다운로드"}
-          </Button>
-        ))}
-      </div>
-    </Form.Item>
-  );
-
   const renderSignatureField = () => (
     <Form.Item label={<FormLabel icon={<EditOutlined />}>서명</FormLabel>}>
-      <Space direction="vertical" size="middle" css={fullWidth}>
+      <Space
+        direction="vertical"
+        size="middle"
+        css={[fullWidth, { marginBottom: spacing.sm }]}
+      >
         <div css={flexLayout.center}>
           <SignatureCanvas
             ref={signatureRef}
@@ -68,7 +49,7 @@ const GuideForm: React.FC = () => {
             }}
           />
         </div>
-        <div css={[flexLayout.end, fullWidth, { marginBottom: spacing.sm }]}>
+        <div css={[flexLayout.end, fullWidth]}>
           <Space wrap>
             <Button
               icon={<DownloadOutlined />}
@@ -93,9 +74,10 @@ const GuideForm: React.FC = () => {
       description={
         <>
           {[
-            "HRD 관련 오류는 증빙서류명 작성 생략",
+            "HRD 오류는 증빙서류명 작성 생략",
             "증빙서류는 이미지 파일 형식으로 첨부",
             "서명 이미지는 'sign.png'로 첨부",
+            "텍스트 입력 칸 우측 하단 드래그하여 크기 조절 가능",
           ].map((text, index) => (
             <Typography.Text key={index} css={typographyTextStyle}>
               {`${index + 1}. ${text}`}
@@ -136,9 +118,8 @@ const GuideForm: React.FC = () => {
   return (
     <Form form={form} layout="vertical" css={flexLayout.column}>
       <div css={flexLayout.flex00Auto}>
-        {renderDownloadButtons()}
-        {renderSignatureField()}
         {renderGuidelinesAlert()}
+        {renderSignatureField()}
         {renderLinks()}
       </div>
     </Form>

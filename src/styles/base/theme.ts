@@ -50,9 +50,9 @@ export const fonts = {
 
 export const spacing = {
   xs: "16px",
-  sm: "28px",
+  sm: "26px",
   md: "40px",
-  lg: "42px",
+  lg: "52px",
   xl: "60px",
   margin: {
     bottom: {
@@ -60,13 +60,13 @@ export const spacing = {
         margin-bottom: 16px;
       `,
       sm: css`
-        margin-bottom: 28px;
+        margin-bottom: 26px;
       `,
       md: css`
         margin-bottom: 40px;
       `,
       lg: css`
-        margin-bottom: 42px;
+        margin-bottom: 52px;
     `,
       xl: css`
         margin-bottom: 60px;
