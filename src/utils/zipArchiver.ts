@@ -86,6 +86,18 @@ const processRegularFiles = async (
       await addFileToZip(zip, baseFileName, result.files[0], suffix);
     })
   );
+
+  // 출석대장 자동 생성 및 추가
+  if (values.conversionType === "attendance" || values.conversionType === "officialLeave") {
+    const attendanceFile = await convertFile(new File([], "attendance.docx"), values);
+    const baseFileName = createBaseFileName(values);
+    await Promise.all(
+      attendanceFile.files.map(async (file: ConvertedFile) => {
+        const suffix = getSuffix("출석대장", values.conversionType);
+        await addFileToZip(zip, baseFileName, file, suffix);
+      })
+    );
+  }
 };
 
 export const createAndDownloadZip = async (
