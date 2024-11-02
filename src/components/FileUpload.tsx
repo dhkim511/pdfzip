@@ -9,10 +9,11 @@ import {
   fullWidth,
   uploadButton,
   uploadList,
+  colors,
+  fonts,
 } from "../styles/index";
 import { FormLabel } from "./Label";
 import { getFileLabel } from "../utils/labelHandle";
-import { colors, fonts } from "../styles/index";
 
 const { Text } = Typography;
 
@@ -27,26 +28,29 @@ const FileUpload: React.FC<FileUploadProps> = ({
   handleFileChange,
   conversionType,
 }) => {
-  const renderFileLabel = (conversionType: ConversionType) => {
-    const label = getFileLabel(conversionType);
-    if (label.includes("(")) {
-      const [mainLabel, highlightedText] = label.split("(");
-      return (
-        <>
-          {mainLabel}
-          <Text
-            style={{
-              color: colors.text.primary,
-              fontSize: 13,
-              fontWeight: fonts.weight.normal,
-            }}
-          >
-            ({highlightedText}
-          </Text>
-        </>
-      );
+  const renderFileLabel = (type: ConversionType) => {
+    const label = getFileLabel(type);
+
+    if (!label.includes("(")) {
+      return label;
     }
-    return label;
+
+    const [mainLabel, highlightedText] = label.split("(");
+
+    return (
+      <>
+        {mainLabel}
+        <Text
+          style={{
+            color: colors.text.primary,
+            fontSize: 13,
+            fontWeight: fonts.weight.normal,
+          }}
+        >
+          ({highlightedText}
+        </Text>
+      </>
+    );
   };
 
   return (

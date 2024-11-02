@@ -35,9 +35,9 @@ const processVacationFiles = async (zip: JSZip, values: FormValues) => {
 
   await Promise.all(
     result.files.map(async (file: ConvertedFile) => {
-      const suffix = file.name.includes("vacation")
-        ? getSuffix("휴가 사용 계획서", values.conversionType)
-        : getSuffix("출석대장", values.conversionType);
+      const suffix = file.name.includes("vacation") 
+        ? "(휴가계획서)" 
+        : "(출석대장)";
       await addFileToZip(zip, baseFileName, file, suffix);
     })
   );
@@ -50,7 +50,7 @@ const processRegularFiles = async (
 ) => {
   await Promise.all(
     fileList.map(async (file: File) => {
-      const { isImage, isPDF } = getFileType(file.name);
+      const { isImage} = getFileType(file.name);
       const baseFileName = createBaseFileName(values);
       
       if (isAttendanceScreenshot(file.name)) {
@@ -59,12 +59,11 @@ const processRegularFiles = async (
         return;
       }
 
-      if (isImage || isPDF) {
+      if (isImage) {
         const content = await file.arrayBuffer();
         const fileExtension = file.name.slice(file.name.lastIndexOf("."));
         const documentSuffix = getSuffix(
           file.name,
-          values.conversionType,
           values.proofDocumentName
         );
         const fileName = `${baseFileName}${documentSuffix}${fileExtension}`;
@@ -80,7 +79,6 @@ const processRegularFiles = async (
       const result = await convertFile(file, values);
       const suffix = getSuffix(
         file.name,
-        values.conversionType,
         processedFile.documentName
       );
       await addFileToZip(zip, baseFileName, result.files[0], suffix);

@@ -23,7 +23,7 @@ import {
 import {
   handleSignatureClear,
   handleSignatureDownload,
-} from "../utils/fileUtils";
+} from "../utils/signature";
 import { FormLabel } from "./Label";
 import { FORMLINK, NOTICELINK } from "../constants/resources";
 

@@ -97,7 +97,7 @@ const pdfProcessor = {
     const pngImage = await pdfDoc.embedPng(fs.readFileSync(signaturePath));
     pdfDoc
       .getPages()[0]
-      .drawImage(pngImage, { x: 437, y: 435, width: 70, height: 30 });
+      .drawImage(pngImage, { x: 437, y: 433, width: 70, height: 30 });
 
     const signedPdfPath = path.join(
       __dirname,

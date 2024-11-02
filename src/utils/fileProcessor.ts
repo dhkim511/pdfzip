@@ -3,7 +3,6 @@ import { uploadSignFile } from "../api/fileConversion";
 
 interface ProcessedFile {
   content: File;
-  needsConversion: boolean;
   documentName: string;
 }
 
@@ -11,17 +10,14 @@ export const getFileType = (fileName: string) => {
   const fileExtension = fileName.split(".").pop()?.toLowerCase() || "";
   return {
     isImage: ["jpg", "jpeg", "png"].includes(fileExtension),
-    isPDF: fileExtension === "pdf",
-    isWord: ["doc", "docx"].includes(fileExtension),
   };
 };
 
 const createProcessedFile = (
   file: File,
-  needsConversion: boolean,
   documentName: string
 ): ProcessedFile => {
-  return { content: file, needsConversion, documentName };
+  return { content: file, documentName };
 };
 
 export const processFile = async (
@@ -33,15 +29,8 @@ export const processFile = async (
     return null;
   }
 
-  const { isWord } = getFileType(file.name);
-
-  if (isWord) {
-    return createProcessedFile(
-      file, 
-      true, 
-      values.proofDocumentName || "증빙서류"
-    );
-  }
-
-  return null;
+  return createProcessedFile(
+    file,
+    values.proofDocumentName || "증빙서류"
+  );
 };

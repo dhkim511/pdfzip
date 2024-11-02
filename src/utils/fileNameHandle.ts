@@ -25,25 +25,13 @@ const getProofDocumentSuffix = (
 
 export const getSuffix = (
   fileName: string,
-  type: FormValues["conversionType"],
   proofDocumentName?: string
 ): string => {
   if (isAttendanceScreenshot(fileName)) {
     return "";
   }
 
-  switch (type) {
-    case "officialLeave":
-      return getProofDocumentSuffix(fileName, proofDocumentName);
-    case "vacation":
-    case "finalVacation":
-      if (fileName.includes("휴가 사용 계획서")) return "(휴가계획서)";
-      return getProofDocumentSuffix(fileName, proofDocumentName);
-    case "attendance":
-      return getProofDocumentSuffix(fileName, proofDocumentName);
-    default:
-      return "";
-  }
+  return getProofDocumentSuffix(fileName, proofDocumentName);
 };
 
 export const getTypeSuffix = (type: FormValues["conversionType"]): string => {
