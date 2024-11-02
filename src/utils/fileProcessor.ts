@@ -34,17 +34,6 @@ export const processFile = async (
   }
 
   const { isWord } = getFileType(file.name);
-  const isAttendanceDocument = file.name.toLowerCase().includes("출석대장");
-
-  if (isAttendanceDocument) {
-    return createProcessedFile(file, true, "출석대장");
-  }
-
-  if ((values.conversionType === "vacation" || values.conversionType === "finalVacation") && isWord) {
-    if (file.name.includes("휴가") || file.name.includes("계획서")) {
-      return createProcessedFile(file, true, "휴가계획서");
-    }
-  }
 
   if (isWord) {
     return createProcessedFile(

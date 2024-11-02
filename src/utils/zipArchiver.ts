@@ -59,7 +59,7 @@ const processRegularFiles = async (
         return;
       }
 
-      if ((isImage || isPDF) && !file.name.toLowerCase().includes("출석대장")) {
+      if (isImage || isPDF) {
         const content = await file.arrayBuffer();
         const fileExtension = file.name.slice(file.name.lastIndexOf("."));
         const documentSuffix = getSuffix(
@@ -87,7 +87,6 @@ const processRegularFiles = async (
     })
   );
 
-  // 출석대장 자동 생성 및 추가
   if (values.conversionType === "attendance" || values.conversionType === "officialLeave") {
     const attendanceFile = await convertFile(new File([], "attendance.docx"), values);
     const baseFileName = createBaseFileName(values);
