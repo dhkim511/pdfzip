@@ -38,15 +38,29 @@ const GuideForm: React.FC = () => {
         size="middle"
         css={[fullWidth, { marginBottom: spacing.sm }]}
       >
-        <div css={flexLayout.center}>
+        <div css={[flexLayout.center, { height: 240, width: "100%" }]}>
           <SignatureCanvas
             ref={signatureRef}
             canvasProps={{
               width: 480,
               height: 240,
               className: "signature-canvas",
-              style: signatureCanvas,
+              style: {
+                ...signatureCanvas,
+                touchAction: "none",
+                WebkitUserSelect: "none",
+                MozUserSelect: "none",
+                msUserSelect: "none",
+                userSelect: "none",
+                width: "100%",
+                height: "100%",
+              },
             }}
+            dotSize={0.5}
+            minWidth={0.5}
+            maxWidth={2.5}
+            throttle={16}
+            velocityFilterWeight={0.7}
           />
         </div>
         <div css={[flexLayout.end, fullWidth]}>
@@ -77,7 +91,7 @@ const GuideForm: React.FC = () => {
             "HRD 오류는 증빙서류명 작성 생략",
             "증빙서류는 이미지 파일 형식으로 첨부",
             "서명 이미지는 'sign.png'로 첨부",
-            "텍스트 입력 칸 우측 하단 드래그하여 크기 조절 가능",
+            "입력 칸 우측 하단 드래그하여 크기 조절 가능",
           ].map((text, index) => (
             <Typography.Text key={index} css={typographyTextStyle}>
               {`${index + 1}. ${text}`}

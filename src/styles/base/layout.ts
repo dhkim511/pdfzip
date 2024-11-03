@@ -11,7 +11,7 @@ export const appContainer = css`
 
 export const formContainer = css`
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   width: 100%;
   max-width: ${sizes.width.maxContent};
   border-radius: ${sizes.borderRadius.large};
@@ -19,13 +19,13 @@ export const formContainer = css`
 `;
 
 export const leftContainer = css`
-  width: 40%; 
+  flex: 1 1 513px;
   display: flex;
   flex-direction: column;
 `;
 
 export const rightContainer = css`
-  width: 60%; 
+  flex: 1 1 770px;
   display: flex;
   flex-direction: column;
 `;

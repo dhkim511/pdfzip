@@ -7,7 +7,6 @@ import { FileChangeInfo, ConversionType } from "../types/conversionType";
 import {
   flexLayout,
   fullWidth,
-  uploadButton,
   uploadList,
   colors,
   fonts,
@@ -73,9 +72,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           listType="picture"
           css={uploadList}
         >
-          <Button icon={<UploadOutlined />} css={uploadButton}>
-            파일 선택
-          </Button>
+          <Button icon={<UploadOutlined />}>파일 업로드</Button>
         </Upload>
       </Form.Item>
     </div>

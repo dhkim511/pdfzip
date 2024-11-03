@@ -13,12 +13,6 @@ export const submitButton = css`
   }
 `;
 
-export const uploadButton = css`
-  width: 100%;
-  height: ${sizes.height.control};
-  border-radius: ${sizes.borderRadius.small};
-`;
-
 export const buttonGroup = css`
   display: flex;
   justify-content: space-between;
@@ -46,7 +40,13 @@ export const signatureCanvas = {
   border: `1px solid ${colors.border}`,
   borderRadius: sizes.borderRadius.small,
   width: '100%',
-  maxWidth: '100%'
+  height: '100%',
+  touchAction: 'none',
+  WebkitUserSelect: 'none',
+  MozUserSelect: 'none',
+  msUserSelect: 'none',
+  userSelect: 'none',
+  display: 'block'
 };
 
 export const uploadList = css`
