@@ -95,9 +95,12 @@ const pdfProcessor = {
     });
 
     const pngImage = await pdfDoc.embedPng(fs.readFileSync(signaturePath));
-    pdfDoc
-      .getPages()[0]
-      .drawImage(pngImage, { x: 450, y: 430, width: 40, height: 25 });
+    pdfDoc.getPages()[0].drawImage(pngImage, {
+      x: 445,
+      y: 440,
+      width: 50,
+      height: 20,
+    });
 
     const signedPdfPath = path.join(
       __dirname,
@@ -305,7 +308,12 @@ app.post("/sign", upload.single("file"), async (req, res) => {
 
   try {
     const filePath = path.join(__dirname, DIRS.upload, "sign.png");
-    await sharp(req.file.path).resize(520, 160).toFile(filePath);
+    await sharp(req.file.path)
+      .resize(260, 100, {
+        fit: "contain",
+        background: { r: 255, g: 255, b: 255, alpha: 0 },
+      })
+      .toFile(filePath);
 
     res.status(200).json({
       message: "Signature file uploaded and resized successfully",

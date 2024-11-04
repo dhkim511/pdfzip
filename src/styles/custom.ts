@@ -33,8 +33,8 @@ export const datePicker = css`
 `;
 
 export const signatureContainer = css`
-  height: 240px;
   width: 100%;
+  height: 180px;
   position: relative;
   overflow: hidden;
   border: 1px solid ${colors.border};
