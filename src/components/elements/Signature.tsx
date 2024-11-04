@@ -77,7 +77,7 @@ export const Signature: React.FC<SignatureProps> = ({ signatureRef }) => {
       <Space
         direction="vertical"
         size="middle"
-        css={[fullWidth, { marginBottom: spacing.sm }]}
+        css={[fullWidth, { marginBottom: spacing.xs }]}
       >
         <div ref={containerRef} css={[flexLayout.center, signatureContainer]}>
           {canvasSize.width > 0 && canvasSize.height > 0 && (
