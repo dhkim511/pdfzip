@@ -14,5 +14,6 @@ export const FEEDBACK_MESSAGES = {
     CHECKIN_TIME_REQUIRED: "입실 시간을 입력해주세요.",
     CHECKOUT_TIME_REQUIRED: "퇴실 시간을 입력해주세요.",
     REASON_REQUIRED: "사유를 입력해주세요.",
+    PROOF_DOCUMENT_NAME_REQUIRED: "증빙서류명을 입력해주세요.",
   },
 };

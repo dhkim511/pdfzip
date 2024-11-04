@@ -32,18 +32,15 @@ export const datePicker = css`
   width: 100%;
 `;
 
-export const signatureCanvas = {
-  border: `1px solid ${colors.border}`,
-  borderRadius: sizes.borderRadius.small,
-  width: '100%',
-  height: '100%',
-  touchAction: 'none',
-  WebkitUserSelect: 'none',
-  MozUserSelect: 'none',
-  msUserSelect: 'none',
-  userSelect: 'none',
-  display: 'block'
-};
+export const signatureContainer = css`
+  height: 240px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid ${colors.border};
+  border-radius: ${sizes.borderRadius.small};
+  background-color: ${colors.background.white};
+`;
 
 export const uploadList = css`
   .ant-upload-list-item {

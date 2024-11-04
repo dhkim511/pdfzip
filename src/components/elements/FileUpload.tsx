@@ -4,13 +4,7 @@ import { Form, Upload, Button, Typography } from "antd";
 import { UploadOutlined, FileAddOutlined } from "@ant-design/icons";
 import { UploadFile } from "antd/es/upload/interface";
 import { FileChangeInfo, ConversionType } from "../../types/conversionType";
-import {
-  flexLayout,
-  fullWidth,
-  uploadList,
-  colors,
-  fonts,
-} from "../../styles/styles";
+import { flexLayout, fullWidth, uploadList, fonts } from "../../styles/styles";
 import { FormLabel } from "../common/Label";
 import { getFileLabel } from "../../utils/labelHandle";
 
@@ -30,19 +24,42 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const renderFileLabel = (type: ConversionType) => {
     const label = getFileLabel(type);
 
+    if (label.includes("|||")) {
+      const [firstPart, secondPart] = label
+        .split("|||")
+        .map((part) => part.trim());
+
+      return (
+        <>
+          파일 첨부{" "}
+          <Text
+            style={{
+              color: "#ff4d6d",
+              fontSize: 14,
+              fontWeight: fonts.weight.normal,
+            }}
+          >
+            <span style={{ marginRight: 8 }}>
+              {firstPart.substring(firstPart.indexOf("("))}
+            </span>
+            {secondPart}
+          </Text>
+        </>
+      );
+    }
+
     if (!label.includes("(")) {
       return label;
     }
 
     const [mainLabel, highlightedText] = label.split("(");
-
     return (
       <>
         {mainLabel}
         <Text
           style={{
-            color: colors.text.primary,
-            fontSize: 13,
+            color: "#ff4d6d",
+            fontSize: 14,
             fontWeight: fonts.weight.normal,
           }}
         >
@@ -51,7 +68,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
       </>
     );
   };
-
   return (
     <div css={flexLayout.container}>
       <Form.Item

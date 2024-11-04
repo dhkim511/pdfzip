@@ -18,7 +18,7 @@ export const getDateLabel = (conversionType: ConversionType): string => {
 export const getFileLabel = (type: ConversionType): string => {
   switch (type) {
     case "attendance":
-      return "파일 첨부 (출석 스크린샷 or 증빙서류, 서명 이미지)";
+      return "파일 첨부 ( HRD 오류 → 출석 스크린샷, 오류 화면 캡처본, 서명 이미지 ) ||| ( 기타 → 증빙서류, 서명 이미지 )";
     case "vacation":
       return "파일 첨부 (서명 이미지)";
     case "officialLeave":

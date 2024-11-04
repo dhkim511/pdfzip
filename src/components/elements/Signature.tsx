@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import React, { RefObject } from "react";
+import React, { RefObject, useEffect, useState, CSSProperties } from "react";
 import { Form, Button, Space } from "antd";
 import {
   EditOutlined,
@@ -11,7 +11,7 @@ import { FormLabel } from "../common/Label";
 import {
   flexLayout,
   spacing,
-  signatureCanvas,
+  signatureContainer,
   fullWidth,
 } from "../../styles/styles";
 
@@ -19,7 +19,43 @@ interface SignatureProps {
   signatureRef: RefObject<SignatureCanvas>;
 }
 
+const canvasStyle: CSSProperties = {
+  position: "absolute",
+  left: 0,
+  top: 0,
+  width: "100%",
+  height: "100%",
+  touchAction: "none",
+  WebkitUserSelect: "none",
+  MozUserSelect: "none",
+  msUserSelect: "none",
+  userSelect: "none",
+  display: "block",
+};
+
 export const Signature: React.FC<SignatureProps> = ({ signatureRef }) => {
+  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const updateCanvasSize = () => {
+      if (containerRef.current) {
+        const { width, height } = containerRef.current.getBoundingClientRect();
+        setCanvasSize({
+          width: Math.floor(width),
+          height: Math.floor(height),
+        });
+      }
+    };
+
+    updateCanvasSize();
+    window.addEventListener("resize", updateCanvasSize);
+
+    return () => {
+      window.removeEventListener("resize", updateCanvasSize);
+    };
+  }, []);
+
   const handleSignatureClear = () => {
     if (signatureRef.current) {
       signatureRef.current.clear();
@@ -43,30 +79,23 @@ export const Signature: React.FC<SignatureProps> = ({ signatureRef }) => {
         size="middle"
         css={[fullWidth, { marginBottom: spacing.sm }]}
       >
-        <div css={[flexLayout.center, { height: 240, width: "100%" }]}>
-          <SignatureCanvas
-            ref={signatureRef}
-            canvasProps={{
-              width: 480,
-              height: 240,
-              className: "signature-canvas",
-              style: {
-                ...signatureCanvas,
-                touchAction: "none",
-                WebkitUserSelect: "none",
-                MozUserSelect: "none",
-                msUserSelect: "none",
-                userSelect: "none",
-                width: "100%",
-                height: "100%",
-              },
-            }}
-            dotSize={0.5}
-            minWidth={0.5}
-            maxWidth={2.5}
-            throttle={16}
-            velocityFilterWeight={0.7}
-          />
+        <div ref={containerRef} css={[flexLayout.center, signatureContainer]}>
+          {canvasSize.width > 0 && canvasSize.height > 0 && (
+            <SignatureCanvas
+              ref={signatureRef}
+              canvasProps={{
+                width: canvasSize.width,
+                height: canvasSize.height,
+                className: "signature-canvas",
+                style: canvasStyle,
+              }}
+              dotSize={1}
+              minWidth={1}
+              maxWidth={3}
+              throttle={0}
+              velocityFilterWeight={0.5}
+            />
+          )}
         </div>
         <div css={[flexLayout.end, fullWidth]}>
           <Space wrap>

@@ -48,14 +48,21 @@ export const Attendance: React.FC = () => (
         },
       ]}
     >
-      <Input placeholder="ex) HRD 오류, 면접, 시험, 질병, 예비군 ..." />
+      <Input placeholder="ex) HRD 오류, 질병,  면접, 예비군 ..." />
     </Form.Item>
 
     <Form.Item
       name="proofDocumentName"
       label={<FormLabel icon={<FileTextOutlined />}>증빙서류명</FormLabel>}
+      rules={[
+        {
+          required: true,
+          message:
+            FEEDBACK_MESSAGES.FORM_VALIDATION.PROOF_DOCUMENT_NAME_REQUIRED,
+        },
+      ]}
     >
-      <Input placeholder="ex) 진료확인서, 면접확인서, 예비군 필증..." />
+      <Input placeholder="ex) HRD 오류 화면, 진료확인서, 면접확인서, 예비군 필증..." />
     </Form.Item>
   </>
 );
