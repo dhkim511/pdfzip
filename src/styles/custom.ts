@@ -107,9 +107,7 @@ export const fileTag = {
   container: css`
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-top: 10px;
-    
+    gap: 10px;  
   `,
   requirementContainer: css`
     display: flex;
