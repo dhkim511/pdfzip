@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
 import { Spin } from "antd";
-import ConversionForm from "../components/ConversionForm";
-import GuideForm from "../components/GuideForm";
+import ConversionForm from "../components/forms/ConversionForm";
+import GuideForm from "../components/forms/GuideForm";
 import { useConversionForm } from "../hooks/useConversionForm";
 import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
 import {
@@ -12,7 +12,7 @@ import {
   rightContainer,
   guideSection,
   formSection,
-} from "../styles/index";
+} from "../styles/styles";
 
 const Dashboard: React.FC = () => {
   const { form, fileList, isLoading, onFinish, handleFileChange } =

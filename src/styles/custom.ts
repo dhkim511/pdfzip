@@ -32,10 +32,6 @@ export const datePicker = css`
   width: 100%;
 `;
 
-export const link = css`
-  margin-left: 19px;
-`;
-
 export const signatureCanvas = {
   border: `1px solid ${colors.border}`,
   borderRadius: sizes.borderRadius.small,

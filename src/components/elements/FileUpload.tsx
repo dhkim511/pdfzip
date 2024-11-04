@@ -3,16 +3,16 @@ import React from "react";
 import { Form, Upload, Button, Typography } from "antd";
 import { UploadOutlined, FileAddOutlined } from "@ant-design/icons";
 import { UploadFile } from "antd/es/upload/interface";
-import { FileChangeInfo, ConversionType } from "../types/conversionType";
+import { FileChangeInfo, ConversionType } from "../../types/conversionType";
 import {
   flexLayout,
   fullWidth,
   uploadList,
   colors,
   fonts,
-} from "../styles/index";
-import { FormLabel } from "./Label";
-import { getFileLabel } from "../utils/labelHandle";
+} from "../../styles/styles";
+import { FormLabel } from "../common/Label";
+import { getFileLabel } from "../../utils/labelHandle";
 
 const { Text } = Typography;
 
