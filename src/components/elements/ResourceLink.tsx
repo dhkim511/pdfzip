@@ -11,7 +11,10 @@ import { buttonGroup, downloadButton } from "../../styles/styles";
 import { FORMLINK, NOTICELINK } from "../../constants/resources";
 
 export const ResourceLink: React.FC = () => (
-  <Form.Item label={<FormLabel icon={<LinkOutlined />}>링크</FormLabel>}>
+  <Form.Item
+    label={<FormLabel icon={<LinkOutlined />}>링크</FormLabel>}
+    css={{ marginBottom: "90px" }}
+  >
     <div css={buttonGroup}>
       <Button
         href={NOTICELINK}

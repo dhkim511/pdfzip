@@ -15,17 +15,52 @@ export const getDateLabel = (conversionType: ConversionType): string => {
   }
 };
 
-export const getFileLabel = (type: ConversionType): string => {
+interface FileRequirement {
+  category?: string;
+  files: string[];
+}
+
+interface FileLabel {
+  primary: FileRequirement | FileRequirement[];
+  warning?: FileRequirement;
+}
+
+export const getFileLabel = (type: ConversionType): FileLabel => {
   switch (type) {
     case "attendance":
-      return "파일 첨부 ( HRD 오류 → 출석 스크린샷, 오류 화면 캡처본, 서명 이미지 ) ||| ( 기타 → 증빙서류, 서명 이미지 )";
+      return {
+        primary: {
+          category: "HRD 오류",
+          files: ["출석 스크린샷", "오류 화면 캡처본", "서명 이미지"]
+        },
+        warning: {
+          category: "기타",
+          files: ["증빙서류", "서명 이미지"]
+        }
+      };
     case "vacation":
-      return "파일 첨부 (서명 이미지)";
+      return {
+        primary: {
+          files: ["서명 이미지"]
+        }
+      };
     case "officialLeave":
-      return "파일 첨부 (증빙서류, 서명 이미지)";
+      return {
+        primary: {
+          files: ["증빙서류", "서명 이미지"]
+        }
+      };
     case "finalVacation":
-      return "파일 첨부 (서명 이미지)";
+      return {
+        primary: {
+          files: ["서명 이미지"]
+        }
+      };
     default:
-      return "파일 첨부";
+      return {
+        primary: {
+          files: []
+        }
+      };
   }
 };

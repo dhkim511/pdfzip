@@ -1,14 +1,17 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
-import { Form, Upload, Button, Typography } from "antd";
-import { UploadOutlined, FileAddOutlined } from "@ant-design/icons";
+import { Form, Upload, Button } from "antd";
+import { FileAddOutlined, PlusOutlined } from "@ant-design/icons";
 import { UploadFile } from "antd/es/upload/interface";
 import { FileChangeInfo, ConversionType } from "../../types/conversionType";
-import { flexLayout, fullWidth, uploadList, fonts } from "../../styles/styles";
+import {
+  flexLayout,
+  fullWidth,
+  uploadList,
+  fileUpload,
+} from "../../styles/styles";
 import { FormLabel } from "../common/Label";
-import { getFileLabel } from "../../utils/labelHandle";
-
-const { Text } = Typography;
+import FileTag from "./FileTag";
 
 interface FileUploadProps {
   fileList: UploadFile[];
@@ -21,75 +24,52 @@ const FileUpload: React.FC<FileUploadProps> = ({
   handleFileChange,
   conversionType,
 }) => {
-  const renderFileLabel = (type: ConversionType) => {
-    const label = getFileLabel(type);
-
-    if (label.includes("|||")) {
-      const [firstPart, secondPart] = label
-        .split("|||")
-        .map((part) => part.trim());
-
-      return (
-        <>
-          파일 첨부{" "}
-          <Text
-            style={{
-              color: "#ff4d6d",
-              fontSize: 14,
-              fontWeight: fonts.weight.normal,
-            }}
-          >
-            <span style={{ marginRight: 8 }}>
-              {firstPart.substring(firstPart.indexOf("("))}
-            </span>
-            {secondPart}
-          </Text>
-        </>
-      );
-    }
-
-    if (!label.includes("(")) {
-      return label;
-    }
-
-    const [mainLabel, highlightedText] = label.split("(");
-    return (
-      <>
-        {mainLabel}
-        <Text
-          style={{
-            color: "#ff4d6d",
-            fontSize: 14,
-            fontWeight: fonts.weight.normal,
-          }}
-        >
-          ({highlightedText}
-        </Text>
-      </>
-    );
-  };
   return (
     <div css={flexLayout.container}>
       <Form.Item
         name="files"
-        label={
-          <FormLabel icon={<FileAddOutlined />}>
-            {renderFileLabel(conversionType)}
-          </FormLabel>
-        }
+        label={<FormLabel icon={<FileAddOutlined />}>파일 첨부</FormLabel>}
         rules={[{ required: true, message: "파일을 첨부해주세요" }]}
         css={[fullWidth]}
       >
-        <Upload
-          beforeUpload={() => false}
-          onChange={handleFileChange}
-          multiple
-          fileList={fileList}
-          listType="picture"
-          css={uploadList}
-        >
-          <Button icon={<UploadOutlined />}>파일 업로드</Button>
-        </Upload>
+        <div css={fileUpload.wrapper}>
+          <div css={fileUpload.uploadSection}>
+            <Upload
+              beforeUpload={() => false}
+              onChange={handleFileChange}
+              multiple
+              fileList={[]}
+              showUploadList={false}
+            >
+              <Button
+                icon={<PlusOutlined />}
+                style={{
+                  width: "70px",
+                  height: "70px",
+                  color: "#595959",
+                  border: "1px solid #d9d9d9",
+                  borderRadius: "6px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                css={fileUpload.buttonHover}
+              />
+            </Upload>
+            <div css={fileUpload.tagContainer}>
+              <FileTag type={conversionType} />
+            </div>
+          </div>
+          <Upload
+            beforeUpload={() => false}
+            onChange={handleFileChange}
+            multiple
+            fileList={fileList}
+            listType="picture"
+            css={uploadList}
+            showUploadList={{ showRemoveIcon: true }}
+          />
+        </div>
       </Form.Item>
     </div>
   );

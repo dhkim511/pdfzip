@@ -4,13 +4,7 @@ import { colors, sizes } from "./theme";
 export const submitButton = css`
   width: 100%;
   height: ${sizes.height.button};
-  color: ${colors.primary};
-  border-color: ${colors.primary};
   border-radius: ${sizes.borderRadius.large};
-
-  &:hover {
-    opacity: 0.65;
-  }
 `;
 
 export const buttonGroup = css`
@@ -62,24 +56,79 @@ export const typographyTextStyle = css`
 
 export const alertStyle = css`
   &.ant-alert-warning {
-    background-color: rgba(252, 28, 73, 0.03);
-    border: 1px solid rgba(252, 28, 73, 0.4);
+    background-color: #fff2f0;
+    border: 1px solid #ffccc7;
 
     .ant-alert-icon {
-      color: #ff4d6d;
+      color: #ff4d4f;
     }
 
     .ant-alert-message {
-      color: #ff4d6d;
+      color: #ff4d4f;
     }
 
     .ant-alert-description {
-      color: #ff4d6d;
+      color: #ff4d4f;
       
       .ant-typography {
-        color: #ff4d6d;
+        color: #ff4d4f;
         margin-left: 8px;
       }
     }
   }
 `;
+
+export const fileUpload = {
+  wrapper: css`
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+  `,
+  uploadSection: css`
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    align-items: flex-start;
+  `,
+  tagContainer: css`
+    flex: 1;
+    min-width: 0;
+  `,
+  buttonHover: css`
+    &:hover {
+      color: ${colors.primary} !important;
+      border-color: ${colors.primary} !important;
+    }
+  `
+};
+
+export const fileTag = {
+  container: css`
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+  `,
+  requirementContainer: css`
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+  `,
+  filesContainer: css`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: baseline;
+  `,
+  categoryText: {
+    fontSize: "14px",
+    color: colors.text.secondary,
+    whiteSpace: "nowrap" as const
+  },
+  tagWrapper: css`
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  `
+};

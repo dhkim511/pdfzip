@@ -22,6 +22,6 @@ export const GuideAlert: React.FC = () => (
     }
     type="warning"
     showIcon
-    css={[alertStyle, { marginTop: "80px", marginBottom: spacing.md }]}
+    css={[alertStyle, { marginTop: "80px", marginBottom: spacing.xl }]}
   />
 );
