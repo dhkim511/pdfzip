@@ -107,18 +107,19 @@ export const fileTag = {
   container: css`
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-top: 4px;
+    gap: 10px;
+    margin-top: 10px;
+    
   `,
   requirementContainer: css`
     display: flex;
-    gap: 6px;
+    gap: 8px;
     align-items: baseline;
   `,
   filesContainer: css`
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 8px;
     align-items: baseline;
   `,
   categoryText: {
