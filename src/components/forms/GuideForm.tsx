@@ -5,7 +5,7 @@ import SignatureCanvas from "react-signature-canvas";
 import { flexLayout } from "../../styles/styles";
 import { Signature } from "../elements/Signature";
 import { GuideAlert } from "../elements/GuideAlert";
-import { FormLinks } from "../elements/FormLinks";
+import { ResourceLink } from "../elements/ResourceLink";
 
 const GuideForm: React.FC = () => {
   const [form] = Form.useForm();
@@ -16,7 +16,7 @@ const GuideForm: React.FC = () => {
       <div css={flexLayout.flex00Auto}>
         <GuideAlert />
         <Signature signatureRef={signatureRef} />
-        <FormLinks />
+        <ResourceLink />
       </div>
     </Form>
   );

@@ -10,7 +10,7 @@ import { FormLabel } from "../common/Label";
 import { buttonGroup, downloadButton } from "../../styles/styles";
 import { FORMLINK, NOTICELINK } from "../../constants/resources";
 
-export const FormLinks: React.FC = () => (
+export const ResourceLink: React.FC = () => (
   <Form.Item label={<FormLabel icon={<LinkOutlined />}>링크</FormLabel>}>
     <div css={buttonGroup}>
       <Button
