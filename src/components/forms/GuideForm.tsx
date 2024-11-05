@@ -14,8 +14,8 @@ const GuideForm: React.FC = () => {
   return (
     <Form form={form} layout="vertical" css={flexLayout.column}>
       <div css={flexLayout.flex00Auto}>
-        <Signature signatureRef={signatureRef} />
         <GuideAlert />
+        <Signature signatureRef={signatureRef} />
         <ResourceLink />
       </div>
     </Form>

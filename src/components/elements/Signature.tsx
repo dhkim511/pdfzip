@@ -8,8 +8,12 @@ import {
 } from "@ant-design/icons";
 import SignatureCanvas from "react-signature-canvas";
 import { FormLabel } from "../common/Label";
-import { flexLayout, signatureContainer, fullWidth } from "../../styles/styles";
-
+import {
+  flexLayout,
+  signatureContainer,
+  fullWidth,
+  spacing,
+} from "../../styles/styles";
 interface SignatureProps {
   signatureRef: RefObject<SignatureCanvas>;
 }
@@ -68,7 +72,10 @@ export const Signature: React.FC<SignatureProps> = ({ signatureRef }) => {
   };
 
   return (
-    <Form.Item label={<FormLabel icon={<EditOutlined />}>서명</FormLabel>}>
+    <Form.Item
+      label={<FormLabel icon={<EditOutlined />}>서명</FormLabel>}
+      css={{ marginBottom: spacing.lg }}
+    >
       <Space direction="vertical" size="middle" css={[fullWidth]}>
         <div ref={containerRef} css={[flexLayout.center, signatureContainer]}>
           {canvasSize.width > 0 && canvasSize.height > 0 && (

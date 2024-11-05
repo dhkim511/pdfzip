@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
 import { Form, Upload, Button } from "antd";
-import { FileAddOutlined, PlusOutlined } from "@ant-design/icons";
+import { UploadOutlined, PlusOutlined } from "@ant-design/icons";
 import { UploadFile } from "antd/es/upload/interface";
 import { FileChangeInfo, ConversionType } from "../../types/conversionType";
 import {
@@ -24,11 +24,19 @@ const FileUpload: React.FC<FileUploadProps> = ({
   handleFileChange,
   conversionType,
 }) => {
+  const handleFirstUploadChange = (info: FileChangeInfo) => {
+    const newInfo = {
+      ...info,
+      fileList: [...fileList, ...info.fileList],
+    };
+    handleFileChange(newInfo);
+  };
+
   return (
     <div css={flexLayout.container}>
       <Form.Item
         name="files"
-        label={<FormLabel icon={<FileAddOutlined />}>파일 첨부</FormLabel>}
+        label={<FormLabel icon={<UploadOutlined />}>파일 업로드</FormLabel>}
         rules={[{ required: true, message: "파일을 첨부해주세요" }]}
         css={[fullWidth]}
       >
@@ -36,7 +44,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           <div css={fileUpload.uploadSection}>
             <Upload
               beforeUpload={() => false}
-              onChange={handleFileChange}
+              onChange={handleFirstUploadChange}
               multiple
               fileList={[]}
               showUploadList={false}
@@ -44,8 +52,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
               <Button
                 icon={<PlusOutlined />}
                 style={{
-                  width: "100px",
-                  height: "100px",
+                  width: "64px",
+                  height: "64px",
                   color: "#595959",
                   border: "1px solid #d9d9d9",
                   borderRadius: "6px",

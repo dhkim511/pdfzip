@@ -51,17 +51,17 @@ export const fonts = {
 
 export const spacing = {
   xs: "16px",
-  sm: "24px",
-  md: "40px",
-  lg: "52px",
-  xl: "80px",
+  sm: "32px",
+  md: "48px",
+  lg: "64px",
+  xl: "90px",
   margin: {
     bottom: {
       xs: css`margin-bottom: 16px;`,
-      sm: css`margin-bottom: 24px;`,
-      md: css`margin-bottom: 40px;`,
-      lg: css`margin-bottom: 52px;`,
-      xl: css`margin-bottom: 80px;`,
+      sm: css`margin-bottom: 32px;`,
+      md: css`margin-bottom: 48px;`,
+      lg: css`margin-bottom: 64px;`,
+      xl: css`margin-bottom: 90px;`,
     },
   },
 };

@@ -5,7 +5,7 @@ import {
   UserOutlined,
   CheckSquareOutlined,
   CalendarOutlined,
-  FileDoneOutlined,
+  DownloadOutlined,
 } from "@ant-design/icons";
 import {
   FormValues,
@@ -135,9 +135,9 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
           htmlType="submit"
           css={submitButton}
           disabled={isLoading}
-          icon={<FileDoneOutlined />}
+          icon={<DownloadOutlined />}
         >
-          실행
+          신청파일 다운로드
         </Button>
       </Form.Item>
     </Form>

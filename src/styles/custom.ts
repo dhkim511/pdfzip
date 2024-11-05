@@ -4,7 +4,12 @@ import { colors, sizes } from "./theme";
 export const submitButton = css`
   width: 100%;
   height: ${sizes.height.button};
+  color: ${colors.primary};
+  border-color: ${colors.primary};
   border-radius: ${sizes.borderRadius.large};
+  &:hover {
+    opacity: 0.6;
+  }
 `;
 
 export const buttonGroup = css`
@@ -107,21 +112,21 @@ export const fileTag = {
   container: css`
     display: flex;
     flex-direction: column;
-    gap: 10px;  
+    gap: 8px;  
   `,
   requirementContainer: css`
     display: flex;
-    gap: 8px;
+    gap: 6px;
     align-items: baseline;
   `,
   filesContainer: css`
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
     align-items: baseline;
   `,
   categoryText: {
-    fontSize: "14px",
+    fontSize: "13px",
     color: colors.text.secondary,
     whiteSpace: "nowrap" as const
   },
