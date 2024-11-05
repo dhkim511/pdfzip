@@ -68,11 +68,11 @@ const fileUtils = {
 
 const formatDates = {
   attendance: (date) => {
-    return dayjs(date).add(9, "hour").format("YYMMDD");
+    return dayjs(date).format("YYMMDD");
   },
   vacation: (date) => {
     const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
-    const dateObj = dayjs(date).add(9, "hour");
+    const dateObj = dayjs(date);
     return `${dateObj.year()}년 ${dateObj.month() + 1}월 ${dateObj.date()}일 (${
       weekDays[dateObj.day()]
     })`;
@@ -216,7 +216,7 @@ const documentGenerator = {
 
     doc.render({
       date: formatDates.attendance(values.date),
-      applicationDate: dayjs().format("YYMMDD"),
+      applicationDate: dayjs().add(9, "hour").format("YYMMDD"),
       name: values.name,
       checkInTime: values.checkInTime,
       checkOutTime: values.checkOutTime,
