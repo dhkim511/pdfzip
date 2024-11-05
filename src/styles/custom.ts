@@ -4,12 +4,7 @@ import { colors, sizes } from "./theme";
 export const submitButton = css`
   width: 100%;
   height: ${sizes.height.button};
-  color: ${colors.primary};
-  border-color: ${colors.primary};
   border-radius: ${sizes.borderRadius.large};
-  &:hover {
-    opacity: 0.6;
-  }
 `;
 
 export const buttonGroup = css`
