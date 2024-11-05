@@ -2,7 +2,7 @@ import { ThemeConfig } from "antd/es/config-provider/context";
 import { css } from "@emotion/react";
 
 export const colors = {
-  primary: "#ff4d4f",
+  primary: "#ed234b",
   primaryHover: "#d11539",
   border: "#d9d9d9",
   text: {

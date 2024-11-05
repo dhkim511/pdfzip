@@ -52,8 +52,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
               <Button
                 icon={<PlusOutlined />}
                 style={{
-                  width: "64px",
-                  height: "64px",
+                  width: "68px",
+                  height: "68px",
                   color: "#595959",
                   border: "1px solid #d9d9d9",
                   borderRadius: "6px",
