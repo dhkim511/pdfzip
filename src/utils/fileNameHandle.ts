@@ -11,8 +11,8 @@ export const isAttendanceScreenshot = (fileName: string): boolean => {
 };
 
 const getProofDocumentSuffix = (
-  fileName: string, 
-  proofDocumentName?: string
+  fileName: string,
+  proofDocumentName?: string,
 ): string => {
   if (fileName.toLowerCase().includes("출석대장")) {
     return "(출석대장)";
@@ -25,7 +25,7 @@ const getProofDocumentSuffix = (
 
 export const getSuffix = (
   fileName: string,
-  proofDocumentName?: string
+  proofDocumentName?: string,
 ): string => {
   if (isAttendanceScreenshot(fileName)) {
     return "";

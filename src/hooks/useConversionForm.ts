@@ -28,7 +28,7 @@ export const useConversionForm = () => {
     setIsLoading(true);
     try {
       const signFile = files.find((file) =>
-        file.name.toLowerCase().includes("sign")
+        file.name.toLowerCase().includes("sign"),
       );
 
       if (signFile) {
@@ -46,14 +46,14 @@ export const useConversionForm = () => {
       }
 
       const otherFiles = files.filter(
-        (file) => !file.name.toLowerCase().includes("sign")
+        (file) => !file.name.toLowerCase().includes("sign"),
       );
 
       await createAndDownloadZip(values, otherFiles);
     } catch (error) {
       const errorMessage = (error as Error).message;
       message.error(
-        `${FEEDBACK_MESSAGES.ERRORS.GENERAL_ERROR} - ${errorMessage}`
+        `${FEEDBACK_MESSAGES.ERRORS.GENERAL_ERROR} - ${errorMessage}`,
       );
     } finally {
       setIsLoading(false);

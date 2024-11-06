@@ -31,36 +31,36 @@ export const getFileLabel = (type: ConversionType): FileLabel => {
       return {
         primary: {
           category: "HRD 오류",
-          files: ["출석 스크린샷", "오류 화면 캡처본", "서명 이미지"]
+          files: ["출석 스크린샷", "오류 화면 캡처본", "서명 이미지"],
         },
         warning: {
           category: "기타",
-          files: ["증빙서류", "서명 이미지"]
-        }
+          files: ["증빙서류", "서명 이미지"],
+        },
       };
     case "vacation":
       return {
         primary: {
-          files: ["서명 이미지"]
-        }
+          files: ["서명 이미지"],
+        },
       };
     case "officialLeave":
       return {
         primary: {
-          files: ["증빙서류", "서명 이미지"]
-        }
+          files: ["증빙서류", "서명 이미지"],
+        },
       };
     case "finalVacation":
       return {
         primary: {
-          files: ["서명 이미지"]
-        }
+          files: ["서명 이미지"],
+        },
       };
     default:
       return {
         primary: {
-          files: []
-        }
+          files: [],
+        },
       };
   }
 };

@@ -1,7 +1,11 @@
 import type { UploadFile, UploadChangeParam } from "antd/es/upload/interface";
 import type { Dayjs } from "dayjs";
 
-export type ConversionType = "vacation" | "officialLeave" | "attendance" | "finalVacation";
+export type ConversionType =
+  | "vacation"
+  | "officialLeave"
+  | "attendance"
+  | "finalVacation";
 
 export interface FormValues {
   reason: string | Blob;

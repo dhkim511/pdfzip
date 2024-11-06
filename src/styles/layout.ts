@@ -78,6 +78,16 @@ export const flexLayout = {
   `,
 };
 
+export const flexContainer = css`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+`;
+
+export const flexItem = css`
+  flex: 1 1 300px;
+`;
+
 export const fullWidth = css`
   width: 100%;
 `;

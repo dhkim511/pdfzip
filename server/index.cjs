@@ -16,6 +16,12 @@ const {
 } = require("@adobe/pdfservices-node-sdk");
 const { PDFDocument } = require("pdf-lib");
 const dayjs = require("dayjs");
+const utc = require("dayjs/plugin/utc");
+const timezone = require("dayjs/plugin/timezone");
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault("Asia/Seoul");
 
 dotenv.config();
 
@@ -68,11 +74,11 @@ const fileUtils = {
 
 const formatDates = {
   attendance: (date) => {
-    return dayjs(date).add(9, "hour").format("YYMMDD");
+    return dayjs(date).tz("Asia/Seoul").format("YYMMDD");
   },
   vacation: (date) => {
     const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
-    const dateObj = dayjs(date).add(9, "hour");
+    const dateObj = dayjs(date).tz("Asia/Seoul");
     return `${dateObj.year()}년 ${dateObj.month() + 1}월 ${dateObj.date()}일 (${
       weekDays[dateObj.day()]
     })`;
@@ -216,7 +222,7 @@ const documentGenerator = {
 
     doc.render({
       date: formatDates.attendance(values.date),
-      applicationDate: dayjs().add(9, "hour").format("YYMMDD"),
+      applicationDate: dayjs().tz("Asia/Seoul").format("YYMMDD"),
       name: values.name,
       checkInTime: values.checkInTime,
       checkOutTime: values.checkOutTime,

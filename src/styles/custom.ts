@@ -69,7 +69,7 @@ export const alertStyle = css`
 
     .ant-alert-description {
       color: #ff4d4f;
-      
+
       .ant-typography {
         color: #ff4d4f;
         margin-left: 8px;
@@ -100,14 +100,14 @@ export const fileUpload = {
       color: ${colors.primary} !important;
       border-color: ${colors.primary} !important;
     }
-  `
+  `,
 };
 
 export const fileTag = {
   container: css`
     display: flex;
     flex-direction: column;
-    gap: 8px;  
+    gap: 8px;
   `,
   requirementContainer: css`
     display: flex;
@@ -123,11 +123,11 @@ export const fileTag = {
   categoryText: {
     fontSize: "13px",
     color: colors.text.secondary,
-    whiteSpace: "nowrap" as const
+    whiteSpace: "nowrap" as const,
   },
   tagWrapper: css`
     display: flex;
     gap: 8px;
     align-items: baseline;
-  `
+  `,
 };
