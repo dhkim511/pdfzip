@@ -54,7 +54,7 @@ export const spacing = {
   sm: "32px",
   md: "48px",
   lg: "66px",
-  xl: "90px",
+  xl: "88px",
   margin: {
     bottom: {
       xs: css`
@@ -70,7 +70,7 @@ export const spacing = {
         margin-bottom: 66px;
       `,
       xl: css`
-        margin-bottom: 90px;
+        margin-bottom: 88px;
       `,
     },
   },

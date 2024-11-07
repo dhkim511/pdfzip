@@ -81,7 +81,10 @@ export const flexLayout = {
 export const flexContainer = css`
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  
+  @media (min-width: 768px) {
+    gap: 16px;
+  }
 `;
 
 export const flexItem = css`

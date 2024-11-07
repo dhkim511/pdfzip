@@ -12,7 +12,7 @@ const MOBILE_BREAKPOINT = 768;
 
 export const FinalVacation: React.FC = () => {
   const { width } = useWindowSize();
-  const textAreaRows = width <= MOBILE_BREAKPOINT ? 3 : 1;
+  const textAreaRows = width <= MOBILE_BREAKPOINT ? 4 : 1;
 
   return (
     <>
