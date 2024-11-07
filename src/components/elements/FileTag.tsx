@@ -22,7 +22,7 @@ const FileTag: React.FC<FileTagProps> = ({ type }) => {
       <div css={fileTag.requirementContainer}>
         {requirement.category && (
           <Text strong style={fileTag.categoryText}>
-            {requirement.category}:
+            {requirement.category} :
           </Text>
         )}
         <div css={fileTag.filesContainer}>
