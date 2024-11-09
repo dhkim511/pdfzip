@@ -122,31 +122,8 @@ const cachedTemplates = {
   ),
 };
 
-const fileUtils = {
-  ensureDir: (dirPath) => {
-    !fs.existsSync(dirPath) && fs.mkdirSync(dirPath);
-  },
-
-  needsConversion: (file) => {
-    const fileExtension = path.extname(file.originalname).toLowerCase();
-    const fileName = file.originalname.toLowerCase();
-
-    if (fileName.includes("출석대장")) {
-      return true;
-    }
-
-    if (
-      (fileName.includes("오전") || fileName.includes("오후")) &&
-      (fileName.includes("10") ||
-        fileName.includes("2") ||
-        fileName.includes("7"))
-    ) {
-      return false;
-    }
-
-    const noConversionExtensions = [".jpg", ".jpeg", ".png", ".pdf"];
-    return !noConversionExtensions.includes(fileExtension);
-  },
+const ensureDir = (dirPath) => {
+  !fs.existsSync(dirPath) && fs.mkdirSync(dirPath);
 };
 
 const formatDates = {
@@ -257,7 +234,6 @@ const pdfProcessor = {
 
       return finalOutputPath;
     } catch (error) {
-      console.error("PDF conversion error:", error);
       throw new Error(`PDF conversion failed: ${error.message}`);
     }
   },
@@ -394,7 +370,7 @@ app.use(
 );
 
 [DIRS.upload, DIRS.converted].forEach((dir) =>
-  fileUtils.ensureDir(path.join(__dirname, dir))
+  ensureDir(path.join(__dirname, dir))
 );
 
 app.post("/sign", upload.single("file"), async (req, res) => {
@@ -414,7 +390,6 @@ app.post("/sign", upload.single("file"), async (req, res) => {
       path: filePath,
     });
   } catch (err) {
-    console.error("Error resizing signature file:", err);
     res.status(500).send("Error resizing signature file");
   }
 });
@@ -468,23 +443,10 @@ app.post("/convert", upload.single("file"), async (req, res) => {
         });
       }
     } else if (req.file) {
-      if (fileUtils.needsConversion(req.file)) {
-        filledDocPaths.push({
-          path: await documentGenerator.fillAttendanceForm(req.body),
-          type: "attendance",
-        });
-      } else {
-        const originalFileName = `original_${Date.now()}${path.extname(
-          req.file.originalname
-        )}`;
-        const outputPath = path.join(
-          __dirname,
-          DIRS.converted,
-          originalFileName
-        );
-        fs.copyFileSync(req.file.path, outputPath);
-        filledDocPaths.push({ path: outputPath, type: "original" });
-      }
+      filledDocPaths.push({
+        path: await documentGenerator.fillAttendanceForm(req.body),
+        type: "attendance",
+      });
     }
 
     if (filledDocPaths.length === 0) {

@@ -6,69 +6,98 @@ import { createAndDownloadZip } from "../utils/zipArchiver";
 import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
 import { SERVER_URL } from "../constants/environmentConfig";
 
+interface ProcessResult {
+ ok: boolean;
+ error?: string;
+}
+
 export const useConversionForm = () => {
-  const [form] = Form.useForm<FormValues>();
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+ const [form] = Form.useForm<FormValues>();
+ const [fileList, setFileList] = useState<UploadFile[]>([]);
+ const [isLoading, setIsLoading] = useState(false);
 
-  const onFinish = async (values: FormValues) => {
-    if (fileList.length === 0) {
-      message.error(FEEDBACK_MESSAGES.ERRORS.NO_FILE);
-      return;
-    }
+ const validateFiles = (files: File[]): ProcessResult => {
+   if (files.length === 0) {
+     return { ok: false, error: FEEDBACK_MESSAGES.ERRORS.NO_FILE };
+   }
+   return { ok: true };
+ };
 
-    const files = fileList.map((file) => {
-      if (!file.originFileObj) {
-        message.error("파일 업로드가 완료되지 않았습니다.");
-        throw new Error("파일이 유효하지 않습니다.");
-      }
-      return file.originFileObj as File;
-    });
+ const uploadSignature = async (file: File): Promise<ProcessResult> => {
+   const formData = new FormData();
+   formData.append("file", file);
 
-    setIsLoading(true);
-    try {
-      const signFile = files.find((file) =>
-        file.name.toLowerCase().includes("sign"),
-      );
+   try {
+     const response = await fetch(`${SERVER_URL}/sign`, {
+       method: "POST",
+       body: formData,
+     });
 
-      if (signFile) {
-        const signFormData = new FormData();
-        signFormData.append("file", signFile);
+     return {
+       ok: response.ok,
+       error: response.ok ? undefined : "서명 파일 업로드 실패",
+     };
+   } catch (error) {
+     return { ok: false, error: "서명 파일 업로드 실패" };
+   }
+ };
 
-        const signResponse = await fetch(`${SERVER_URL}/sign`, {
-          method: "POST",
-          body: signFormData,
-        });
+ const processFiles = async (values: FormValues): Promise<ProcessResult> => {
+   const files = fileList.map((file) => {
+     if (!file.originFileObj) {
+       throw new Error("파일이 유효하지 않습니다.");
+     }
+     return file.originFileObj as File;
+   });
 
-        if (!signResponse.ok) {
-          throw new Error("서명 파일 업로드 실패");
-        }
-      }
+   const validation = validateFiles(files);
+   if (!validation.ok) return validation;
 
-      const otherFiles = files.filter(
-        (file) => !file.name.toLowerCase().includes("sign"),
-      );
+   const signFile = files.find((file) => 
+     file.name.toLowerCase().includes("sign")
+   );
 
-      await createAndDownloadZip(values, otherFiles);
-    } catch (error) {
-      const errorMessage = (error as Error).message;
-      message.error(
-        `${FEEDBACK_MESSAGES.ERRORS.GENERAL_ERROR} - ${errorMessage}`,
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
+   if (signFile) {
+     const signResult = await uploadSignature(signFile);
+     if (!signResult.ok) return signResult;
+   }
 
-  const handleFileChange = (info: FileChangeInfo) => {
-    setFileList([...info.fileList]);
-  };
+   const otherFiles = files.filter(
+     (file) => !file.name.toLowerCase().includes("sign")
+   );
 
-  return {
-    form,
-    fileList,
-    isLoading,
-    onFinish,
-    handleFileChange,
-  };
+   try {
+     await createAndDownloadZip(values, otherFiles);
+     return { ok: true };
+   } catch (error) {
+     return { 
+       ok: false, 
+       error: `${FEEDBACK_MESSAGES.ERRORS.GENERAL_ERROR} - ${(error as Error).message}`
+     };
+   }
+ };
+
+ const onFinish = async (values: FormValues) => {
+   setIsLoading(true);
+   try {
+     const result = await processFiles(values);
+     if (!result.ok && result.error) {
+       message.error(result.error);
+     }
+   } finally {
+     setIsLoading(false);
+   }
+ };
+
+ const handleFileChange = (info: FileChangeInfo) => {
+   setFileList([...info.fileList]);
+ };
+
+ return {
+   form,
+   fileList,
+   isLoading,
+   onFinish,
+   handleFileChange,
+ };
 };
