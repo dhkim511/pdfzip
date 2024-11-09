@@ -1,6 +1,10 @@
 import type { UploadFile, UploadChangeParam } from "antd/es/upload/interface";
 import type { Dayjs } from "dayjs";
 
+export interface Course {
+  name: string;
+}
+
 export type ConversionType =
   | "vacation"
   | "officialLeave"
@@ -8,9 +12,10 @@ export type ConversionType =
   | "finalVacation";
 
 export interface FormValues {
-  reason: string | Blob;
-  checkOutTime: string | Blob;
-  checkInTime: string | Blob;
+  courseType: string;  
+  reason: string;      
+  checkOutTime: string;
+  checkInTime: string; 
   conversionType: ConversionType;
   name: string;
   date: Dayjs;

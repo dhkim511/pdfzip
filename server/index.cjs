@@ -30,6 +30,87 @@ const DIRS = {
   converted: "converted",
 };
 
+const COURSE_LIST = [
+  {
+    name: "데브캠프 프론트엔드 개발_1기(DEV_FE1)",
+    short: "데브캠프 : 프론트엔드 개발",
+    period: "2024-05-20 ~ 2024-12-13(4회차)",
+    time: "10:00 ~ 19:00",
+  },
+  {
+    name: "데브캠프 프론트엔드 개발_2기(DEV_FE2)",
+    short: "데브캠프 : 프론트엔드 개발",
+    period: "2024-09-23 ~ 2025-04-18(5회차)",
+    time: "10:00 ~ 19:00",
+  },
+  {
+    name: "AI 융합 백엔드 개발 부트캠프_1기(DEV_BE1)",
+    short: "AI 융합 백엔드 개발 부트캠프",
+    period: "2024-05-20 ~ 2024-12-13(1회차)",
+    time: "10:00 ~ 19:00",
+  },
+  {
+    name: "AI 융합 백엔드 개발 부트캠프_2기(DEV_BE2)",
+    short: "AI 융합 백엔드 개발 부트캠프",
+    period: "2024-09-23 ~ 2025-04-04 (2회차)",
+    time: "10:00 ~ 19:00",
+  },
+  {
+    name: "패스트캠퍼스 kernel 프론트엔드 개발 부트캠프(KFE1)",
+    short: "프론트엔드 개발 중급 부트캠프",
+    period: "2024-07-15 ~ 2025-01-10(7회차)",
+    time: "10:00 ~ 19:00",
+  },
+  {
+    name: "패스트캠퍼스 kernel 백엔드 개발 부트캠프(KBE2)",
+    short: "백엔드 개발 부트캠프",
+    period: "2024-07-15 ~ 2025-01-10(7회차)",
+    time: "10:00 ~ 19:00",
+  },
+  {
+    name: "AI Lab_5기(Upstage_AI 4기)",
+    short: "AI(인공지능) Lab",
+    period: "2024-07-16 ~ 2025-02-14(5회차)",
+    time: "10:00 ~ 19:00",
+  },
+  {
+    name: "AI Lab_6기(Upstage_AI 5기)",
+    short: "AI(인공지능) Lab",
+    period: "2024-09-23 ~ 2025-04-25(6회차)",
+    time: "10:00 ~ 19:00",
+  },
+  {
+    name: "PM(프로덕트 매니저) 부트캠프_7기",
+    short: "프로덕트 매니저(PM) 부트캠프",
+    period: "2024-10-14 ~ 2025-04-11(7회차)",
+    time: "10:00 ~ 19:00",
+  },
+  {
+    name: "패스트캠퍼스 UXUI 디자인 부트캠프 4기",
+    short: "UXUI 디자인 부트캠프",
+    period: "2024-10-14 ~ 2025-04-11(4회차)",
+    time: "10:00 ~ 19:00",
+  },
+  {
+    name: "데이터 분석 부트캠프_8기(BDA16)",
+    short: "데이터 분석 부트캠프",
+    period: "2024-08-19 ~ 2025-01-10(8회차)",
+    time: "09:00 ~ 18:00",
+  },
+];
+
+const findCourseInfo = (courseName) => {
+  const course = COURSE_LIST.find((c) => c.name === courseName);
+  if (!course) {
+    return {
+      short: "데브캠프 : 프론트엔드 개발",
+      period: "2024-05-20 ~ 2024-12-13(4회차)",
+      time: "10:00 ~ 19:00",
+    };
+  }
+  return course;
+};
+
 const cachedTemplates = {
   attendance: fs.readFileSync(
     path.join(__dirname, "templates", "attendance_template.docx"),
@@ -220,6 +301,8 @@ const documentGenerator = {
       linebreaks: true,
     });
 
+    const courseInfo = findCourseInfo(values.courseType);
+
     doc.render({
       date: formatDates.attendance(values.date),
       applicationDate: dayjs().tz("Asia/Seoul").format("YYMMDD"),
@@ -232,6 +315,9 @@ const documentGenerator = {
           : values.conversionType === "officialLeave"
           ? "공가"
           : values.reason,
+      course: courseInfo.short,
+      coursePeriod: courseInfo.period,
+      courseTime: courseInfo.time,
     });
 
     const outputPath = path.join(
@@ -250,12 +336,15 @@ const documentGenerator = {
       linebreaks: true,
     });
 
+    const courseInfo = findCourseInfo(values.courseType);
+
     doc.render({
       name: values.name,
       vacationDate: formatDates.vacation(values.date),
       courseContent: values.courseContent || "",
       studyPlan: values.studyPlan || "",
       significant: values.significant || "",
+      course: courseInfo.short,
     });
 
     const outputPath = path.join(
@@ -274,6 +363,8 @@ const documentGenerator = {
       linebreaks: true,
     });
 
+    const courseInfo = findCourseInfo(values.courseType);
+
     doc.render({
       name: values.name,
       vacationDate: formatDates.vacation(values.date),
@@ -282,6 +373,7 @@ const documentGenerator = {
       taskAdjustments: values.taskAdjustments || "",
       workPlan: values.workPlan || "",
       significant: values.significant || "",
+      course: courseInfo.short,
     });
 
     const outputPath = path.join(

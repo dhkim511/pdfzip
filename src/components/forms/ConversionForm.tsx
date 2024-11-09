@@ -6,12 +6,14 @@ import {
   CheckSquareOutlined,
   CalendarOutlined,
   DownloadOutlined,
+  BookOutlined,
 } from "@ant-design/icons";
 import {
   FormValues,
   ConversionType,
   FileChangeInfo,
 } from "../../types/conversionType";
+import { COURSE_LIST } from "../../constants/courseList";
 import FileUpload from "../elements/FileUpload";
 import { submitButton, datePicker } from "../../styles/styles";
 import { getDateLabel } from "../../utils/labelHandle";
@@ -21,6 +23,7 @@ import { Attendance } from "../fields/Attendance";
 import { Vacation } from "../fields/Vacation";
 import { FinalVacation } from "../fields/FinalVacation";
 import { OfficialLeave } from "../fields/OfficialLeave";
+import { flexContainer, flexItem } from "../../styles/layout";
 
 const { Option } = Select;
 
@@ -64,16 +67,23 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
       requiredMark={false}
     >
       <Form.Item
+        name="courseType"
+        label={<FormLabel icon={<BookOutlined />}>교육 과정</FormLabel>}
+        initialValue={COURSE_LIST[0].name}
+      >
+        <Select>
+          {COURSE_LIST.map((course) => (
+            <Option key={course.name} value={course.name}>
+              {course.name}
+            </Option>
+          ))}
+        </Select>
+      </Form.Item>
+
+      <Form.Item
         name="conversionType"
         label={<FormLabel icon={<CheckSquareOutlined />}>신청 유형</FormLabel>}
         initialValue="attendance"
-        rules={[
-          {
-            required: true,
-            message:
-              FEEDBACK_MESSAGES.FORM_VALIDATION.APPLICATION_TYPE_REQUIRED,
-          },
-        ]}
       >
         <Select>
           <Option value="attendance">출결 정정</Option>
@@ -83,43 +93,75 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
         </Select>
       </Form.Item>
 
-      <Form.Item
-        name="name"
-        label={<FormLabel icon={<UserOutlined />}>이름</FormLabel>}
-        rules={[
-          {
-            required: true,
-            message: FEEDBACK_MESSAGES.FORM_VALIDATION.NAME_REQUIRED,
-          },
-        ]}
-        style={
-          conversionType === "officialLeave"
-            ? { marginTop: "60px", marginBottom: "74px" }
-            : {}
-        }
-      >
-        <Input placeholder="이름 입력" />
-      </Form.Item>
+      {conversionType === "officialLeave" ? (
+        <>
+          <Form.Item
+            name="name"
+            label={<FormLabel icon={<UserOutlined />}>이름</FormLabel>}
+            rules={[
+              {
+                required: true,
+                message: FEEDBACK_MESSAGES.FORM_VALIDATION.NAME_REQUIRED,
+              },
+            ]}
+            style={{ marginTop: "45px", marginBottom: "60px" }}
+          >
+            <Input placeholder="이름 입력" />
+          </Form.Item>
 
-      <Form.Item
-        name="date"
-        label={
-          <FormLabel icon={<CalendarOutlined />}>
-            {getDateLabel(conversionType as ConversionType)}
-          </FormLabel>
-        }
-        rules={[
-          {
-            required: true,
-            message: FEEDBACK_MESSAGES.FORM_VALIDATION.DATE_REQUIRED,
-          },
-        ]}
-        style={
-          conversionType === "officialLeave" ? { marginBottom: "74px" } : {}
-        }
-      >
-        <DatePicker css={datePicker} />
-      </Form.Item>
+          <Form.Item
+            name="date"
+            label={
+              <FormLabel icon={<CalendarOutlined />}>
+                {getDateLabel(conversionType as ConversionType)}
+              </FormLabel>
+            }
+            rules={[
+              {
+                required: true,
+                message: FEEDBACK_MESSAGES.FORM_VALIDATION.DATE_REQUIRED,
+              },
+            ]}
+            style={{ marginBottom: "60px" }}
+          >
+            <DatePicker css={datePicker} />
+          </Form.Item>
+        </>
+      ) : (
+        <div css={flexContainer}>
+          <Form.Item
+            css={flexItem}
+            name="name"
+            label={<FormLabel icon={<UserOutlined />}>이름</FormLabel>}
+            rules={[
+              {
+                required: true,
+                message: FEEDBACK_MESSAGES.FORM_VALIDATION.NAME_REQUIRED,
+              },
+            ]}
+          >
+            <Input placeholder="이름 입력" />
+          </Form.Item>
+
+          <Form.Item
+            css={flexItem}
+            name="date"
+            label={
+              <FormLabel icon={<CalendarOutlined />}>
+                {getDateLabel(conversionType as ConversionType)}
+              </FormLabel>
+            }
+            rules={[
+              {
+                required: true,
+                message: FEEDBACK_MESSAGES.FORM_VALIDATION.DATE_REQUIRED,
+              },
+            ]}
+          >
+            <DatePicker css={datePicker} />
+          </Form.Item>
+        </div>
+      )}
 
       {renderFields()}
 

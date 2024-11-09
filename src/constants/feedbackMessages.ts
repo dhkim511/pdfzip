@@ -7,7 +7,6 @@ export const FEEDBACK_MESSAGES = {
     LOADING: "파일 처리 중...",
   },
   FORM_VALIDATION: {
-    APPLICATION_TYPE_REQUIRED: "신청 유형을 선택해주세요",
     NAME_REQUIRED: "이름을 입력해주세요",
     DATE_REQUIRED: "날짜를 선택해주세요",
     FIELD_REQUIRED: "항목을 입력해주세요",

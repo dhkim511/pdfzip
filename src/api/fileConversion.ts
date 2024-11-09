@@ -7,6 +7,7 @@ export const convertVacationFiles = async (values: FormValues) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       conversionType: values.conversionType,
+      courseType: values.courseType,
       date: values.date.format(),
       name: values.name,
       courseContent: values.courseContent || "",
@@ -30,6 +31,7 @@ export const convertFile = async (file: File, values: FormValues) => {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("conversionType", values.conversionType);
+  formData.append("courseType", values.courseType);
   formData.append("date", values.date.format());
   formData.append("name", values.name);
   formData.append("checkInTime", values.checkInTime);

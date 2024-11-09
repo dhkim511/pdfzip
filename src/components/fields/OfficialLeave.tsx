@@ -7,7 +7,6 @@ export const OfficialLeave: React.FC = () => (
   <Form.Item
     name="proofDocumentName"
     label={<FormLabel icon={<FileTextOutlined />}>증빙서류명</FormLabel>}
-    style={{ marginTop: "60px", marginBottom: "74px" }}
   >
     <Input placeholder="ex) 진료확인서, 면접확인서, 예비군 필증..." />
   </Form.Item>
