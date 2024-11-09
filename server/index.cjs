@@ -180,7 +180,7 @@ const pdfProcessor = {
     const pngImage = await pdfDoc.embedPng(fs.readFileSync(signaturePath));
     pdfDoc.getPages()[0].drawImage(pngImage, {
       x: 445,
-      y: 440,
+      y: 430,
       width: 50,
       height: 20,
     });
