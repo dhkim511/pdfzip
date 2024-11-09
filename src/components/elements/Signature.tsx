@@ -87,9 +87,9 @@ export const Signature: React.FC<SignatureProps> = ({ signatureRef }) => {
                 className: "signature-canvas",
                 style: canvasStyle,
               }}
-              dotSize={1}
-              minWidth={1}
-              maxWidth={3}
+              dotSize={2}
+              minWidth={2}
+              maxWidth={4}
               throttle={0}
               velocityFilterWeight={0.5}
             />
