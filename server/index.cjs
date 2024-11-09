@@ -102,11 +102,7 @@ const COURSE_LIST = [
 const findCourseInfo = (courseName) => {
   const course = COURSE_LIST.find((c) => c.name === courseName);
   if (!course) {
-    return {
-      short: "데브캠프 : 프론트엔드 개발",
-      period: "2024-05-20 ~ 2024-12-13(4회차)",
-      time: "10:00 ~ 19:00",
-    };
+    throw new Error("과정 정보를 찾을 수 없습니다.");
   }
   return course;
 };
