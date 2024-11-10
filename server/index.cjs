@@ -25,79 +25,7 @@ dayjs.tz.setDefault("Asia/Seoul");
 
 dotenv.config();
 
-const DIRS = {
-  upload: "uploads",
-  converted: "converted",
-};
-
-const COURSE_LIST = [
-  {
-    name: "데브캠프 프론트엔드 개발_1기(DEV_FE1)",
-    short: "데브캠프 : 프론트엔드 개발",
-    period: "2024-05-20 ~ 2024-12-13(4회차)",
-    time: "10:00 ~ 19:00",
-  },
-  {
-    name: "데브캠프 프론트엔드 개발_2기(DEV_FE2)",
-    short: "데브캠프 : 프론트엔드 개발",
-    period: "2024-09-23 ~ 2025-04-18(5회차)",
-    time: "10:00 ~ 19:00",
-  },
-  {
-    name: "AI 융합 백엔드 개발 부트캠프_1기(DEV_BE1)",
-    short: "AI 융합 백엔드 개발 부트캠프",
-    period: "2024-05-20 ~ 2024-12-13(1회차)",
-    time: "10:00 ~ 19:00",
-  },
-  {
-    name: "AI 융합 백엔드 개발 부트캠프_2기(DEV_BE2)",
-    short: "AI 융합 백엔드 개발 부트캠프",
-    period: "2024-09-23 ~ 2025-04-04 (2회차)",
-    time: "10:00 ~ 19:00",
-  },
-  {
-    name: "패스트캠퍼스 kernel 프론트엔드 개발 부트캠프(KFE1)",
-    short: "프론트엔드 개발 중급 부트캠프",
-    period: "2024-07-15 ~ 2025-01-10(7회차)",
-    time: "10:00 ~ 19:00",
-  },
-  {
-    name: "패스트캠퍼스 kernel 백엔드 개발 부트캠프(KBE2)",
-    short: "백엔드 개발 부트캠프",
-    period: "2024-07-15 ~ 2025-01-10(7회차)",
-    time: "10:00 ~ 19:00",
-  },
-  {
-    name: "AI Lab_5기(Upstage_AI 4기)",
-    short: "AI(인공지능) Lab",
-    period: "2024-07-16 ~ 2025-02-14(5회차)",
-    time: "10:00 ~ 19:00",
-  },
-  {
-    name: "AI Lab_6기(Upstage_AI 5기)",
-    short: "AI(인공지능) Lab",
-    period: "2024-09-23 ~ 2025-04-25(6회차)",
-    time: "10:00 ~ 19:00",
-  },
-  {
-    name: "PM(프로덕트 매니저) 부트캠프_7기",
-    short: "프로덕트 매니저(PM) 부트캠프",
-    period: "2024-10-14 ~ 2025-04-11(7회차)",
-    time: "10:00 ~ 19:00",
-  },
-  {
-    name: "패스트캠퍼스 UXUI 디자인 부트캠프 4기",
-    short: "UXUI 디자인 부트캠프",
-    period: "2024-10-14 ~ 2025-04-11(4회차)",
-    time: "10:00 ~ 19:00",
-  },
-  {
-    name: "데이터 분석 부트캠프_8기(BDA16)",
-    short: "데이터 분석 부트캠프",
-    period: "2024-08-19 ~ 2025-01-10(8회차)",
-    time: "09:00 ~ 18:00",
-  },
-];
+const COURSE_LIST = require("./courses.json").courses;
 
 const findCourseInfo = (courseName) => {
   const course = COURSE_LIST.find((c) => c.name === courseName);
@@ -169,7 +97,7 @@ const pdfProcessor = {
 
     const signedPdfPath = path.join(
       __dirname,
-      DIRS.converted,
+      "converted",
       "signed_output.pdf"
     );
     fs.writeFileSync(
@@ -213,11 +141,7 @@ const pdfProcessor = {
       });
 
       const streamAsset = await pdfServices.getContent({ asset: resultAsset });
-      const finalOutputPath = path.join(
-        __dirname,
-        DIRS.converted,
-        outputFileName
-      );
+      const finalOutputPath = path.join(__dirname, "converted", outputFileName);
 
       await new Promise((resolve, reject) => {
         const writeStream = fs.createWriteStream(finalOutputPath, {
@@ -253,7 +177,7 @@ const pdfProcessor = {
           docInfo.type === "attendance"
             ? await pdfProcessor.addSignature(
                 finalOutputPath,
-                path.join(__dirname, DIRS.upload, "sign.png")
+                path.join(__dirname, "uploads", "sign.png")
               )
             : finalOutputPath;
 
@@ -299,7 +223,7 @@ const documentGenerator = {
 
     const outputPath = path.join(
       __dirname,
-      DIRS.converted,
+      "converted",
       "filled_attendance.docx"
     );
     fs.writeFileSync(outputPath, doc.getZip().generate({ type: "nodebuffer" }));
@@ -327,7 +251,7 @@ const documentGenerator = {
 
     const outputPath = path.join(
       __dirname,
-      DIRS.converted,
+      "converted",
       "filled_vacation_plan.docx"
     );
     fs.writeFileSync(outputPath, doc.getZip().generate({ type: "nodebuffer" }));
@@ -357,7 +281,7 @@ const documentGenerator = {
 
     const outputPath = path.join(
       __dirname,
-      DIRS.converted,
+      "converted",
       "filled_final_vacation_plan.docx"
     );
     fs.writeFileSync(outputPath, doc.getZip().generate({ type: "nodebuffer" }));
@@ -367,24 +291,21 @@ const documentGenerator = {
 };
 
 const app = express();
-const upload = multer({ dest: path.join(__dirname, DIRS.upload) });
+const upload = multer({ dest: path.join(__dirname, "uploads") });
 
 app.use(cors({ origin: "*" }));
 app.use(express.json());
-app.use(
-  `/${DIRS.converted}`,
-  express.static(path.join(__dirname, DIRS.converted))
-);
+app.use("/converted", express.static(path.join(__dirname, "converted")));
 
-[DIRS.upload, DIRS.converted].forEach((dir) =>
-  ensureDir(path.join(__dirname, dir))
+[path.join(__dirname, "uploads"), path.join(__dirname, "converted")].forEach(
+  (dir) => ensureDir(dir)
 );
 
 app.post("/sign", upload.single("file"), async (req, res) => {
   if (!req.file) return res.status(400).send("No file uploaded.");
 
   try {
-    const filePath = path.join(__dirname, DIRS.upload, "sign.png");
+    const filePath = path.join(__dirname, "uploads", "sign.png");
     await sharp(req.file.path)
       .resize(260, 100, {
         fit: "contain",
@@ -486,7 +407,7 @@ app.post("/convert", upload.single("file"), async (req, res) => {
       );
 
       await Promise.all(
-        [DIRS.upload, DIRS.converted].map(async (dir) => {
+        ["uploads", "converted"].map(async (dir) => {
           const dirPath = path.join(__dirname, dir);
           const files = await fs.promises.readdir(dirPath);
           return Promise.all(
