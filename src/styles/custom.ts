@@ -96,7 +96,7 @@ export const fileUpload = {
     min-width: 0;
     
     .ant-tag {
-      font-size: 12px;
+      font-size: 11px;
     }
   `,
   buttonHover: css`
