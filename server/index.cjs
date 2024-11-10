@@ -107,6 +107,11 @@ const findCourseInfo = (courseName) => {
   return course;
 };
 
+const extractBatchNumber = (period) => {
+  const match = period.match(/\((\d+)회차\)/);
+  return match ? match[1] : "";
+};
+
 const cachedTemplates = {
   attendance: fs.readFileSync(
     path.join(__dirname, "templates", "attendance_template.docx"),
@@ -309,6 +314,7 @@ const documentGenerator = {
     });
 
     const courseInfo = findCourseInfo(values.courseType);
+    const batchNumber = extractBatchNumber(courseInfo.period);
 
     doc.render({
       name: values.name,
@@ -316,7 +322,7 @@ const documentGenerator = {
       courseContent: values.courseContent || "",
       studyPlan: values.studyPlan || "",
       significant: values.significant || "",
-      course: courseInfo.short,
+      course: `${courseInfo.short} ${batchNumber}회차`,
     });
 
     const outputPath = path.join(
@@ -336,6 +342,7 @@ const documentGenerator = {
     });
 
     const courseInfo = findCourseInfo(values.courseType);
+    const batchNumber = extractBatchNumber(courseInfo.period);
 
     doc.render({
       name: values.name,
@@ -345,7 +352,7 @@ const documentGenerator = {
       taskAdjustments: values.taskAdjustments || "",
       workPlan: values.workPlan || "",
       significant: values.significant || "",
-      course: courseInfo.short,
+      course: `${courseInfo.short} ${batchNumber}회차`,
     });
 
     const outputPath = path.join(
@@ -491,7 +498,6 @@ app.post("/convert", upload.single("file"), async (req, res) => {
       );
     }, 60000);
   } catch (error) {
-    console.error("Conversion error:", error);
     res.status(500).send({
       message: "Error occurred during conversion.",
       details: error.toString(),
