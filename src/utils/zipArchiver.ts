@@ -2,26 +2,27 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { FormValues } from "../types/conversionType";
 import {
- formatDate,
- getSuffix,
- getTypeSuffix,
- isAttendanceScreenshot,
+  formatDate,
+  getSuffix,
+  getTypeSuffix,
+  isAttendanceScreenshot,
+  removeParentheses,
 } from "./fileNameHandle";
 import { processFile, getFileType } from "./fileProcessor";
 import {
- convertVacationFiles,
- convertFile,
- fetchConvertedFile,
+  convertVacationFiles,
+  convertFile,
+  fetchConvertedFile,
 } from "../api/fileConversion";
 
 interface ConvertedFile {
- content: Blob | ArrayBuffer | string;
- path: string;
- name: string;
+  content: Blob | ArrayBuffer | string;
+  path: string;
+  name: string;
 }
 
 const createBaseFileName = (values: FormValues): string => {
- return `${formatDate(values.date)}_${values.courseType}_${values.name}`;
+  return `${formatDate(values.date)}_${removeParentheses(values.courseType)}_${values.name}`;
 };
 
 const addFileToZip = async (

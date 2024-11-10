@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
 import { Alert, Typography } from "antd";
-import { typographyTextStyle, alertStyle, spacing } from "../../styles/styles";
+import { typographyTextStyle, alertStyle } from "../../styles";
 
 export const GuideAlert: React.FC = () => (
   <Alert
@@ -22,6 +22,6 @@ export const GuideAlert: React.FC = () => (
     }
     type="warning"
     showIcon
-    css={[alertStyle, { marginTop: "32px", marginBottom: spacing.xl }]}
+    css={[alertStyle, { marginTop: "32px", marginBottom: "48px" }]}
   />
 );

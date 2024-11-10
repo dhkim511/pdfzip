@@ -1,14 +1,11 @@
 import { ThemeConfig } from "antd/es/config-provider/context";
-import { css } from "@emotion/react";
 
 export const colors = {
   primary: "#ed234b",
-  primaryHover: "#d11539",
   border: "#d9d9d9",
   text: {
     primary: "#595959",
     secondary: "#8c8c8c",
-    light: "#bfbfbf",
   },
   background: {
     main: "#f6f6f6",
@@ -22,57 +19,12 @@ export const sizes = {
     medium: "8px",
     large: "10px",
   },
-  height: {
-    control: "38px",
-    button: "48px",
-  },
   width: {
     maxContent: "1300px",
   },
-};
-
-export const fonts = {
-  size: {
-    small: "13px",
-    medium: "15px",
-    large: "17px",
-  },
-  weight: {
-    normal: "400",
-    medium: "500",
-    bold: "700",
-  },
-  lineHeight: {
-    small: "1.4",
-    medium: "1.6",
-    large: "1.8",
-  },
-};
-
-export const spacing = {
-  xs: "16px",
-  sm: "32px",
-  md: "48px",
-  lg: "78px",
-  xl: "88px",
-  margin: {
-    bottom: {
-      xs: css`
-        margin-bottom: 16px;
-      `,
-      sm: css`
-        margin-bottom: 32px;
-      `,
-      md: css`
-        margin-bottom: 48px;
-      `,
-      lg: css`
-        margin-bottom: 78px;
-      `,
-      xl: css`
-        margin-bottom: 88px;
-      `,
-    },
+  height: {
+    control: "38px",
+    button: "48px",
   },
 };
 
@@ -80,7 +32,7 @@ export const antTheme: ThemeConfig = {
   token: {
     colorPrimary: colors.primary,
     colorBorder: colors.border,
-    fontSize: 15,
+    fontSize: 16,
     controlHeight: parseInt(sizes.height.control),
     borderRadius: parseInt(sizes.borderRadius.small),
   },

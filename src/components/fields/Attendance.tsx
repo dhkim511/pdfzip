@@ -3,7 +3,7 @@ import React from "react";
 import { Form, Input } from "antd";
 import { ClockCircleOutlined, FileTextOutlined } from "@ant-design/icons";
 import { FormLabel } from "../common/Label";
-import { flexLayout, halfWidth } from "../../styles/styles";
+import { flexLayout, halfWidth } from "../../styles";
 import { FEEDBACK_MESSAGES } from "../../constants/feedbackMessages";
 
 export const Attendance: React.FC = () => (

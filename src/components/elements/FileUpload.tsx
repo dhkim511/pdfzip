@@ -4,12 +4,7 @@ import { Form, Upload, Button } from "antd";
 import { UploadOutlined, PlusOutlined } from "@ant-design/icons";
 import { UploadFile } from "antd/es/upload/interface";
 import { FileChangeInfo, ConversionType } from "../../types/conversionType";
-import {
-  flexLayout,
-  fullWidth,
-  uploadList,
-  fileUpload,
-} from "../../styles/styles";
+import { flexLayout, fullWidth, uploadList, fileUpload } from "../../styles";
 import { FormLabel } from "../common/Label";
 import FileTag from "./FileTag";
 
@@ -52,8 +47,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
               <Button
                 icon={<PlusOutlined />}
                 style={{
-                  width: "79px",
-                  height: "79px",
+                  width: "60px",
+                  height: "60px",
                   color: "#595959",
                   border: "1px solid #d9d9d9",
                   borderRadius: "6px",

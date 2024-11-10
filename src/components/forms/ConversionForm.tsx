@@ -15,7 +15,7 @@ import {
 } from "../../types/conversionType";
 import { COURSE_LIST } from "../../constants/courseList";
 import FileUpload from "../elements/FileUpload";
-import { submitButton, datePicker } from "../../styles/styles";
+import { submitButton, datePicker } from "../../styles";
 import { getDateLabel } from "../../utils/labelHandle";
 import { FEEDBACK_MESSAGES } from "../../constants/feedbackMessages";
 import { FormLabel } from "../common/Label";

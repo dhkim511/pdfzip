@@ -28,7 +28,7 @@ export const datePicker = css`
 
 export const signatureContainer = css`
   width: 100%;
-  height: 180px;
+  height: 200px;
   position: relative;
   overflow: hidden;
   border: 1px solid ${colors.border};
@@ -94,6 +94,10 @@ export const fileUpload = {
   tagContainer: css`
     flex: 1;
     min-width: 0;
+    
+    .ant-tag {
+      font-size: 12px;
+    }
   `,
   buttonHover: css`
     &:hover {
@@ -121,7 +125,7 @@ export const fileTag = {
     align-items: baseline;
   `,
   categoryText: {
-    fontSize: "13px",
+    fontSize: "12px",
     color: colors.text.secondary,
     whiteSpace: "nowrap" as const,
   },

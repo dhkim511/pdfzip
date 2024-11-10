@@ -2,7 +2,7 @@
 import React, { useRef } from "react";
 import { Form } from "antd";
 import SignatureCanvas from "react-signature-canvas";
-import { flexLayout } from "../../styles/styles";
+import { flexLayout } from "../../styles";
 import { Signature } from "../elements/Signature";
 import { GuideAlert } from "../elements/GuideAlert";
 import { ResourceLink } from "../elements/ResourceLink";
