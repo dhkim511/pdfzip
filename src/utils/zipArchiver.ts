@@ -21,9 +21,8 @@ interface ConvertedFile {
   name: string;
 }
 
-const createBaseFileName = (values: FormValues): string => {
-  return `${formatDate(values.date)}_${removeParentheses(values.courseType)}_${values.name}`;
-};
+const createBaseFileName = (values: FormValues): string =>
+  `${formatDate(values.date)}_${removeParentheses(values.courseType)}_${values.name}`;
 
 const addFileToZip = async (
   zip: JSZip,
@@ -40,24 +39,33 @@ const handleImageFile = async (
   zip: JSZip,
   file: File,
   baseFileName: string,
-  values: FormValues,
-  index: number,
-  totalFiles: number
+  values: FormValues
 ): Promise<void> => {
-  const processedFile = await processFile(file, values);
-  if (!processedFile) return;
-
   const content = await file.arrayBuffer();
+  
   if (isAttendanceScreenshot(file.name)) {
     zip.file(file.name, content);
     return;
   }
-
+  
   const fileExtension = file.name.slice(file.name.lastIndexOf("."));
-  const fileName = totalFiles > 1
-    ? `${baseFileName}(${values.proofDocumentName}_${index + 1})${fileExtension}`
-    : `${baseFileName}(${values.proofDocumentName})${fileExtension}`;
+  const documentSuffix = getSuffix(file.name, values.proofDocumentName);
+  const fileName = `${baseFileName}${documentSuffix}${fileExtension}`;
   zip.file(fileName, content);
+};
+
+const handleDocumentFile = async (
+  zip: JSZip,
+  file: File,
+  baseFileName: string,
+  values: FormValues
+): Promise<void> => {
+  const processedFile = await processFile(file, values);
+  if (!processedFile) return;
+
+  const result = await convertFile(file, values);
+  const suffix = getSuffix(file.name, processedFile.documentName);
+  await addFileToZip(zip, baseFileName, result.files[0], suffix);
 };
 
 const processVacationFiles = async (
@@ -84,15 +92,19 @@ const processRegularFiles = async (
 ): Promise<void> => {
   const baseFileName = createBaseFileName(values);
 
-  if (
-    values.conversionType === "attendance" ||
-    values.conversionType === "officialLeave"
-  ) {
-    const attendanceFile = await convertFile(
-      new File([], "attendance.docx"),
-      values
-    );
-    
+  await Promise.all(
+    fileList.map(async (file: File) => {
+      const { isImage } = getFileType(file.name);
+      if (isImage) {
+        await handleImageFile(zip, file, baseFileName, values);
+      } else {
+        await handleDocumentFile(zip, file, baseFileName, values);
+      }
+    })
+  );
+
+  if (["attendance", "officialLeave"].includes(values.conversionType)) {
+    const attendanceFile = await convertFile(new File([], "attendance.docx"), values);
     await Promise.all(
       attendanceFile.files.map(async (file: ConvertedFile) => {
         const suffix = getSuffix("출석대장", values.conversionType);
@@ -100,13 +112,6 @@ const processRegularFiles = async (
       })
     );
   }
-
-  const imageFiles = fileList.filter(file => getFileType(file.name).isImage);
-  await Promise.all(
-    imageFiles.map(async (file, index) => {
-      await handleImageFile(zip, file, baseFileName, values, index, imageFiles.length);
-    })
-  );
 };
 
 export const createAndDownloadZip = async (
@@ -114,9 +119,7 @@ export const createAndDownloadZip = async (
   fileList: File[]
 ): Promise<void> => {
   const zip = new JSZip();
-  const isVacationType = ["vacation", "finalVacation"].includes(
-    values.conversionType
-  );
+  const isVacationType = ["vacation", "finalVacation"].includes(values.conversionType);
 
   if (isVacationType) {
     await processVacationFiles(zip, values);
