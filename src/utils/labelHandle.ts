@@ -32,7 +32,7 @@ export const getFileLabel = (type: ConversionType): FileLabel => {
       return {
         primary: {
           category: "HRD 오류",
-          files: ["출석 스크린샷", "오류 캡처본", "서명 이미지"],
+          files: ["출석 스크린샷", "오류 화면", "서명 이미지"],
         },
         warning: {
           category: "기타",
