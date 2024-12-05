@@ -3,11 +3,11 @@ import React, { useRef } from "react";
 import { Form } from "antd";
 import SignatureCanvas from "react-signature-canvas";
 import { flexLayout } from "../../styles";
-import { Signature } from "../elements/Signature";
-import { GuideAlert } from "../elements/GuideAlert";
-import { ResourceLink } from "../elements/ResourceLink";
+import { Signature } from "../features/Signature";
+import { GuideAlert } from "../features/GuideAlert";
+import { ResourceLink } from "../features/ResourceLink";
 
-const GuideForm: React.FC = () => {
+const GuideSection: React.FC = () => {
   const [form] = Form.useForm();
   const signatureRef = useRef<SignatureCanvas>(null);
 
@@ -22,4 +22,4 @@ const GuideForm: React.FC = () => {
   );
 };
 
-export default GuideForm;
+export default GuideSection;

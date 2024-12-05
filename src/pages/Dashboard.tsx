@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
 import { Spin } from "antd";
-import ConversionForm from "../components/forms/ConversionForm";
-import GuideForm from "../components/forms/GuideForm";
+import ConversionForm from "../components/form/ConversionForm";
+import GuideSection from "../components/section/GuideSection";
 import { useConversionForm } from "../hooks/useConversionForm";
 import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
 import {
@@ -23,7 +23,7 @@ const Dashboard: React.FC = () => {
       <div css={formContainer}>
         <div css={leftContainer}>
           <div css={guideSection}>
-            <GuideForm />
+            <GuideSection />
           </div>
         </div>
         <div css={rightContainer}>

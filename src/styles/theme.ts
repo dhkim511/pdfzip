@@ -40,10 +40,10 @@ export const antTheme: ThemeConfig = {
     Select: {
       colorBgContainer: colors.background.white,
       colorBorder: colors.border,
-      controlItemBgHover: "#f5f5f5",
+      controlItemBgHover: "transparent",
       controlItemBgActive: "#f5f5f5",
       colorPrimaryHover: colors.border,
-      colorPrimaryActive: colors.border,
+      colorBgElevated: colors.background.white,
     },
     Button: {
       borderRadius: parseInt(sizes.borderRadius.small),
@@ -52,10 +52,12 @@ export const antTheme: ThemeConfig = {
     Input: {
       borderRadius: parseInt(sizes.borderRadius.small),
       controlHeight: parseInt(sizes.height.control),
+      hoverBorderColor: colors.border,
     },
     DatePicker: {
       borderRadius: parseInt(sizes.borderRadius.small),
       controlHeight: parseInt(sizes.height.control),
+      hoverBorderColor: colors.border,
     },
     Form: {
       marginLG: 24,

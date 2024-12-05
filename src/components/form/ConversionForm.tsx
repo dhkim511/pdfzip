@@ -14,7 +14,7 @@ import {
   FileChangeInfo,
 } from "../../types/conversionType";
 import { COURSE_LIST } from "../../constants/courseList";
-import FileUpload from "../elements/FileUpload";
+import FileUpload from "../features/FileUpload";
 import { submitButton, datePicker } from "../../styles";
 import { getDateLabel } from "../../utils/labelHandle";
 import { FEEDBACK_MESSAGES } from "../../constants/feedbackMessages";
