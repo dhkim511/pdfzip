@@ -22,7 +22,6 @@ export const getSuffix = (fileName: string, proofDocumentName?: string): string 
 export const getTypeSuffix = (type: FormValues["conversionType"]): string => {
   switch (type) {
     case "vacation":
-    case "finalVacation":
       return "(휴가)";
     case "officialLeave":
       return "(공가)";

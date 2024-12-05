@@ -119,7 +119,7 @@ export const createAndDownloadZip = async (
   fileList: File[]
 ): Promise<void> => {
   const zip = new JSZip();
-  const isVacationType = ["vacation", "finalVacation"].includes(values.conversionType);
+  const isVacationType = ["vacation"].includes(values.conversionType);
 
   if (isVacationType) {
     await processVacationFiles(zip, values);

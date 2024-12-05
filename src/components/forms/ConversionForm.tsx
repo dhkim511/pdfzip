@@ -21,7 +21,6 @@ import { FEEDBACK_MESSAGES } from "../../constants/feedbackMessages";
 import { FormLabel } from "../common/Label";
 import { Attendance } from "../fields/Attendance";
 import { Vacation } from "../fields/Vacation";
-import { FinalVacation } from "../fields/FinalVacation";
 import { OfficialLeave } from "../fields/OfficialLeave";
 import { flexContainer, flexItem } from "../../styles/layout";
 
@@ -50,8 +49,6 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
         return <Attendance />;
       case "vacation":
         return <Vacation />;
-      case "finalVacation":
-        return <FinalVacation />;
       case "officialLeave":
         return <OfficialLeave />;
       default:
@@ -89,7 +86,6 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
           <Option value="attendance">출결 정정</Option>
           <Option value="vacation">휴가</Option>
           <Option value="officialLeave">공가</Option>
-          <Option value="finalVacation">휴가 (파이널 프로젝트 기간)</Option>
         </Select>
       </Form.Item>
 

@@ -49,10 +49,6 @@ const cachedTemplates = {
     path.join(__dirname, "templates", "vacation_template.docx"),
     "binary"
   ),
-  finalVacation: fs.readFileSync(
-    path.join(__dirname, "templates", "final_vacation_template.docx"),
-    "binary"
-  ),
 };
 
 const ensureDir = (dirPath) => {
@@ -258,36 +254,6 @@ const documentGenerator = {
 
     return outputPath;
   },
-
-  fillFinalVacationForm: async (values) => {
-    const doc = new Docxtemplater(new PizZip(cachedTemplates.finalVacation), {
-      paragraphLoop: true,
-      linebreaks: true,
-    });
-
-    const courseInfo = findCourseInfo(values.courseType);
-    const batchNumber = extractBatchNumber(courseInfo.period);
-
-    doc.render({
-      name: values.name,
-      vacationDate: formatDates.vacation(values.date),
-      courseContent: values.courseContent || "",
-      currentTasks: values.currentTasks || "",
-      taskAdjustments: values.taskAdjustments || "",
-      workPlan: values.workPlan || "",
-      significant: values.significant || "",
-      course: `${courseInfo.short} ${batchNumber}회차`,
-    });
-
-    const outputPath = path.join(
-      __dirname,
-      "converted",
-      "filled_final_vacation_plan.docx"
-    );
-    fs.writeFileSync(outputPath, doc.getZip().generate({ type: "nodebuffer" }));
-
-    return outputPath;
-  },
 };
 
 const app = express();
@@ -325,31 +291,15 @@ app.post("/sign", upload.single("file"), async (req, res) => {
 app.post("/convert", upload.single("file"), async (req, res) => {
   try {
     const filledDocPaths = [];
-    const isLeaveRequest = [
-      "vacation",
-      "officialLeave",
-      "finalVacation",
-    ].includes(req.body.conversionType);
+    const isLeaveRequest = ["vacation", "officialLeave"].includes(
+      req.body.conversionType
+    );
 
     if (isLeaveRequest) {
       if (req.body.conversionType === "vacation") {
         filledDocPaths.push({
           path: await documentGenerator.fillVacationForm(req.body),
           type: "vacation",
-        });
-        filledDocPaths.push({
-          path: await documentGenerator.fillAttendanceForm({
-            ...req.body,
-            checkInTime: "",
-            checkOutTime: "",
-            reason: "휴가",
-          }),
-          type: "attendance",
-        });
-      } else if (req.body.conversionType === "finalVacation") {
-        filledDocPaths.push({
-          path: await documentGenerator.fillFinalVacationForm(req.body),
-          type: "finalVacation",
         });
         filledDocPaths.push({
           path: await documentGenerator.fillAttendanceForm({

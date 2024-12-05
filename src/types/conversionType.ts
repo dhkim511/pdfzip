@@ -1,7 +1,7 @@
 import type { UploadFile, UploadChangeParam } from "antd/es/upload/interface";
 import type { Dayjs } from "dayjs";
 
-export type ConversionType = "vacation" | "officialLeave" | "attendance" | "finalVacation";
+export type ConversionType = "vacation" | "officialLeave" | "attendance";
 
 export type CourseName = string;
 
@@ -25,12 +25,7 @@ export interface FormValues {
   studyPlan?: string;
   vacationDate?: string;
   
-  // 휴가(파이널 프로젝트 기간) 추가 정보 : 진행하고 있는 업무, 조정 필요한 업무, 업무 계획
-  currentTasks?: string;
-  taskAdjustments?: string;
-  workPlan?: string;
-
-  // 특이사항, 증빙서류명
+  // 휴이사항, 증빙서류명
   significant?: string;
   proofDocumentName?: string;
 }

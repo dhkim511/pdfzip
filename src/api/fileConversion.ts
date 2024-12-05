@@ -9,9 +9,6 @@ const createVacationRequestBody = (values: FormValues) => ({
  courseContent: values.courseContent || "",
  studyPlan: values.conversionType === "vacation" ? values.studyPlan || "" : "",
  significant: values.significant || "",
- currentTasks: values.currentTasks || "",
- taskAdjustments: values.taskAdjustments || "",
- workPlan: values.workPlan || "",
 });
 
 const createConversionFormData = (file: File, values: FormValues) => {

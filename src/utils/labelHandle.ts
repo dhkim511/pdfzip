@@ -3,7 +3,6 @@ import { ConversionType } from "../types/conversionType";
 export const getDateLabel = (conversionType: ConversionType): string => {
   switch (conversionType) {
     case "vacation":
-    case "finalVacation":
       return "휴가 예정 날짜";
     case "officialLeave":
       return "공가 날짜";
@@ -46,7 +45,6 @@ export const getFileLabel = (type: ConversionType): FileLabel => {
         },
       };
     case "vacation":
-    case "finalVacation":
       return {
         primary: defaultFiles,
       };
