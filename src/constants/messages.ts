@@ -1,4 +1,4 @@
-export const FEEDBACK_MESSAGES = {
+export const MESSAGES = {
   ERRORS: {
     NO_FILE: "파일을 첨부해주세요.",
     GENERAL_ERROR: "오류가 발생했습니다.",
@@ -15,4 +15,4 @@ export const FEEDBACK_MESSAGES = {
     REASON_REQUIRED: "사유를 입력해주세요.",
     PROOF_DOCUMENT_NAME_REQUIRED: "증빙서류명을 입력해주세요.",
   },
-};
+}; 

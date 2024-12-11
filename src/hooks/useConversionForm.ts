@@ -3,8 +3,8 @@ import { Form, message } from "antd";
 import type { UploadFile } from "antd/es/upload/interface";
 import { FormValues, FileChangeInfo } from "../types/conversionType";
 import { createAndDownloadZip } from "../utils/zipArchiver";
-import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
-import { SERVER_URL } from "../constants/environmentConfig";
+import { MESSAGES } from "../constants/messages";
+import { SERVER_URL } from "../constants/environment";
 
 interface ProcessResult {
  ok: boolean;
@@ -18,7 +18,7 @@ export const useConversionForm = () => {
 
  const validateFiles = (files: File[]): ProcessResult => {
    if (files.length === 0) {
-     return { ok: false, error: FEEDBACK_MESSAGES.ERRORS.NO_FILE };
+     return { ok: false, error: MESSAGES.ERRORS.NO_FILE };
    }
    return { ok: true };
  };
@@ -72,7 +72,7 @@ export const useConversionForm = () => {
    } catch (error) {
      return { 
        ok: false, 
-       error: `${FEEDBACK_MESSAGES.ERRORS.GENERAL_ERROR} - ${(error as Error).message}`
+       error: `${MESSAGES.ERRORS.GENERAL_ERROR} - ${(error as Error).message}`
      };
    }
  };

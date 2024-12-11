@@ -4,7 +4,7 @@ import { Form, Input } from "antd";
 import { ClockCircleOutlined, FileTextOutlined } from "@ant-design/icons";
 import { FormLabel } from "../common/Label";
 import { flexLayout, halfWidth } from "../../styles";
-import { FEEDBACK_MESSAGES } from "../../constants/feedbackMessages";
+import { MESSAGES } from "../../constants/messages";
 
 export const Attendance: React.FC = () => (
   <>
@@ -15,7 +15,7 @@ export const Attendance: React.FC = () => (
         rules={[
           {
             required: true,
-            message: FEEDBACK_MESSAGES.FORM_VALIDATION.CHECKIN_TIME_REQUIRED,
+            message: MESSAGES.FORM_VALIDATION.CHECKIN_TIME_REQUIRED,
           },
         ]}
         css={halfWidth}
@@ -29,7 +29,7 @@ export const Attendance: React.FC = () => (
         rules={[
           {
             required: true,
-            message: FEEDBACK_MESSAGES.FORM_VALIDATION.CHECKOUT_TIME_REQUIRED,
+            message: MESSAGES.FORM_VALIDATION.CHECKOUT_TIME_REQUIRED,
           },
         ]}
         css={halfWidth}
@@ -44,7 +44,7 @@ export const Attendance: React.FC = () => (
       rules={[
         {
           required: true,
-          message: FEEDBACK_MESSAGES.FORM_VALIDATION.REASON_REQUIRED,
+          message: MESSAGES.FORM_VALIDATION.REASON_REQUIRED,
         },
       ]}
     >
@@ -57,8 +57,7 @@ export const Attendance: React.FC = () => (
       rules={[
         {
           required: true,
-          message:
-            FEEDBACK_MESSAGES.FORM_VALIDATION.PROOF_DOCUMENT_NAME_REQUIRED,
+          message: MESSAGES.FORM_VALIDATION.PROOF_DOCUMENT_NAME_REQUIRED,
         },
       ]}
     >

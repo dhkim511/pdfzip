@@ -69,7 +69,7 @@ export const Signature: React.FC<SignatureProps> = ({ signatureRef }) => {
   return (
     <Form.Item
       label={<FormLabel icon={<EditOutlined />}>서명</FormLabel>}
-      css={{ marginBottom: "80px" }}
+      css={{ marginBottom: "92px" }}
     >
       <Space direction="vertical" size="middle" css={[fullWidth]}>
         <div ref={containerRef} css={[flexLayout.center, signatureContainer]}>

@@ -17,7 +17,7 @@ import { COURSE_LIST } from "../../constants/courseList";
 import FileUpload from "../features/FileUpload";
 import { submitButton, datePicker } from "../../styles";
 import { getDateLabel } from "../../utils/labelHandle";
-import { FEEDBACK_MESSAGES } from "../../constants/feedbackMessages";
+import { MESSAGES } from "../../constants/messages";
 import { FormLabel } from "../common/Label";
 import { Attendance } from "../fields/Attendance";
 import { Vacation } from "../fields/Vacation";
@@ -97,7 +97,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
             rules={[
               {
                 required: true,
-                message: FEEDBACK_MESSAGES.FORM_VALIDATION.NAME_REQUIRED,
+                message: MESSAGES.FORM_VALIDATION.NAME_REQUIRED,
               },
             ]}
             style={{ marginTop: "45px", marginBottom: "60px" }}
@@ -115,7 +115,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
             rules={[
               {
                 required: true,
-                message: FEEDBACK_MESSAGES.FORM_VALIDATION.DATE_REQUIRED,
+                message: MESSAGES.FORM_VALIDATION.DATE_REQUIRED,
               },
             ]}
             style={{ marginBottom: "60px" }}
@@ -132,7 +132,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
             rules={[
               {
                 required: true,
-                message: FEEDBACK_MESSAGES.FORM_VALIDATION.NAME_REQUIRED,
+                message: MESSAGES.FORM_VALIDATION.NAME_REQUIRED,
               },
             ]}
           >
@@ -150,7 +150,7 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
             rules={[
               {
                 required: true,
-                message: FEEDBACK_MESSAGES.FORM_VALIDATION.DATE_REQUIRED,
+                message: MESSAGES.FORM_VALIDATION.DATE_REQUIRED,
               },
             ]}
           >

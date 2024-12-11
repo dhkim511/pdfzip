@@ -1,5 +1,5 @@
 import { FormValues } from "../types/conversionType";
-import { SERVER_URL } from "../constants/environmentConfig";
+import { SERVER_URL } from "../constants/environment";
 
 const createVacationRequestBody = (values: FormValues) => ({
  conversionType: values.conversionType,

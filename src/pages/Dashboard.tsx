@@ -4,7 +4,7 @@ import { Spin } from "antd";
 import ConversionForm from "../components/form/ConversionForm";
 import GuideSection from "../components/section/GuideSection";
 import { useConversionForm } from "../hooks/useConversionForm";
-import { FEEDBACK_MESSAGES } from "../constants/feedbackMessages";
+import { MESSAGES } from "../constants/messages";
 import {
   appContainer,
   formContainer,
@@ -28,7 +28,7 @@ const Dashboard: React.FC = () => {
         </div>
         <div css={rightContainer}>
           <div css={formSection}>
-            <Spin spinning={isLoading} tip={FEEDBACK_MESSAGES.STATUS.LOADING}>
+            <Spin spinning={isLoading} tip={MESSAGES.STATUS.LOADING}>
               <ConversionForm
                 form={form}
                 onFinish={onFinish}

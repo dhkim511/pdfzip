@@ -3,7 +3,7 @@ import React from "react";
 import { Form, Input } from "antd";
 import { FileTextOutlined } from "@ant-design/icons";
 import { FormLabel } from "../common/Label";
-import { FEEDBACK_MESSAGES } from "../../constants/feedbackMessages";
+import { MESSAGES } from "../../constants/messages";
 import { useWindowSize } from "../../hooks/useWindowSize";
 
 const { TextArea } = Input;
@@ -25,11 +25,15 @@ export const Vacation: React.FC = () => {
         rules={[
           {
             required: true,
-            message: FEEDBACK_MESSAGES.FORM_VALIDATION.FIELD_REQUIRED,
+            message: MESSAGES.FORM_VALIDATION.FIELD_REQUIRED,
           },
         ]}
       >
-        <TextArea rows={textAreaRows} placeholder="내용 작성" />
+        <TextArea
+          rows={textAreaRows}
+          placeholder="내용 작성"
+          autoSize={{ minRows: textAreaRows }}
+        />
       </Form.Item>
 
       <Form.Item
@@ -40,18 +44,26 @@ export const Vacation: React.FC = () => {
         rules={[
           {
             required: true,
-            message: FEEDBACK_MESSAGES.FORM_VALIDATION.FIELD_REQUIRED,
+            message: MESSAGES.FORM_VALIDATION.FIELD_REQUIRED,
           },
         ]}
       >
-        <TextArea rows={textAreaRows} placeholder="자세히 작성" />
+        <TextArea
+          rows={textAreaRows}
+          placeholder="자세히 작성"
+          autoSize={{ minRows: textAreaRows }}
+        />
       </Form.Item>
 
       <Form.Item
         name="significant"
         label={<FormLabel icon={<FileTextOutlined />}>특이사항</FormLabel>}
       >
-        <TextArea rows={textAreaRows} placeholder="없을 시 생략" />
+        <TextArea
+          rows={textAreaRows}
+          placeholder="없을 시 생략"
+          autoSize={{ minRows: textAreaRows }}
+        />
       </Form.Item>
     </>
   );
