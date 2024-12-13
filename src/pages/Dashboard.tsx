@@ -12,7 +12,7 @@ import {
   rightContainer,
   guideSection,
   formSection,
-} from "../styles";
+} from "../styles/layout";
 
 const Dashboard: React.FC = () => {
   const { form, fileList, isLoading, onFinish, handleFileChange } =

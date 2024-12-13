@@ -7,7 +7,7 @@ import {
   LinkOutlined,
 } from "@ant-design/icons";
 import { FormLabel } from "../common/Label";
-import { buttonGroup, downloadButton } from "../../styles";
+import { buttonGroup, downloadButton } from "../../styles/custom";
 import { FORMLINK, NOTICELINK } from "../../constants/resources";
 
 export const ResourceLink: React.FC = () => (

@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
 import { Alert, Typography } from "antd";
-import { typographyTextStyle, alertStyle } from "../../styles";
+import { typographyTextStyle, alertStyle } from "../../styles/custom";
 
 export const GuideAlert: React.FC = () => (
   <Alert

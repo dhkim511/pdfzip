@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
 import { Space, Typography } from "antd";
 import { AntdIconProps } from "@ant-design/icons/lib/components/AntdIcon";
-import { labelIcon, labelText } from "../../styles";
+import { labelIcon, labelText } from "../../styles/custom";
 
 const { Text } = Typography;
 

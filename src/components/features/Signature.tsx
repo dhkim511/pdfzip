@@ -8,9 +8,11 @@ import {
 } from "@ant-design/icons";
 import SignatureCanvas from "react-signature-canvas";
 import { FormLabel } from "../common/Label";
-import { flexLayout, signatureContainer, fullWidth } from "../../styles";
+import { flexLayout, fullWidth } from "../../styles/layout";
+import { signatureContainer } from "../../styles/custom";
+
 interface SignatureProps {
-  signatureRef: RefObject<SignatureCanvas>;
+  signatureRef: RefObject<SignatureCanvas | null>;
 }
 
 const canvasStyle: CSSProperties = {

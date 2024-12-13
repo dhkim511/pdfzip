@@ -4,7 +4,8 @@ import { Form, Upload, Button } from "antd";
 import { UploadOutlined, PlusOutlined } from "@ant-design/icons";
 import { UploadFile } from "antd/es/upload/interface";
 import { FileChangeInfo, ConversionType } from "../../types/conversionType";
-import { flexLayout, fullWidth, uploadList, fileUpload } from "../../styles";
+import { flexLayout, fullWidth } from "../../styles/layout";
+import { uploadList, fileUpload } from "../../styles/custom";
 import { FormLabel } from "../common/Label";
 import FileTag from "./FileTag";
 

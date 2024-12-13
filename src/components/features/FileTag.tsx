@@ -3,7 +3,7 @@ import React from "react";
 import { Tag, Typography } from "antd";
 import { ConversionType } from "../../types/conversionType";
 import { getFileLabel } from "../../utils/labelHandle";
-import { fileTag } from "../../styles";
+import { fileTag } from "../../styles/custom";
 
 interface FileRequirement {
   category?: string;
