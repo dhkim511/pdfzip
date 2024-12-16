@@ -12,7 +12,7 @@ import { flexLayout, fullWidth } from "../../styles/layout";
 import { signatureContainer } from "../../styles/custom";
 
 interface SignatureProps {
-  signatureRef: RefObject<SignatureCanvas | null>;
+  signatureRef: RefObject<SignatureCanvas>;
 }
 
 const canvasStyle: CSSProperties = {

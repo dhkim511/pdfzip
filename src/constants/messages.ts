@@ -15,4 +15,11 @@ export const MESSAGES = {
     REASON_REQUIRED: "사유를 입력해주세요.",
     PROOF_DOCUMENT_NAME_REQUIRED: "증빙서류명을 입력해주세요.",
   },
+  GUIDE: {
+    DESCRIPTIONS: [
+      "증빙서류는 이미지 파일 형식으로 첨부",
+      "서명 이미지는 'sign.png'로 첨부",
+      "모바일 가능",
+    ],
+  },
 }; 

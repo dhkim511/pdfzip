@@ -13,7 +13,7 @@ import {
   ConversionType,
   FileChangeInfo,
 } from "../../types/conversionType";
-import { COURSE_LIST } from "../../constants/courseList";
+import { COURSES } from "../../constants/courses";
 import FileUpload from "../features/FileUpload";
 import { submitButton, datePicker } from "../../styles/custom";
 import { getDateLabel } from "../../utils/labelHandle";
@@ -66,10 +66,10 @@ const ConversionForm: React.FC<ConversionFormProps> = ({
       <Form.Item
         name="courseType"
         label={<FormLabel icon={<BookOutlined />}>교육 과정</FormLabel>}
-        initialValue={COURSE_LIST[0].name}
+        initialValue={COURSES[0].name}
       >
         <Select>
-          {COURSE_LIST.map((course) => (
+          {COURSES.map((course) => (
             <Option key={course.name} value={course.name}>
               {course.name}
             </Option>

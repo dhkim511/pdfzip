@@ -1,4 +1,4 @@
-export const COURSE_LIST = [
+export const COURSES = [
   { name: "데브캠프 프론트엔드 개발_1기(DEV_FE1)" },
   { name: "데브캠프 프론트엔드 개발_2기(DEV_FE2)" },
   { name: "AI 융합 백엔드 개발 부트캠프_1기(DEV_BE1)" },
